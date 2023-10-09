@@ -31,7 +31,7 @@ override.tf.json
 # !example_override.tf
 
 # Ignore tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-*tfplan
+*.tfplan
 
 # End of https://www.gitignore.io/api/python,terraform
 .vscode
