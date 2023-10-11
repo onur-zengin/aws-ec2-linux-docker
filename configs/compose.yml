@@ -16,8 +16,8 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - prom_data:/etc/prometheus
-      - /opt/docker/prometheus:/etc/prometheus
+      - prom_data:/data/prometheus #named volume on the EBS data-disk to persist TSDB
+      - /etc/docker/prometheus:/etc/prometheus #bind-mount config directory
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
@@ -27,6 +27,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - graf_data:/var/lib/grafana
+      - graf_data:/data/grafana
+    #  - graf_data:/var/lib/grafana
     networks:
       - vmmon

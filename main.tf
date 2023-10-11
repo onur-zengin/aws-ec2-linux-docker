@@ -47,11 +47,6 @@ resource "aws_instance" "ec2" {
 }
 
 
-resource "aws_eip" "staticIP" {
-  instance = aws_instance.ec2.id
-}
-
-
 resource "aws_ebs_volume" "ebs" {
   availability_zone = data.aws_availability_zones.available.names[0] // Must be in the same AZ with the EC2 instance
   size              = 16
@@ -63,9 +58,15 @@ resource "aws_ebs_volume" "ebs" {
 
 
 resource "aws_volume_attachment" "ec2_ebs" {
-  device_name = "/dev/xvdh"
+  device_name = "/dev/sdf" // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
   instance_id = aws_instance.ec2.id
   volume_id   = aws_ebs_volume.ebs.id
+  stop_instance_before_detaching = true // Workaround to known issue #8602. https://github.com/hashicorp/terraform-provider-aws/pull/21144
+}
+
+
+resource "aws_eip" "staticIP" {
+  instance = aws_instance.ec2.id
 }
 
 
