@@ -30,6 +30,11 @@ data "cloudinit_config" "config" {
           content: ${base64encode(file("${path.module}/configs/compose.yml"))}
           owner: root:root
           permissions: '0644'
+        - path: /etc/docker/daemon.json
+          encoding: b64
+          content: ${base64encode(file("${path.module}/configs/daemon.json"))}
+          owner: root:root
+          permissions: '0644'
         - path: /etc/docker/prometheus/prometheus.yml
           encoding: b64
           content: ${base64encode(file("${path.module}/configs/prometheus.yml"))}
@@ -37,15 +42,16 @@ data "cloudinit_config" "config" {
           permissions: '0644'
       bootcmd:
       # bootcmd runs on every boot.
-        - echo "## Updating system $(hostnamectl | grep Kernel)" 
-        - yum update -y
-      # Ignore the 'command not found' error during first boot. runcmd (see below) will take it over & complete.
+        # During first boot, runcmd (see below) will take this over & complete. 
         - echo "## Booting up containers (1)" 
         - cd /etc/docker/
         - docker compose up -d 
       runcmd:
-      # runcmd runs only during first boot. If there is an existing filesystem on the data volume, mkfs will detect it & skip.
+      # runcmd runs only during first boot, after bootcmd.
+        - echo "## Updating system $(hostnamectl | grep Kernel)" 
+        - yum update -y
         - echo "## Mounting data volume" 
+        # If there is an existing filesystem on the data volume, mkfs (by default) will detect it & skip.
         - sudo mkfs -t xfs /dev/xvdf
         - sudo xfs_admin -L data /dev/xvdf
         - sudo mkdir /data
@@ -63,7 +69,7 @@ data "cloudinit_config" "config" {
         - sudo mkdir -p /usr/local/lib/docker/cli-plugins/
         - sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
         - sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
-      # Can't leave this solely under bootcmd, since it is executed before runcmd during first boot
+        # This is executed in place its copy under bootcmd during first boot.
         - echo "## Booting up containers (2)" 
         - cd /etc/docker/
         - docker compose up -d 
