@@ -1,0 +1,37 @@
+# Pre-recorded expressions to improve query response time by minimizing the need for ad hoc computation
+groups:
+- name: cpu-node
+  rules:
+  # Note that every instant rule will be evaulated within the system default lookback window 5 minutes. 
+  # Staleness markers also only apply here, and they will in the range vectors selectors - if present.
+
+  # Per-second avg. rate of non-idle CPU time on the instance over a range of 1 minute lookback window;
+  # Further averaged over all CPUs on the system if there are more than one (not the case for t2.micro)
+  # Graph (1-rate(node_cpu_seconds_total{mode="idle"}[1m]))
+  - record: job_instance_mode:node_cpu_seconds:avg_rate1m
+    expr: avg by (job, instance, mode) (1-rate(node_cpu_seconds_total{mode="idle"}[1m])
+
+
+  # Per-second avg. rate of network traffic transmitted (in bytes) over a window of the last 5 minutes;
+  # Further averaged over all interfaces on the system if there are more than one (not the case for t2.micro)
+  # Graph rate(node_network_transmit_bytes_total{device="eth0"}[1m])
+  - record: job_instance_mode:node_cpu_nw_transmit_bytes:avg_rate5m:avg_rate5m
+    expr: avg by (job, instance, mode) rate(node_network_transmit_bytes_total[5m])) #fixme - exclude lo0 from this.
+
+
+  # Per-second avg. rate of network traffic received (in bytes) over a window of the last 5 minutes;
+  # Further averaged over all interfaces on the system if there are more than one (not the case for t2.micro)
+  # Graph rate(node_network_transmit_bytes_total{device="eth0"}[1m])
+  - record: job_instance_mode:node_cpu_nw_receive_bytes:avg_rate5m:avg_rate5m
+    expr: avg by (job, instance, mode) rate(node_network_receive_bytes_total[5m])) #fixme - exclude lo0 from this.
+
+
+  # node_filesystem_avail_bytes The file system space available to non-root users (in bytes)
+  # node_filesystem_avail_bytes{device="/dev/xvda1", fstype="xfs", group="remote", instance="....:8080", job="ne_hosts", mountpoint="/"}
+  # add this for /data and root mountpoints seperataly on the prometheus localhost
+
+  
+  # TYPE "node_memory_* gauge"
+  # node_memory_MemAvailable_bytes 7.29718784e+08
+  # node_memory_MemFree_bytes 3.6124672e+08
+  # node_memory_MemTotal_bytes 9.99006208e+08

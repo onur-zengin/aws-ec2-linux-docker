@@ -1,20 +1,51 @@
 global:
-  scrape_interval:     60s # By default, scrape targets every 15 seconds.
+  scrape_interval:     15s # Scrape targets every 15 seconds by default. Range vector selectors then aggregate N of these in every [R] & hand off to a function (e.g. rate) to condense the series to a single output that can be graphed. See prometheus.rules.yml.
+  evaluation_interval: 45s # Evaluate rules every 45 seconds. Intended to make the results less jumpy to instantaneous (one-off) spikes, while preserving continuity by capturing the last reading in the previous series. (That is assuming the range is 1 minute)
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
     monitor: 'codelab-monitor'
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
-scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'prometheus'
+rule_files:
+  - 'prometheus.rules.yml'
 
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
+scrape_configs:
+
+# The following job is for the Prometheus_host itself (also hosts Grafana & Nginx);
+  - job_name: 'prometheus_host'
+
+    #scrape_interval: 5s # Optional override to the global default specified at the top.
 
     static_configs:
-      - targets: ['localhost:9090']
 
+      - targets: ['localhost:9090']
+        labels:
+          group: 'local'
+          region: 'eu-central-1'
+          stage: 'prod'
+
+# These are the remote hosts (e.g. VMs) with node_exporter (ne) installed & scraped by the Prometheus_host;
+  - job_name:       'ne_instances'
+
+    #scrape_interval: 5s # Optional override to the global default specified at the top.
+
+    static_configs:
+
+      - targets: ['</AWS_EIP>:8080']
+        labels:
+          group: 'remote'
+          region: 'eu-central-1'
+          stage: 'prod'
+
+      - targets: ['</AWS_EIP>:8080']
+        labels:
+          group: 'remote'
+          region: 'eu-west-1'
+          stage: 'dev'
+
+      - targets: ['</AWS_EIP>:8080']
+        labels:
+          group: 'remote'
+          region: 'us-west-1'
+          stage: 'dev'

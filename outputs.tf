@@ -1,7 +1,8 @@
+/*
 output "amiId" {
   value = data.aws_ami.linux.id
 }
-/*
+
 output "amiObject" {
   value = data.aws_ami.linux // full object definition 
 }
@@ -18,3 +19,5 @@ output "testAz_ebs" {
   value = aws_ebs_volume.ebs.availability_zone
 }
 */
+
+

@@ -1,7 +1,3 @@
-variable "region" {
-  type    = string
-  default = "eu-central-1"
-}
 
 variable "instance_type" {
   type    = string
@@ -10,7 +6,7 @@ variable "instance_type" {
 
 variable "prefix" {
   type    = string
-  default = "NR_vmmon"
+  default = "NR_ne_instance"
 }
 
 variable "sg_rule_description" {
@@ -20,12 +16,11 @@ variable "sg_rule_description" {
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  default = [22, 443, 9090, 3000, 8080]
+  default = [22, 443, 9090, 8080]
 }
 
 variable "sg_allowed_ranges" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
-
 

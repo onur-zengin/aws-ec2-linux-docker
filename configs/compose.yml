@@ -1,5 +1,5 @@
 version: "0.1"
-name: netradar_vmmon
+name: NR_vmmon
 
 networks:
   vmmon:
@@ -17,7 +17,7 @@ services:
       - 9090:9090
     volumes:
       - prom_data:/data/prometheus #named volume on the EBS data-disk to persist TSDB
-      - /etc/docker/prometheus:/etc/prometheus #bind-mount config directory
+      - /etc/docker/prometheus:/etc/prometheus #bind-mounted config directory
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:

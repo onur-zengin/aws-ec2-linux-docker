@@ -65,7 +65,7 @@ data "cloudinit_config" "config" {
         - yum install docker -y
         - systemctl start docker
         - systemctl enable docker
-        - echo "## Installing the Compose plugin" 
+        - echo "## Installing Docker Compose plugin" 
         - sudo mkdir -p /usr/local/lib/docker/cli-plugins/
         - sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
         - sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose

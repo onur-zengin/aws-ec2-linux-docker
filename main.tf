@@ -1,8 +1,3 @@
-provider "aws" {
-  region = var.region
-}
-
-
 data "aws_availability_zones" "available" {
   state = "available"
 
@@ -28,9 +23,9 @@ data "aws_ami" "linux" {
 resource "aws_instance" "ec2" {
   ami               = data.aws_ami.linux.id
   availability_zone = data.aws_availability_zones.available.names[0] // Must be in the same AZ with the EBS volume
-  instance_type     = var.instance
+  instance_type     = var.instance_type
   #user_data        = file("./docker/bootstrap.sh") // Boot logs under /var/log/cloud-init-output.log in case of issues
-  user_data_base64  = data.cloudinit_config.config.rendered
+  user_data_base64 = data.cloudinit_config.config.rendered
   ebs_block_device {
     device_name           = "/dev/xvda"
     delete_on_termination = true
@@ -55,12 +50,12 @@ resource "aws_ebs_volume" "ebs" {
     Name = "${var.prefix}_data-disk"
   }
 }
-
+#/dev/sdf
 
 resource "aws_volume_attachment" "ec2_ebs" {
-  device_name = "/dev/sdf" // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
-  instance_id = aws_instance.ec2.id
-  volume_id   = aws_ebs_volume.ebs.id
+  device_name                    = "/dev/xvdf" // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
+  instance_id                    = aws_instance.ec2.id
+  volume_id                      = aws_ebs_volume.ebs.id
   stop_instance_before_detaching = true // Workaround to known issue #8602. https://github.com/hashicorp/terraform-provider-aws/pull/21144
 }
 
@@ -96,3 +91,5 @@ resource "aws_security_group" "ec2_inbound" {
     Name = var.sg_rule_description
   }
 }
+
+
