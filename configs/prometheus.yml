@@ -32,19 +32,25 @@ scrape_configs:
 
     static_configs:
 
-      - targets: ['</AWS_EIP>:8080']
+      - targets: ['0.0.0.0:9100'] # this has to be the EIP, and can't point to the localhost since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
+        labels:
+          group: 'local'
+          region: 'eu-central-1'
+          stage: 'prod'
+
+      - targets: ['0.0.0.0:9100']
         labels:
           group: 'remote'
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['</AWS_EIP>:8080']
+      - targets: ['0.0.0.0:9100']
         labels:
           group: 'remote'
-          region: 'eu-west-1'
+          region: 'eu-west-2'
           stage: 'dev'
 
-      - targets: ['</AWS_EIP>:8080']
+      - targets: ['0.0.0.0:9100']
         labels:
           group: 'remote'
           region: 'us-west-1'

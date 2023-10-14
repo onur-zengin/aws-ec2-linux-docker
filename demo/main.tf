@@ -1,5 +1,3 @@
-
-
 data "aws_ami" "linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -7,29 +5,35 @@ data "aws_ami" "linux" {
   filter {
     name   = "name"
     values = ["amzn2-ami-kernel-5*-x86_64-gp2"]
-    #values = ["al2023-ami-2023.*-x86_64"] // It has improvements over amazon-linux-2 (e.g. kernel-6). However, on-prem support not yet announced.
   }
 }
 
 
 resource "aws_instance" "ne" {
-  ami           = data.aws_ami.linux.id
-  instance_type = var.instance_type
-  user_data        = file("./demo/ne_instances/bootstrap.sh") 
+  count           = var.instance_count
+  instance_type   = var.instance_type
+  ami             = data.aws_ami.linux.id
+  user_data       = file("./demo/bootstrap.sh")
   security_groups = [aws_security_group.ne_inbound.name]
 
   tags = {
-    Name = "${var.prefix}_ne"
+    Name = "${var.prefix}"
   }
 }
 
 resource "aws_eip" "ne_staticIP" {
-  instance = aws_instance.ne.id
+  count = var.instance_count
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  count = var.instance_count
+  instance_id = aws_instance.ne[count.index].id
+  allocation_id = aws_eip.ne_staticIP[count.index].id
 }
 
 
+
 resource "aws_security_group" "ne_inbound" {
-  #name        = "Allow ne traffic"
   description = var.sg_rule_description
 
   ingress {

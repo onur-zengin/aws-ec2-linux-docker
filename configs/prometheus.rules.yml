@@ -9,7 +9,7 @@ groups:
   # Further averaged over all CPUs on the system if there are more than one (not the case for t2.micro)
   # Graph (1-rate(node_cpu_seconds_total{mode="idle"}[1m]))
   - record: job_instance_mode:node_cpu_seconds:avg_rate1m
-    expr: avg by (job, instance, mode) (1-rate(node_cpu_seconds_total{mode="idle"}[1m])
+    expr: avg by (job, instance, mode) (1-rate(node_cpu_seconds_total{mode="idle"}[1m]))
 
 
   # Per-second avg. rate of network traffic transmitted (in bytes) over a window of the last 5 minutes;

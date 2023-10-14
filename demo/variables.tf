@@ -1,3 +1,6 @@
+variable "instance_count" {
+  type        = number
+}
 
 variable "instance_type" {
   type    = string
@@ -11,12 +14,12 @@ variable "prefix" {
 
 variable "sg_rule_description" {
   type    = string
-  default = "allow_ssh&https"
+  default = "allow_inbound"
 }
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  default = [22, 443, 9090, 8080]
+  default = [22, 443, 9090, 9100]
 }
 
 variable "sg_allowed_ranges" {
