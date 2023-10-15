@@ -1,5 +1,5 @@
 variable "instance_count" {
-  type        = number
+  type = number
 }
 
 variable "instance_type" {
@@ -9,7 +9,7 @@ variable "instance_type" {
 
 variable "prefix" {
   type    = string
-  default = "NR_ne_instance"
+  default = "vmmon_demo_instance"
 }
 
 variable "sg_rule_description" {

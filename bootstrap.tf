@@ -69,17 +69,18 @@ data "cloudinit_config" "config" {
         - sudo mkdir -p /usr/local/lib/docker/cli-plugins/
         - sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
         - sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
-        # This is executed in place of its copy under bootcmd during first boot.
+        - echo "## Downloading & installing node exporter"
+        - sudo mkdir -p /downloads/prometheus_ne
+        - sudo chmod 757 /downloads/prometheus_ne
+        - cd /downloads/prometheus_ne
+        - wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        - tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
+        - cd node_exporter-1.6.1.linux-amd64/
+        - ./node_exporter --web.listen-address 0.0.0.0:9100 &
+         # The following is executed in place of its copy under bootcmd during first boot
         - echo "## Booting up containers (2)" 
         - cd /etc/docker/
         - docker compose up -d 
-        - echo "## Downloading & installing node exporter"
-        - sudo mkdir /prom_ne
-        - cd /prom_ne
-        - sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
-        - sudo tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz 
-        - cd node_exporter-1.6.1.linux-amd64/
-        - ./node_exporter --web.listen-address 0.0.0.0:9100
       final_message: "## The system is up after $UPTIME seconds"
     EOF
   }

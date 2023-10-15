@@ -8,46 +8,45 @@ data "aws_ami" "linux" {
   }
 }
 
-
-resource "aws_instance" "ne" {
+resource "aws_instance" "demo" {
   count           = var.instance_count
   instance_type   = var.instance_type
   ami             = data.aws_ami.linux.id
   user_data       = file("./demo/bootstrap.sh")
-  security_groups = [aws_security_group.ne_inbound.name]
+  security_groups = [aws_security_group.ne_inbound[0].name]
 
   tags = {
-    Name = "${var.prefix}"
+    Name = "${var.prefix}_${count.index}"
   }
 }
 
 resource "aws_eip" "ne_staticIP" {
   count = var.instance_count
+
+  tags = {
+    Name = "${var.prefix}_${count.index}"
+  }
 }
 
 resource "aws_eip_association" "eip_assoc" {
-  count = var.instance_count
-  instance_id = aws_instance.ne[count.index].id
+  count         = var.instance_count
+  instance_id   = aws_instance.demo[count.index].id
   allocation_id = aws_eip.ne_staticIP[count.index].id
 }
 
-
-
 resource "aws_security_group" "ne_inbound" {
+  count       = (var.instance_count == 0 ? 0 : 1) # Avoid orphan SGs being created in demo regions with no EC2 present
   description = var.sg_rule_description
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.sg_allowed_ranges
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8085
-    protocol    = "tcp"
-    cidr_blocks = var.sg_allowed_ranges
+  dynamic "ingress" {
+    iterator = port
+    for_each = var.sg_allowed_ports
+    content {
+      from_port   = port.value // these two lines are defining a range, not the src & dst ports
+      to_port     = port.value // set them the same to configure a single port
+      protocol    = "tcp"
+      cidr_blocks = var.sg_allowed_ranges
+    }
   }
 
   egress {
@@ -57,4 +56,3 @@ resource "aws_security_group" "ne_inbound" {
     cidr_blocks = var.sg_allowed_ranges
   }
 }
-

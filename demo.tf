@@ -22,7 +22,7 @@ module "frankfurt" {
     aws = aws
   }
 }
-
+/*
 module "san_fran" {
   source = "./demo"
   instance_count = local.instance_count
@@ -47,3 +47,4 @@ output "ne_data" {
     module.london
   ]
 }
+*/

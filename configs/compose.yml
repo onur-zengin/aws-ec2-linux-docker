@@ -1,4 +1,4 @@
-version: "0.1"
+version: "3"
 name: nr_vmmon
 
 networks:
@@ -16,8 +16,8 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - prom_data:/data/prometheus #named volume on the EBS data-disk to persist TSDB
-      - /etc/docker/prometheus:/etc/prometheus #bind-mounted config directory
+      - prom_data:/data/prometheus # named volume on the EBS data-disk to persist TSDB (path relative to Docker root directory)
+      - /etc/docker/prometheus:/etc/prometheus # bind-mounted config directory
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
@@ -27,7 +27,6 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - graf_data:/data/grafana
-    #  - graf_data:/var/lib/grafana
+      - graf_data:/var/lib/grafana # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
     networks:
       - vmmon
