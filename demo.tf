@@ -12,14 +12,6 @@ module "frankfurt" {
     aws = aws
   }
 }
-/*
-module "san_fran" {
-  source = "./demo"
-  instance_count = local.instance_count
-  providers = {
-    aws = aws.us-west-1
-  }
-}
 
 module "london" {
   source        = "./demo"
@@ -27,6 +19,14 @@ module "london" {
   instance_type = "t3.nano"
   providers = {
     aws = aws.eu-west-2
+  }
+}
+/*
+module "san_fran" {
+  source = "./demo"
+  instance_count = local.instance_count
+  providers = {
+    aws = aws.us-west-1
   }
 }
 

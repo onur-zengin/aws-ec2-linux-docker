@@ -23,7 +23,7 @@ scrape_configs:
         labels:
           group: 'local'
           region: 'eu-central-1'
-          stage: 'prod'
+          stage: 'prod' 
 
 # These are the remote hosts (e.g. VMs) with node_exporter (ne) installed & scraped by the Prometheus_host;
   - job_name:       'ne_instances'
@@ -32,19 +32,19 @@ scrape_configs:
 
     static_configs:
 
-      - targets: ['0.0.0.0:9100'] # this has to be the EIP, and can't point to the localhost since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
+      - targets: ['self.demo.zenite.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
         labels:
           group: 'local'
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['0.0.0.0:9100']
+      - targets: ['fra.demo.zenite.uk:9100']
         labels:
           group: 'remote'
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['0.0.0.0:9100']
+      - targets: ['lon.demo.zenite.uk:9100']
         labels:
           group: 'remote'
           region: 'eu-west-2'
