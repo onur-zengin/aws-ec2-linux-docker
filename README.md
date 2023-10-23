@@ -1,5 +1,5 @@
-# vmmon
+# morangie
 
-![image](https://github.com/onur-zengin/vmmon/assets/10590811/4e7d87dd-562c-4f7a-a3fe-49d790fbe6c4)
+![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
 
 WIP - work-in-progress
