@@ -1,7 +1,7 @@
 variable "region" {
   description = "Prometheus host region"
-  type    = string
-  default = "eu-central-1"
+  type        = string
+  default     = "eu-central-1"
 }
 
 variable "instance_type" {
@@ -11,8 +11,8 @@ variable "instance_type" {
 
 variable "prefix" {
   description = "Resource name prefix for ease of identification on the AWS console"
-  type    = string
-  default = "NR_vmmon"
+  type        = string
+  default     = "nr-vmon"
 }
 
 variable "sg_rule_description" {
@@ -32,14 +32,14 @@ variable "sg_allowed_ranges" {
 
 variable "demo" {
   description = "Creates demo EC2 instances in a variety of regions listed in the demo.tf file. Leave default (false) in Production"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "demo_instance_count" {
   description = "Number of EC2 instances to be created in each region in a demo setup"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
 
 

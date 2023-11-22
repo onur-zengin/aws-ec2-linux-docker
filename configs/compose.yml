@@ -1,9 +1,9 @@
 version: "3"
-name: nr_vmmon
+name: nr-vmon
 
 networks:
-  vmmon:
-    name: vmmon
+  nr-vnet:
+    name: nr-vnet
     driver: bridge
 
 volumes:
@@ -21,12 +21,14 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
-      - vmmon
+      - nr-vnet
   grafana:
     image: grafana/grafana:latest
     ports:
       - 3000:3000
+    links:
+      - "prometheus:prometheus"
     volumes:
       - graf_data:/var/lib/grafana # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
     networks:
-      - vmmon
+      - nr-vnet

@@ -1,6 +1,6 @@
 global:
-  scrape_interval:     15s # Scrape targets every 15 seconds by default. Range vector selectors then aggregate N of these in every [R] & hand off to a function (e.g. rate) to condense the series to a single output that can be graphed. See prometheus.rules.yml.
-  evaluation_interval: 15s # [fixme] - Evaluate rules every 45 seconds. Intended to make the results less jumpy to instantaneous (one-off) spikes, while preserving continuity by capturing the last reading in the previous series. (That is assuming the range is 1 minute)
+  scrape_interval:     5s # Scrape targets every 15 seconds by default. Range vector selectors then aggregate N of these in every [R] & hand off to a function (e.g. rate) to condense the series to a single output that can be graphed. See prometheus.rules.yml.
+  evaluation_interval: 5s # [fixme] - Evaluate rules every 45 seconds. Intended to make the results less jumpy to instantaneous (one-off) spikes, while preserving continuity by capturing the last reading in the previous series. (That is assuming the range is 1 minute)
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
@@ -8,50 +8,71 @@ global:
     monitor: 'codelab-monitor'
 
 rule_files:
-  - 'prometheus.rules.yml'
+  - 'prometheus.records.yml'
+  - 'prometheus.alerts.yml'
 
 scrape_configs:
 
 # The following job is for the Prometheus_host itself (also hosts Grafana & Nginx);
-  - job_name: 'prometheus_host'
+  - job_name: 'nrv_host'
 
     #scrape_interval: 5s # Optional override to the global default specified at the top.
 
     static_configs:
 
-      - targets: ['localhost:9090']
+      - targets: ['self.demo.oz-enterprises.co.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
         labels:
-          group: 'local'
-          region: 'eu-central-1'
-          stage: 'prod' 
+          country: 'Finland'
+          region: 'eu-central-f'
+          stage: 'prod'
 
 # These are the remote hosts (e.g. VMs) with node_exporter (ne) installed & scraped by the Prometheus_host;
-  - job_name:       'ne_instances'
+  - job_name: 'nrv_clients'
 
     #scrape_interval: 5s # Optional override to the global default specified at the top.
 
     static_configs:
 
-      - targets: ['self.demo.zenite.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
+      - targets: ['fra.demo.oz-enterprises.co.uk:9100']
         labels:
-          group: 'local'
+          country: 'Germany'
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['fra.demo.zenite.uk:9100']
+      - targets: ['lon.demo.oz-enterprises.co.uk:9100']
         labels:
-          group: 'remote'
-          region: 'eu-central-1'
-          stage: 'prod'
-
-      - targets: ['lon.demo.zenite.uk:9100']
-        labels:
-          group: 'remote'
+          country: 'United Kingdom'
           region: 'eu-west-2'
           stage: 'dev'
 
-      - targets: ['0.0.0.0:9100']
+      - targets: ['sfc.demo.oz-enterprises.co.uk:9100']
         labels:
-          group: 'remote'
+          country: 'USA'
           region: 'us-west-1'
           stage: 'dev'
+
+      - targets: ['nyc.demo.oz-enterprises.co.uk:9100']
+        labels:
+          country: 'USA'
+          region: 'us-east-1-nyc'
+          stage: 'dev'
+
+      - targets: ['sgp.demo.oz-enterprises.co.uk:9100']
+        labels:
+          country: 'Singapore'
+          region: 'ap-southeast-1'
+          stage: 'dev'
+
+      - targets: ['tyo.demo.oz-enterprises.co.uk:9100']
+        labels:
+          country: 'Japan'
+          region: 'ap-northeast-1'
+          stage: 'dev'
+
+alerting:
+  alert_relabel_configs:
+    - action: replace
+      source_labels: ['instance']
+      regex: lon.demo.oz-enterprises.co.uk:9100
+      target_label: 'region'
+      replacement: 'eu-west-2'

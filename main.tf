@@ -24,17 +24,18 @@ resource "aws_instance" "ec2" {
   ami               = data.aws_ami.linux.id
   availability_zone = data.aws_availability_zones.available.names[0] // Must be in the same AZ with the EBS volume
   instance_type     = var.instance_type
-  #user_data        = file("./docker/bootstrap.sh") // Boot logs under /var/log/cloud-init-output.log in case of issues
-  user_data_base64 = data.cloudinit_config.config.rendered
-  ebs_block_device {
-    device_name           = "/dev/xvda"
+  key_name          = aws_key_pair.ec2_key_pair.key_name
+  user_data_base64  = data.cloudinit_config.config.rendered // Boot logs under /var/log/cloud-init-output.log in case of issues
+  security_groups   = [aws_security_group.ec2_inbound.name]
+
+  root_block_device {
     delete_on_termination = true
     volume_size           = 8
+
     tags = {
       Name = "${var.prefix}_system-disk" // aka. "root volume"
     }
   }
-  security_groups = [aws_security_group.ec2_inbound.name]
 
   tags = {
     Name = "${var.prefix}"
@@ -50,7 +51,7 @@ resource "aws_ebs_volume" "ebs" {
     Name = "${var.prefix}_data-disk"
   }
 }
-#/dev/sdf
+
 
 resource "aws_volume_attachment" "ec2_ebs" {
   device_name                    = "/dev/xvdf" // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
@@ -62,6 +63,16 @@ resource "aws_volume_attachment" "ec2_ebs" {
 
 resource "aws_eip" "staticIP" {
   instance = aws_instance.ec2.id
+}
+
+
+resource "aws_key_pair" "ec2_key_pair" {
+  key_name   = "aws_linux"
+  public_key = file("./keys/aws_linux.pub")
+
+  tags = {
+    Name = "${var.prefix}"
+  }
 }
 
 
@@ -93,3 +104,47 @@ resource "aws_security_group" "ec2_inbound" {
 }
 
 
+resource "aws_s3_bucket" "graf_config" {
+  bucket        = "graf-config"
+  force_destroy = true
+
+  tags = {
+    Name = "${var.prefix}"
+  }
+}
+
+
+resource "aws_s3_object" "coordinates" {
+  bucket = aws_s3_bucket.graf_config.id
+  key    = "geo.json"
+  source = "configs/geo.json"
+}
+
+/*
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  bucket = aws_s3_bucket.graf_config.id
+  acl = "public-read"
+}
+
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+    bucket = aws_s3_bucket.graf_config.id
+    policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid: "PublicReadGetObject",
+        Principal = "*"
+        Action = [
+          "s3:GetObject",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.graf_config.id}",
+          "arn:aws:s3:::${aws_s3_bucket.graf_config.id}/*"
+        ]
+      }
+    ]
+  })
+}
+*/

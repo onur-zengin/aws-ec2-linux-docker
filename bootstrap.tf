@@ -40,6 +40,11 @@ data "cloudinit_config" "config" {
           content: ${base64encode(file("${path.module}/configs/prometheus.yml"))}
           owner: root:root
           permissions: '0644'
+        - path: /etc/docker/prometheus/prometheus.alerts.yml
+          encoding: b64
+          content: ${base64encode(file("${path.module}/configs/prometheus.alerts.yml"))}
+          owner: root:root
+          permissions: '0644'
       bootcmd:
       # bootcmd runs on every boot.
         # During first boot, runcmd (see below) will take this over & complete. 
@@ -85,3 +90,6 @@ data "cloudinit_config" "config" {
     EOF
   }
 }
+
+
+

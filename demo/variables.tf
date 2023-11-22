@@ -7,6 +7,15 @@ variable "instance_type" {
   default = "t2.micro" // free-tier eligible
 }
 
+
+variable "city_code" {
+  type = string
+}
+
+variable "zone_id" {
+  type = string
+}
+
 variable "prefix" {
   type    = string
   default = "vmmon_demo_instance"
