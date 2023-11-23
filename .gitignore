@@ -39,3 +39,4 @@ override.tf.json
 # Other
 .ds_store
 backup_modules/
+test-*.tf

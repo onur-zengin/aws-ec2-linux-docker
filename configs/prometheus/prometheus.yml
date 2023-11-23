@@ -8,8 +8,8 @@ global:
     monitor: 'codelab-monitor'
 
 rule_files:
-  - 'prometheus.records.yml'
-  - 'prometheus.alerts.yml'
+  - 'records.yml'
+  - 'alerts.yml'
 
 scrape_configs:
 
