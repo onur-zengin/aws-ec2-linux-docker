@@ -8,7 +8,7 @@ data "cloudinit_config" "config" {
       package_update: true
       package_upgrade: true
       packages:
-      # These instructions try to use "apt-get" by default, whilst Amazon Linux 2 comes with "yum". Hence, commented out. See "runcmd:" below.
+      # Replaced by manual installation. See "runcmd:" below.
       #  - docker.io
       #  - docker-compose
       groups:

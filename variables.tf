@@ -33,7 +33,7 @@ variable "sg_allowed_ranges" {
 variable "demo" {
   description = "Creates demo EC2 instances in a variety of regions listed in the demo.tf file. Leave default (false) in Production"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "demo_instance_count" {

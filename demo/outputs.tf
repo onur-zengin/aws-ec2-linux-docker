@@ -1,5 +1,5 @@
 output "eip" {
-  value = aws_eip.ne_staticIP[*].public_ip
+  value = aws_eip.ne_static_ip[*].public_ip
 }
 
 output "ami" {

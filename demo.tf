@@ -50,7 +50,7 @@ module "london" {
     aws = aws.eu-west-2
   }
 }
-
+/*
 module "frankfurt" {
   city_code      = "fra"
   source         = "./demo"
@@ -80,4 +80,4 @@ module "new_york" {
     aws = aws.us-east-1
   }
 }
-
+*/

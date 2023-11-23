@@ -25,7 +25,7 @@ resource "aws_instance" "demo" {
 }
 
 
-resource "aws_eip" "ne_staticIP" {
+resource "aws_eip" "ne_static_ip" {
   count = var.instance_count
 
   tags = {
@@ -37,17 +37,17 @@ resource "aws_eip" "ne_staticIP" {
 resource "aws_eip_association" "eip_assoc" {
   count         = var.instance_count
   instance_id   = aws_instance.demo[count.index].id
-  allocation_id = aws_eip.ne_staticIP[count.index].id
+  allocation_id = aws_eip.ne_static_ip[count.index].id
 }
 
 
-resource "aws_route53_record" "nyc" {
+resource "aws_route53_record" "a_record" {
   count   = var.instance_count
   zone_id = var.zone_id
   name    = "${var.city_code}.${count.index}.demo.oz-enterprises.co.uk"
   type    = "A"
   ttl     = 300
-  records = [aws_eip.ne_staticIP[count.index].public_ip]
+  records = [aws_eip.ne_static_ip[count.index].public_ip]
 }
 
 

@@ -14,15 +14,21 @@ data "aws_ami" "linux" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-kernel-5*-x86_64-gp2"]
-    #values = ["al2023-ami-2023.*-x86_64"]                                      // It has improvements over amazon-linux-2 (e.g. kernel-6). However, on-prem support not yet announced.
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22*"]
+  }
+  filter {
+    name   = "description"
+    values = ["Canonical*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
 }
 
 
 resource "aws_instance" "ec2" {
-  #ami               = data.aws_ami.linux.id
-  ami                         = "ami-06dd92ecc74fdfb36"
+  ami                         = data.aws_ami.linux.id
   availability_zone           = data.aws_availability_zones.available.names[0]  // Must be in the same AZ with the EBS volume
   instance_type               = var.instance_type
   user_data_base64            = data.cloudinit_config.config.rendered           // Boot logs under /var/log/cloud-init-output.log in case of issues
