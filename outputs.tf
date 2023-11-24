@@ -1,13 +1,13 @@
 /*
-output "amiId" {
+output "ami_id" {
   value = data.aws_ami.linux.id
 }
 
-output "amiObject" {
+output "ami_object" {
   value = data.aws_ami.linux // full object definition 
 }
 
-output "availabilityZones" {
+output "availability_zones" {
   value = data.aws_availability_zones.available
 }
 

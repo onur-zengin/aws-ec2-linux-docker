@@ -32,3 +32,19 @@ services:
       - graf_data:/var/lib/grafana # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
     networks:
       - nr-vnet
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    #links:
+    #  - "prometheus:prometheus"
+    #  - "grafana:grafana"
+    volumes:
+      - /etc/docker/nginx/conf.d:/etc/nginx/conf.d
+    #  - /etc/docker/nginx/www:/var/www
+    #  - /etc/docker/nginx/ssl:/etc/nginx/ssl:ro
+    #  - /etc/docker/nginx/snippets:/etc/nginx/snippets:ro
+    #  - /etc/docker/nginx/protect:/etc/nginx/protect:ro
+    networks:
+      - nr-vnet

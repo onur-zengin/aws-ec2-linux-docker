@@ -14,7 +14,7 @@ data "aws_ami" "linux" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"] // Major release upgrades (22+) should be bound to UAT on stage
   }
   filter {
     name   = "description"
@@ -29,10 +29,10 @@ data "aws_ami" "linux" {
 
 resource "aws_instance" "ec2" {
   ami                         = data.aws_ami.linux.id
-  availability_zone           = data.aws_availability_zones.available.names[0]  // Must be in the same AZ with the EBS volume
+  availability_zone           = data.aws_availability_zones.available.names[0] // Must be in the same AZ with the EBS volume
   instance_type               = var.instance_type
-  user_data_base64            = data.cloudinit_config.config.rendered           // Boot logs under /var/log/cloud-init-output.log in case of issues
-  user_data_replace_on_change = true                                            // In order to avoid EC2 becoming left in hanging state after in-flight changes to user_data
+  user_data_base64            = data.cloudinit_config.config.rendered // Boot logs under /var/log/cloud-init-output.log in case of issues
+  user_data_replace_on_change = true                                  // In order to avoid EC2 becoming left in hanging state after in-flight changes to user_data
   key_name                    = aws_key_pair.ec2_key_pair.key_name
   security_groups             = [aws_security_group.ec2_inbound.name]
 
@@ -45,8 +45,6 @@ resource "aws_instance" "ec2" {
     }
   }
 
-  #depends_on = [ aws_ebs_volume.ebs ]
-
   tags = {
     Name = "${var.prefix}"
   }
@@ -54,7 +52,7 @@ resource "aws_instance" "ec2" {
 
 
 resource "aws_ebs_volume" "ebs" {
-  availability_zone = data.aws_availability_zones.available.names[0]            // Must be in the same AZ with the EC2 instance
+  availability_zone = data.aws_availability_zones.available.names[0] // Must be in the same AZ with the EC2 instance
   size              = 16
 
   tags = {
@@ -64,10 +62,10 @@ resource "aws_ebs_volume" "ebs" {
 
 
 resource "aws_volume_attachment" "ec2_ebs" {
-  device_name                    = "/dev/sdf"                                   // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
+  device_name                    = "/dev/sdf" // Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
   instance_id                    = aws_instance.ec2.id
   volume_id                      = aws_ebs_volume.ebs.id
-  stop_instance_before_detaching = true                                         // Workaround to known issue #8602. https://github.com/hashicorp/terraform-provider-aws/pull/21144
+  stop_instance_before_detaching = true // Workaround to known issue #8602. https://github.com/hashicorp/terraform-provider-aws/pull/21144
 }
 
 
@@ -94,8 +92,8 @@ resource "aws_security_group" "ec2_inbound" {
     iterator = port
     for_each = var.sg_allowed_ports
     content {
-      from_port   = port.value                                                     // these two lines are defining a range, not the src & dst ports
-      to_port     = port.value                                                     // set them the same to configure a single port
+      from_port   = port.value // these two lines are defining a range, not the src & dst ports
+      to_port     = port.value // set them the same to configure a single port
       protocol    = "tcp"
       cidr_blocks = var.sg_allowed_ranges
     }

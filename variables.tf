@@ -42,4 +42,14 @@ variable "demo_instance_count" {
   default     = 1
 }
 
+variable "demo_dns_zone" {
+  description = "Take extra care (esp. with NS records) before importing a production zone here."
+  type        = string
+  default     = "zenite.uk"
+}
 
+variable "demo_dns_record" {
+  description = "The domain under with both Grafana & Prometheus instances will be reachable"
+  type        = string
+  default     = "demo.zenite.uk"
+}

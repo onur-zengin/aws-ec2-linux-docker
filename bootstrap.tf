@@ -40,9 +40,14 @@ data "cloudinit_config" "config" {
           content: ${base64encode(file("${path.module}/configs/prometheus/prometheus.yml"))}
           owner: root:root
           permissions: '0644'
-        - path: /etc/docker/prometheus/prometheus.alerts.yml
+        - path: /etc/docker/prometheus/alerts.yml
           encoding: b64
           content: ${base64encode(file("${path.module}/configs/prometheus/alerts.yml"))}
+          owner: root:root
+          permissions: '0644'
+        - path: /etc/docker/nginx/conf.d/nginx.conf
+          encoding: b64
+          content: ${base64encode(file("${path.module}/configs/nginx/nginx.conf"))}
           owner: root:root
           permissions: '0644'
       bootcmd:
@@ -74,10 +79,9 @@ data "cloudinit_config" "config" {
         - sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
         - echo "## Downloading & installing node exporter"
         - sudo mkdir -p /usr/local/bin/prometheus_ne
-        - sudo chmod 757 /usr/local/bin/prometheus_ne
         - cd /usr/local/bin/prometheus_ne
-        - wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
-        - tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
+        - sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        - sudo tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
         - cd node_exporter-1.6.1.linux-amd64/
         - ./node_exporter --web.listen-address 0.0.0.0:9100 &
         # The following is executed in place of its copy under bootcmd during first boot

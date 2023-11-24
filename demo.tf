@@ -5,14 +5,14 @@ locals {
   instance_count = (var.demo == false ? 0 : var.demo_instance_count)
 }
 
-resource "aws_route53_zone" "zenite" {
-  name          = "zenite.uk"
+resource "aws_route53_zone" "demo_dns_zone" {
+  name          = var.demo_dns_zone
   force_destroy = false
 }
 
-resource "aws_route53_record" "demo" {
-  zone_id = aws_route53_zone.zenite.zone_id
-  name    = "demo.zenite.uk"
+resource "aws_route53_record" "demo_dns_record" {
+  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  name    = var.demo_dns_record
   type    = "A"
   ttl     = 300
   records = [aws_eip.staticIP.public_ip]
