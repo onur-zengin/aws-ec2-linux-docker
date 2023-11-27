@@ -22,7 +22,7 @@ variable "sg_rule_description" {
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  default = [22, 80, 443, 3000, 8080, 9090, 9100]
+  default = [22, 80, 443, 9100]
 }
 
 variable "sg_allowed_ranges" {
@@ -43,13 +43,19 @@ variable "demo_instance_count" {
 }
 
 variable "demo_dns_zone" {
-  description = "Take extra care (esp. with NS records) before importing a production zone here."
+  description = "DNS zone file representing the collection of domain records managed together by Terraform"
   type        = string
   default     = "zenite.uk"
 }
 
-variable "demo_dns_record" {
-  description = "The domain under with both Grafana & Prometheus instances will be reachable"
+variable "demo_dns_record-web" {
+  description = "The domain record under which both Grafana & Prometheus instances will reside"
   type        = string
   default     = "demo.zenite.uk"
+}
+
+variable "demo_dns_record-collector" {
+  description = "The domain record under which Prometheus will scrape its co-hosted collector"
+  type        = string
+  default     = "self.demo.zenite.uk"
 }

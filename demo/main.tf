@@ -16,7 +16,7 @@ data "aws_ami" "linux_ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"] // Major release upgrades (22+) should be bound to UAT on stage
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"]                     # Major release upgrades should be bound to UAT, hence the version number is hardcoded.
   }
   filter {
     name   = "description"
@@ -80,15 +80,15 @@ resource "aws_key_pair" "demo_key_pair" {
 
 
 resource "aws_security_group" "ne_inbound" {
-  count       = (var.instance_count == 0 ? 0 : 1) # Avoid orphan SGs being created in demo regions with no EC2 present
+  count       = (var.instance_count == 0 ? 0 : 1)                         # Avoid orphan SGs being created in demo regions with no EC2 present
   description = var.sg_rule_description
 
   dynamic "ingress" {
     iterator = port
     for_each = var.sg_allowed_ports
     content {
-      from_port   = port.value // these two lines are defining a range, not the src & dst ports
-      to_port     = port.value // set them the same to configure a single port
+      from_port   = port.value                                            # these two lines are defining a range, not the src & dst ports
+      to_port     = port.value                                            # set them the same to configure a single port
       protocol    = "tcp"
       cidr_blocks = var.sg_allowed_ranges
     }

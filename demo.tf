@@ -10,40 +10,26 @@ resource "aws_route53_zone" "demo_dns_zone" {
   force_destroy = false
 }
 
-resource "aws_route53_record" "demo_dns_record" {
+resource "aws_route53_record" "demo_dns_record-web" {
   zone_id = aws_route53_zone.demo_dns_zone.zone_id
-  name    = var.demo_dns_record
+  name    = var.demo_dns_record-web
   type    = "A"
   ttl     = 300
   records = [aws_eip.staticIP.public_ip]
 }
 
-resource "aws_route53_zone" "oz_ent" {
-  name          = "oz-enterprises.co.uk"
-  force_destroy = false
-}
-
-resource "aws_route53_record" "demo_temp" {
-  zone_id = aws_route53_zone.oz_ent.zone_id
-  name    = "demo.oz-enterprises.co.uk"
+resource "aws_route53_record" "demo_dns_record-collector" {
+  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  name    = var.demo_dns_record-collector
   type    = "A"
   ttl     = 300
   records = [aws_eip.staticIP.public_ip]
 }
-
-resource "aws_route53_record" "self" {
-  zone_id = aws_route53_zone.oz_ent.zone_id
-  name    = "self.demo.oz-enterprises.co.uk"
-  type    = "A"
-  ttl     = 300
-  records = [aws_eip.staticIP.public_ip]
-}
-
 
 module "london" {
   city_code      = "lon"
   source         = "./demo"
-  zone_id        = aws_route53_zone.oz_ent.zone_id
+  zone_id        = aws_route53_zone.demo_dns_zone.zone_id
   instance_count = local.instance_count
   instance_type  = "t3.nano"
   providers = {
@@ -54,7 +40,7 @@ module "london" {
 module "frankfurt" {
   city_code      = "fra"
   source         = "./demo"
-  zone_id        = aws_route53_zone.oz_ent.zone_id
+  zone_id        = aws_route53_zone.demo_dns_zone.zone_id
   instance_count = local.instance_count
   providers = {
     aws = aws
@@ -64,7 +50,7 @@ module "frankfurt" {
 module "san_fran" {
   city_code      = "sfc"
   source         = "./demo"
-  zone_id        = aws_route53_zone.oz_ent.zone_id
+  zone_id        = aws_route53_zone.demo_dns_zone.zone_id
   instance_count = local.instance_count
   providers = {
     aws = aws.us-west-1
@@ -74,7 +60,7 @@ module "san_fran" {
 module "new_york" {
   city_code      = "nyc"
   source         = "./demo"
-  zone_id        = aws_route53_zone.oz_ent.zone_id
+  zone_id        = aws_route53_zone.demo_dns_zone.zone_id
   instance_count = local.instance_count
   providers = {
     aws = aws.us-east-1

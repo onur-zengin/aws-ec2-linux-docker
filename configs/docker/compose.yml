@@ -14,25 +14,26 @@ services:
   prometheus:
     image: prom/prometheus:latest
     ports:
-      - 9090:9090
+      - 127.0.0.1:9090:9090
     volumes:
       - prom_data:/data/prometheus # named volume on the EBS data-disk to persist TSDB (path relative to Docker root directory)
       - /etc/docker/prometheus:/etc/prometheus # bind-mounted config directory
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url=/prom/' # to allow path-based routing by the nginx-proxy. This is matched in the nginx.conf location block
     networks:
       - nr-vnet
   grafana:
     image: grafana/grafana:latest
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
     links:
       - "prometheus:prometheus"
     volumes:
       - graf_data:/var/lib/grafana # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
     networks:
       - nr-vnet
-  nginx:
+  nginx-proxy:
     image: nginx
     ports:
       - "80:80"
