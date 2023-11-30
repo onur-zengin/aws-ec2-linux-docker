@@ -12,8 +12,8 @@ variable "city_code" {
   type = string
 }
 
-variable "zone_id" {
-  type = string
+variable "zone" {
+  #type = map(string)
 }
 
 variable "prefix" {

@@ -26,10 +26,18 @@ resource "aws_route53_record" "demo_dns_record-collector" {
   records = [aws_eip.staticIP.public_ip]
 }
 
+resource "aws_route53_record" "demo_dns_record-certbot_challenge" {
+  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  name    = var.demo_dns_record-certbot_challenge
+  type    = "TXT"
+  ttl     = 300
+  records = [aws_eip.staticIP.public_ip]
+}
+
 module "london" {
   city_code      = "lon"
   source         = "./demo"
-  zone_id        = aws_route53_zone.demo_dns_zone.zone_id
+  zone           = aws_route53_zone.demo_dns_zone
   instance_count = local.instance_count
   instance_type  = "t3.nano"
   providers = {

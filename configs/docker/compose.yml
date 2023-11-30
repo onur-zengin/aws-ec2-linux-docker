@@ -31,6 +31,11 @@ services:
       - "prometheus:prometheus"
     volumes:
       - graf_data:/var/lib/grafana # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
+    environment:
+      GF_SERVER_DOMAIN: vmon.zenite.uk
+      #GF_SERVER_HTTP_PORT: 443
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SERVER_ROOT_URL:	'%(protocol)s://%(domain)s:%(http_port)s/graf/'
     networks:
       - nr-vnet
   nginx-proxy:
@@ -43,9 +48,24 @@ services:
     #  - "grafana:grafana"
     volumes:
       - /etc/docker/nginx/conf.d:/etc/nginx/conf.d
-    #  - /etc/docker/nginx/www:/var/www
-    #  - /etc/docker/nginx/ssl:/etc/nginx/ssl:ro
+      - /etc/docker/nginx/ssl:/etc/nginx/ssl
+    #  - /etc/docker/www:/var/www
     #  - /etc/docker/nginx/snippets:/etc/nginx/snippets:ro
     #  - /etc/docker/nginx/protect:/etc/nginx/protect:ro
     networks:
       - nr-vnet
+#  certbot:
+#    image: certbot/certbot
+#    container_name: certbot
+#    depends_on:
+#      - nginx-proxy
+#    volumes:
+#      - /etc/docker/letsencrypt/ssl:/etc/letsencrypt
+      #- ./ssl:/etc/letsencrypt
+      #- ./ssl-log:/var/log/letsencrypt
+      #- ./www/.well-known:/var/www/.well-known
+#    command: 
+#      - 'renew'
+#    networks:
+#      - nr-vnet
+    

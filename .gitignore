@@ -40,3 +40,4 @@ override.tf.json
 .ds_store
 backup_modules/
 test-*.tf
+*.pem

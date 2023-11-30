@@ -31,7 +31,7 @@ data "aws_ami" "linux_ubuntu" {
 resource "aws_instance" "demo" {
   count                       = var.instance_count
   instance_type               = var.instance_type
-  ami                         = data.aws_ami.linux_ubuntu.id
+  ami                         = data.aws_ami.linux_amzn2.id
   user_data_base64            = data.cloudinit_config.demo_config.rendered  # Boot logs under /var/log/cloud-init-output.log in case of issues
   user_data_replace_on_change = true                                        # In order to avoid EC2 becoming left in hanging state after in-flight changes to user_data  
   key_name                    = aws_key_pair.demo_key_pair.key_name
@@ -61,8 +61,8 @@ resource "aws_eip_association" "eip_assoc" {
 
 resource "aws_route53_record" "a_record" {
   count   = var.instance_count
-  zone_id = var.zone_id
-  name    = "${var.city_code}-${count.index}.demo.oz-enterprises.co.uk"
+  zone_id = var.zone.zone_id
+  name    = "${var.city_code}-${count.index}.demo.${var.zone.name}"
   type    = "A"
   ttl     = 300
   records = [aws_eip.ne_static_ip[count.index].public_ip]

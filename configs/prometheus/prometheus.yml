@@ -20,7 +20,7 @@ scrape_configs:
 
     static_configs:
 
-      - targets: ['self.demo.zenite.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
+      - targets: ['self.vmon.zenite.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
         labels:
           country: 'Finland'
           region: 'eu-central-f'
@@ -33,46 +33,53 @@ scrape_configs:
 
     static_configs:
 
-      - targets: ['fra-0.demo.zenite.uk:9100']
+      - targets: ['fra-0.vmon.zenite.uk:9100']
         labels:
           country: 'Germany'
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['lon-0.demo.zenite.uk:9100']
+      - targets: ['lon-0.vmon.zenite.uk:9122']
         labels:
           country: 'United Kingdom'
           region: 'eu-west-2'
           stage: 'dev'
 
-      - targets: ['sfc-0.demo.zenite.uk:9100']
+      - targets: ['sfc-0.vmon.zenite.uk:9100']
         labels:
           country: 'USA'
           region: 'us-west-1'
           stage: 'dev'
 
-      - targets: ['nyc-0.demo.zenite.uk:9100']
+      - targets: ['nyc-0.vmon.zenite.uk:9100']
         labels:
           country: 'USA'
           region: 'us-east-1-nyc'
           stage: 'dev'
 
-      - targets: ['sgp-0.demo.zenite.uk:9100']
+      - targets: ['sgp-0.vmon.zenite.uk:9100']
         labels:
           country: 'Singapore'
           region: 'ap-southeast-1'
           stage: 'dev'
 
-      - targets: ['tyo-0.demo.zenite.uk:9100']
+      - targets: ['tyo-0.vmon.zenite.uk:9100']
         labels:
           country: 'Japan'
           region: 'ap-northeast-1'
           stage: 'dev'
 
+    #scheme: https
+    #tls_config:
+    #  ca_file: /data/prometheus/ca.crt
+    #  cert_file: /data/prometheus/prom_server.crt
+    #  key_file: /data/prometheus/prom_server_nopass.key
+    #  server_name: netradar.co
+
 alerting:
   alert_relabel_configs:
     - action: replace
       source_labels: ['instance']
-      regex: lon.demo.zenite.uk:9100
+      regex: lon.vmon.zenite.uk:9100
       target_label: 'region'
       replacement: 'eu-west-2'

@@ -6,7 +6,7 @@ variable "region" {
 
 variable "instance_type" {
   type    = string
-  default = "t2.micro" // free-tier eligible
+  default = "t2.small" // free-tier eligible
 }
 
 variable "prefix" {
@@ -33,7 +33,7 @@ variable "sg_allowed_ranges" {
 variable "demo" {
   description = "Creates demo EC2 instances in a variety of regions listed in the demo.tf file. Leave default (false) in Production"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "demo_instance_count" {
@@ -43,19 +43,25 @@ variable "demo_instance_count" {
 }
 
 variable "demo_dns_zone" {
-  description = "DNS zone file representing the collection of domain records managed together by Terraform"
+  description = "The apex record with a zone file representing the collection of all records managed together by Terraform"
   type        = string
   default     = "zenite.uk"
 }
 
 variable "demo_dns_record-web" {
-  description = "The domain record under which both Grafana & Prometheus instances will reside"
+  description = "The domain record under which both Grafana & Prometheus web interfaces reside"
   type        = string
-  default     = "demo.zenite.uk"
+  default     = "vmon.zenite.uk"
 }
 
 variable "demo_dns_record-collector" {
-  description = "The domain record under which Prometheus will scrape its co-hosted collector"
+  description = "The domain record used by Prometheus to scrape its own host"
   type        = string
-  default     = "self.demo.zenite.uk"
+  default     = "self.vmon.zenite.uk"
+}
+
+variable "demo_dns_record-certbot_challenge" {
+  description = "The domain record used by Prometheus to scrape its own host"
+  type        = string
+  default     = "_acme-challenge.zenite.uk"
 }
