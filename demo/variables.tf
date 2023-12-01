@@ -7,7 +7,6 @@ variable "instance_type" {
   default = "t2.micro" // free-tier eligible
 }
 
-
 variable "city_code" {
   type = string
 }
@@ -18,7 +17,7 @@ variable "zone" {
 
 variable "prefix" {
   type    = string
-  default = "vmmon_demo_instance"
+  default = "vmon"
 }
 
 variable "sg_rule_description" {
@@ -28,7 +27,7 @@ variable "sg_rule_description" {
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  default = [22, 443, 9100]
+  default = [22, 9100, 9122]
 }
 
 variable "sg_allowed_ranges" {

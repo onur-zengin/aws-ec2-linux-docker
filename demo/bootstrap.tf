@@ -7,6 +7,13 @@ data "cloudinit_config" "demo_config" {
     content      = <<-EOF
       package_update: true
       package_upgrade: true
+      users:
+        - default
+        - name: pne
+          lock_passwd: true
+          gecos: Prom-NE Deployer
+          sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+          shell: /bin/bash
       write_files:
         - path: /etc/cron.d/stress
           content: |
@@ -22,20 +29,21 @@ data "cloudinit_config" "demo_config" {
       runcmd:
       # runcmd runs only during first boot, after bootcmd.
         - echo "## Installing the stress utility"
-        - sudo amazon-linux-extras install epel -y
-        - sudo yum install stress -y
+        - amazon-linux-extras install epel -y
+        - yum install stress -y
         - echo "## Installing stunnel"
-        - sudo yum install stunnel -y
+        - yum install stunnel -y
         - stunnel /etc/stunnel/stunnel.conf
         - echo "## Downloading & installing node exporter"
-        - sudo mkdir -p /usr/local/bin/prometheus_ne
+        - mkdir -p /usr/local/bin/prometheus_ne
         - cd /usr/local/bin/prometheus_ne
-        - sudo wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
-        - sudo tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
+        - wget -q https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+        - tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
+        - chown -R pne:pne /usr/local/bin/prometheus_ne
         # The following is executed in place of its copy under bootcmd during first boot
         - echo "## Launching Node Exporter" 
         - cd node_exporter-1.6.1.linux-amd64/
-        - ./node_exporter --web.listen-address 127.0.0.1:9100 &
+        - su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
       final_message: "## The system is up after $UPTIME seconds"
     EOF
   }

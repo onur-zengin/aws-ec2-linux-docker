@@ -2,16 +2,20 @@
 ## Not to be deployed in production ##
 
 locals {
+  demo_dns_setup = (var.demo == false ? 0 : 1)
   instance_count = (var.demo == false ? 0 : var.demo_instance_count)
 }
 
+
 resource "aws_route53_zone" "demo_dns_zone" {
+  count         = local.demo_dns_setup
   name          = var.demo_dns_zone
   force_destroy = false
 }
 
 resource "aws_route53_record" "demo_dns_record-web" {
-  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  count   = local.demo_dns_setup
+  zone_id = aws_route53_zone.demo_dns_zone[0].zone_id
   name    = var.demo_dns_record-web
   type    = "A"
   ttl     = 300
@@ -19,7 +23,8 @@ resource "aws_route53_record" "demo_dns_record-web" {
 }
 
 resource "aws_route53_record" "demo_dns_record-collector" {
-  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  count   = local.demo_dns_setup
+  zone_id = aws_route53_zone.demo_dns_zone[0].zone_id
   name    = var.demo_dns_record-collector
   type    = "A"
   ttl     = 300
@@ -27,12 +32,14 @@ resource "aws_route53_record" "demo_dns_record-collector" {
 }
 
 resource "aws_route53_record" "demo_dns_record-certbot_challenge" {
-  zone_id = aws_route53_zone.demo_dns_zone.zone_id
+  count   = local.demo_dns_setup
+  zone_id = aws_route53_zone.demo_dns_zone[0].zone_id
   name    = var.demo_dns_record-certbot_challenge
   type    = "TXT"
   ttl     = 300
   records = [aws_eip.staticIP.public_ip]
 }
+
 
 module "london" {
   city_code      = "lon"

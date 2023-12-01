@@ -61,8 +61,8 @@ resource "aws_eip_association" "eip_assoc" {
 
 resource "aws_route53_record" "a_record" {
   count   = var.instance_count
-  zone_id = var.zone.zone_id
-  name    = "${var.city_code}-${count.index}.demo.${var.zone.name}"
+  zone_id = var.zone[0].zone_id
+  name    = "${var.city_code}-${count.index}.${var.prefix}.${var.zone[0].name}"
   type    = "A"
   ttl     = 300
   records = [aws_eip.ne_static_ip[count.index].public_ip]
