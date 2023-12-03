@@ -4,6 +4,7 @@ variable "grafana_web" {
   default     = "https://vmon.zenite.uk/graf"
 }
 
+
 variable "grafana_org" {
   description = "Organization (company) name to be displayed on the Grafana web interface"
   type        = string

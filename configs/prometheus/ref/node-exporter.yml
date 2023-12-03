@@ -1,3 +1,5 @@
+# Authored by Samuel Berthe and originally published at https://github.com/samber/awesome-prometheus-alerts/. Copied under Creative Commons Attribution 4.0 International License (CC BY 4.0).
+
 groups:
 
 - name: NodeExporter
@@ -301,3 +303,47 @@ groups:
         summary: Host Network Interface Saturated (instance {{ $labels.instance }})
         description: "The network interface \"{{ $labels.device }}\" on \"{{ $labels.instance }}\" is getting overloaded.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
+    - alert: HostNetworkBondDegraded
+      expr: '((node_bonding_active - node_bonding_slaves) != 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}'
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Host Network Bond Degraded (instance {{ $labels.instance }})
+        description: "Bond \"{{ $labels.device }}\" degraded on \"{{ $labels.instance }}\".\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HostConntrackLimit
+      expr: '(node_nf_conntrack_entries / node_nf_conntrack_entries_limit > 0.8) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}'
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: Host conntrack limit (instance {{ $labels.instance }})
+        description: "The number of conntrack is approaching limit\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HostClockSkew
+      expr: '((node_timex_offset_seconds > 0.05 and deriv(node_timex_offset_seconds[5m]) >= 0) or (node_timex_offset_seconds < -0.05 and deriv(node_timex_offset_seconds[5m]) <= 0)) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}'
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: Host clock skew (instance {{ $labels.instance }})
+        description: "Clock skew detected. Clock is out of sync. Ensure NTP is configured correctly on this host.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HostClockNotSynchronising
+      expr: '(min_over_time(node_timex_sync_status[1m]) == 0 and node_timex_maxerror_seconds >= 16) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}'
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Host clock not synchronising (instance {{ $labels.instance }})
+        description: "Clock not synchronising. Ensure NTP is configured on this host.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: HostRequiresReboot
+      expr: '(node_reboot_required > 0) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}'
+      for: 4h
+      labels:
+        severity: info
+      annotations:
+        summary: Host requires reboot (instance {{ $labels.instance }})
+        description: "{{ $labels.instance }} requires a reboot.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

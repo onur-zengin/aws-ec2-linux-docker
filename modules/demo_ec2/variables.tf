@@ -22,15 +22,19 @@ variable "prefix" {
 
 variable "sg_rule_description" {
   type    = string
-  default = "allow_inbound"
+  default = "allow"
 }
 
-variable "sg_allowed_ports" {
+variable "default_allowed_ports" {
   type    = list(number)
-  default = [22, 9100, 9122]
+  default = [22]
 }
 
-variable "sg_allowed_ranges" {
+variable "prometheus_host_address" {
+  type    = string
+}
+
+variable "default_allowed_ranges" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }

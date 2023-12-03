@@ -41,3 +41,4 @@ override.tf.json
 backup_files/
 test-*.tf
 *.pem
+modules/demo_fargate/src/*

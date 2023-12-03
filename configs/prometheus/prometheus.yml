@@ -1,35 +1,46 @@
 global:
-  scrape_interval:     15s # Scrape targets every 15 seconds by default. Range vector selectors then aggregate N of these in every [R] & hand off to a function (e.g. rate) to condense the series to a single output that can be graphed. See prometheus.rules.yml.
-  evaluation_interval: 15s # [fixme] - Evaluate rules every 45 seconds. Intended to make the results less jumpy to instantaneous (one-off) spikes, while preserving continuity by capturing the last reading in the previous series. (That is assuming the range is 1 minute)
 
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
-  external_labels:
-    monitor: 'codelab-monitor'
+  scrape_interval:     15s # Scrape targets every 15 seconds by default. Range vector selectors then aggregate N of these in every [R] & hand off to a function (e.g. rate) to condense the series to a single output that can be graphed. See records.yml.
+  evaluation_interval: 15s # Recommended best practice to be kept the same as scrape_interval
+
 
 rule_files:
-  - 'records.yml'
+
   - 'alerts.yml'
+  #- 'records.yml'
+
 
 scrape_configs:
 
-# The following job is for the Prometheus_host itself (also hosts Grafana & Nginx);
-  - job_name: 'nrv_host'
+  # The following job is for the embedded_exporter on the Prometheus app (i.e. the container) itself;
+  
+  #- job_name: 'host_embedded'
 
-    #scrape_interval: 5s # Optional override to the global default specified at the top.
+  #  static_configs:
+
+  #    - targets: ['localhost:9090']
+  #      labels:
+  #        country: 'Finland'
+  #        region: 'eu-central-f'
+  #        stage: 'prod'
+
+
+  # The following job is for the prom_node_exporter installed on the Prometheus host itself (which also hosts Grafana & Nginx containers, alongside it);
+
+  - job_name: 'host_pne'
 
     static_configs:
 
-      - targets: ['self.vmon.zenite.uk:9100'] # this needs to be the VM's phy.IP and can't point to localhost, since node_exporter is running on the actual VM itself while the prometheus collector is inside a docker container
+      - targets: ['self.vmon.zenite.uk:9100'] # this points the VM's phy-IP and not the localhost, since node_exporter is running on the actual VM itself while the prometheus app is inside a docker network.
         labels:
           country: 'Finland'
           region: 'eu-central-f'
           stage: 'prod'
 
-# These are the remote hosts (e.g. VMs) with node_exporter (ne) installed & scraped by the Prometheus_host;
-  - job_name: 'nrv_clients'
 
-    scrape_interval: 5s # Optional override to the global default specified at the top.
+  # These are the remote instances (i.e. VMs) with prom_node_exporter (PNE) installed & scraped by the Prometheus Host;
+
+  - job_name: 'pne_clients'
 
     static_configs:
 
@@ -39,7 +50,7 @@ scrape_configs:
           region: 'eu-central-1'
           stage: 'prod'
 
-      - targets: ['lon-0.vmon.zenite.uk:9122']
+      - targets: ['lon-0.vmon.zenite.uk:9100']
         labels:
           country: 'United Kingdom'
           region: 'eu-west-2'
@@ -57,12 +68,6 @@ scrape_configs:
           region: 'us-east-1-nyc'
           stage: 'dev'
 
-      - targets: ['sgp-0.vmon.zenite.uk:9100']
-        labels:
-          country: 'Singapore'
-          region: 'ap-southeast-1'
-          stage: 'dev'
-
       - targets: ['tyo-0.vmon.zenite.uk:9100']
         labels:
           country: 'Japan'
@@ -76,10 +81,22 @@ scrape_configs:
     #  key_file: /data/prometheus/prom_server_nopass.key
     #  server_name: netradar.co
 
-alerting:
-  alert_relabel_configs:
-    - action: replace
-      source_labels: ['instance']
-      regex: lon.vmon.zenite.uk:9100
-      target_label: 'region'
-      replacement: 'eu-west-2'
+
+  # These are the remote instances (i.e. serverless containers) with google_container_advisor (GCA) installed & scraped by the Prometheus Host;
+
+  - job_name: 'gca_clients'
+
+    static_configs:
+
+      - targets: ['dxb-0.vmon.zenite.uk:9100']
+        labels:
+          country: 'UAE'
+          region: 'me-central-1'
+          stage: 'dev'
+
+      - targets: ['sgp-0.vmon.zenite.uk:9100']
+        labels:
+          country: 'Singapore'
+          region: 'ap-southeast-1'
+          stage: 'dev'
+

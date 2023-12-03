@@ -9,6 +9,18 @@ resource "aws_s3_object" "gazetteer_test" {
   source = "configs/geo.json"
 }
 
+resource "aws_s3_object" "base_logo" {
+  bucket = aws_s3_bucket.prod_media.id
+  key    = "base_logo.svg"
+  source = "images/logo_circle_base.svg"
+}
+
+resource "aws_s3_object" "red_logo" {
+  bucket = aws_s3_bucket.prod_media.id
+  key    = "red_logo.svg"
+  source = "images/logo_circle_red.svg"
+}
+
 resource "aws_s3_bucket" "prod_media" {
   bucket        = var.prod_media_bucket
   force_destroy = true

@@ -1,3 +1,14 @@
+data "terraform_remote_state" "main" {
+  
+  backend = "s3"
+
+  config = {
+    bucket = "tfstate-vmon"
+    key    = "global/main/vmon.tfstate"
+    region = "eu-central-1"
+  }
+}
+
 data "aws_region" "current" {}
 
 data "aws_ami" "linux_amzn2" {
@@ -16,7 +27,7 @@ data "aws_ami" "linux_ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"]                     # Major release upgrades should be bound to UAT, hence the version number is hardcoded.
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"]                     # Major release upgrades should be bound to UAT, hence the version number is hardcoded (possible to configure as a variable).
   }
   filter {
     name   = "description"
@@ -28,13 +39,21 @@ data "aws_ami" "linux_ubuntu" {
   }
 }
 
+
+locals {
+  count = (var.instance_count == 0 ? 0 : 1) 
+  #specific_allowed_ranges = data.terraform_remote_state.main.outputs.prometheus_host_address
+  specific_allowed_ranges = ["${var.prometheus_host_address}/32"]
+}
+
+
 resource "aws_instance" "demo" {
   count                       = var.instance_count
   instance_type               = var.instance_type
   ami                         = data.aws_ami.linux_amzn2.id
   user_data_base64            = data.cloudinit_config.demo_config.rendered  # Boot logs under /var/log/cloud-init-output.log in case of issues
-  user_data_replace_on_change = true                                        # In order to avoid EC2 becoming left in hanging state after in-flight changes to user_data  
-  key_name                    = aws_key_pair.demo_key_pair.key_name
+  user_data_replace_on_change = true                                        # In order to avoid EC2 getting left in hanging state after in-flight changes to user_data  
+  key_name                    = aws_key_pair.demo_key_pair[0].key_name
   security_groups             = [aws_security_group.ne_inbound[0].name]
 
   tags = {
@@ -70,6 +89,7 @@ resource "aws_route53_record" "a_record" {
 
 
 resource "aws_key_pair" "demo_key_pair" {
+  count      = local.count                                                # Avoid orphan resources being created in demo regions with no EC2 present
   key_name   = "demo_linux"
   public_key = file("./keys/demo_linux.pub")
 
@@ -80,17 +100,24 @@ resource "aws_key_pair" "demo_key_pair" {
 
 
 resource "aws_security_group" "ne_inbound" {
-  count       = (var.instance_count == 0 ? 0 : 1)                         # Avoid orphan SGs being created in demo regions with no EC2 present
+  count      = local.count                                                # Avoid orphan resources being created in demo regions with no EC2 present
   description = var.sg_rule_description
+
+  ingress {
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = local.specific_allowed_ranges
+  }
 
   dynamic "ingress" {
     iterator = port
-    for_each = var.sg_allowed_ports
+    for_each = var.default_allowed_ports
     content {
       from_port   = port.value                                            # these two lines are defining a range, not the src & dst ports
       to_port     = port.value                                            # set them the same to configure a single port
       protocol    = "tcp"
-      cidr_blocks = var.sg_allowed_ranges
+      cidr_blocks = var.default_allowed_ranges
     }
   }
 
@@ -98,6 +125,6 @@ resource "aws_security_group" "ne_inbound" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.sg_allowed_ranges
+    cidr_blocks = var.default_allowed_ranges 
   }
 }

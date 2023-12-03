@@ -19,7 +19,7 @@ locals {
 variable "demo_instance_count" {
   description = "Number of EC2 instances to be created in each region in a demo setup"
   type        = number
-  default     = 0
+  default     = 1
 }
 
 
@@ -89,41 +89,46 @@ resource "aws_route53_record" "demo_dns_record-certbot_challenge" {
 
 
 module "london" {
-  city_code      = "lon"
-  source         = "./modules/demo"
-  zone           = aws_route53_zone.demo_dns_zone
-  instance_count = local.instance_count
-  instance_type  = "t3.nano"
+  city_code               = "lon"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  instance_type           = "t3.nano"
+  prometheus_host_address = aws_eip.staticIP.public_ip
   providers = {
     aws = aws.eu-west-2
   }
 }
 
 module "frankfurt" {
-  city_code      = "fra"
-  source         = "./modules/demo"
-  zone           = aws_route53_zone.demo_dns_zone
-  instance_count = local.instance_count
+  city_code               = "fra"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  prometheus_host_address = aws_eip.staticIP.public_ip
   providers = {
-    aws = aws
+    aws = aws.eu-central-1
   }
 }
 
 module "san_fran" {
-  city_code      = "sfc"
-  source         = "./modules/demo"
-  zone           = aws_route53_zone.demo_dns_zone
-  instance_count = local.instance_count
+  city_code               = "sfc"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  instance_type           = "t3.nano"
+  prometheus_host_address = aws_eip.staticIP.public_ip
   providers = {
     aws = aws.us-west-1
   }
 }
 
 module "new_york" {
-  city_code      = "nyc"
-  source         = "./modules/demo"
-  zone           = aws_route53_zone.demo_dns_zone
-  instance_count = local.instance_count
+  city_code               = "nyc"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  prometheus_host_address = aws_eip.staticIP.public_ip
   providers = {
     aws = aws.us-east-1
   }
