@@ -27,11 +27,11 @@ scrape_configs:
 
   # The following job is for the prom_node_exporter installed on the Prometheus host itself (which also hosts Grafana & Nginx containers, alongside it);
 
-  - job_name: 'host_pne'
+  - job_name: 'pne_host'
 
     static_configs:
 
-      - targets: ['self.vmon.zenite.uk:9100'] # this points the VM's phy-IP and not the localhost, since node_exporter is running on the actual VM itself while the prometheus app is inside a docker network.
+      - targets: ['self.vmon.zenite.uk:9100'] # this points the VM's phy-IP and not the localhost, since node_exporter is running on the actual VM itself while the prometheus app is inside a docker network.
         labels:
           country: 'Finland'
           region: 'eu-central-f'
@@ -99,4 +99,3 @@ scrape_configs:
           country: 'Singapore'
           region: 'ap-southeast-1'
           stage: 'dev'
-

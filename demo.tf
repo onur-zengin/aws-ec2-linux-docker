@@ -19,7 +19,7 @@ locals {
 variable "demo_instance_count" {
   description = "Number of EC2 instances to be created in each region in a demo setup"
   type        = number
-  default     = 1
+  default     = 0
 }
 
 
@@ -134,3 +134,14 @@ module "new_york" {
   }
 }
 
+
+module "tokyo" {
+  city_code               = "tyo"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  prometheus_host_address = aws_eip.staticIP.public_ip
+  providers = {
+    aws = aws.ap-northeast-1
+  }
+}

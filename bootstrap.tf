@@ -117,7 +117,7 @@ data "cloudinit_config" "config" {
         - echo "## Downloading & Booting up containers" 
         - [ cd, /etc/docker/ ]
         - [ su, docker, -c, "docker compose up -d" ]
-      final_message: "## The system is up after $UPTIME seconds"
+      final_message: "## The system is up after $UPTIME seconds - demonstration"
     EOF
   }
 }

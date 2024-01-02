@@ -54,18 +54,3 @@ services:
     #  - /etc/docker/nginx/protect:/etc/nginx/protect:ro
     networks:
       - nr-vnet
-#  certbot:
-#    image: certbot/certbot
-#    container_name: certbot
-#    depends_on:
-#      - nginx-proxy
-#    volumes:
-#      - /etc/docker/letsencrypt/ssl:/etc/letsencrypt
-      #- ./ssl:/etc/letsencrypt
-      #- ./ssl-log:/var/log/letsencrypt
-      #- ./www/.well-known:/var/www/.well-known
-#    command: 
-#      - 'renew'
-#    networks:
-#      - nr-vnet
-    
