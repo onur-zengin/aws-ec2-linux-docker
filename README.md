@@ -67,12 +67,12 @@ variables.tf                    # Environment variables for the main instance. 
 
 ## 4. CLOUD DEPLOYMENT (LINUX)
 
-### 4.1. PRE-REQUISITES
+#### 4.1. PRE-REQUISITES
 
 * An AWS account (with administrative rights to execute #4.2.1)
 * AWS CLI, Terraform, and Git to be installed on the local machine
 
-### 4.2. PROCEDURE
+#### 4.2. PROCEDURE
 
 1. Create a user account & remote backend on AWS for Terraform 
 
@@ -98,42 +98,41 @@ Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 
-
-#### 5. Initialize the working directory and install required providers;
+5. Initialize the working directory and install required providers;
 ```
 terraform init --upgrade
 ```
 
-#### 6. Create an execution plan and save to ...
+6. Create an execution plan and save to ...
 ```
 terraform plan --...
 ```
 
-#### 7. Apply the planned configuration;
+7. Apply the planned configuration;
 ```
 terraform apply --...
 ```
 
-### 4.3. DEMO SETUP
+#### 4.3. DEMO SETUP
 
 node_exporter binary to be installed on the target hosts
 
-### 4.4. DASHBOARD SETUP
+#### 4.4. DASHBOARD SETUP
 
 
 
 ## 5. LOCAL INSTALLATION (MacOS)
 
-### 5.1. PRE-REQUISITES
+#### 5.1. PRE-REQUISITES
 
 docker
 docker compose
 
-### 5.2. DEPLOYING WITH DOCKER COMPOSE
+#### 5.2. DEPLOYING WITH DOCKER COMPOSE
 
 
 ## 6. ...
 ## 7. KNOWN ISSUES
 ## 8. PLANNED FEATURES
 
-    . Alerts to be sent as emails
+- Alerts to be sent as emails
