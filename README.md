@@ -63,7 +63,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 ## 3. DEPENDENCIES
 
-
+</tbc>
 
 ## 4. CLOUD DEPLOYMENT (LINUX)
 
@@ -74,7 +74,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 4.2. PROCEDURE
 
-1. Create a user account & remote backend on AWS for Terraform 
+4.2.1. Create a user account & remote backend on AWS for Terraform 
 
 [todo: automate this with CloudFormation]
 
@@ -82,43 +82,44 @@ IAM user (access keys)
 S3 bucket
 DynamoDB table
 
-2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
+4.2.2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
 
 [todo: automate this with Python / CloudFormation & merge into #4.2.1]
 
-3. Configure AWS CLI with the access keys obtained from #4.2.1
+4.2.3. Configure AWS CLI with the access keys obtained from #4.2.1
 
 ```
 $ aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-4. Clone the remote repository into local machine;
+4.2.4. Clone the remote repository into local machine;
 
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 
-5. Initialize the working directory and install required providers;
+4.2.5. Initialize the working directory and install required providers;
 ```
 terraform init --upgrade
 ```
 
-6. Create an execution plan and save to ...
+4.2.6. Create an execution plan and save to ...
 ```
-terraform plan --...
+terraform plan -var="backend=S3_BUCKET_NAME" -out="tfplan"
 ```
 
-7. Apply the planned configuration;
+4.2.7. Apply the planned configuration;
 ```
-terraform apply --...
+terraform apply "tfplan"
 ```
+
 
 #### 4.3. DEMO SETUP
 
 node_exporter binary to be installed on the target hosts
 
-#### 4.4. DASHBOARD SETUP
 
+#### 4.4. DASHBOARD SETUP
 
 
 ## 5. LOCAL INSTALLATION (MacOS)

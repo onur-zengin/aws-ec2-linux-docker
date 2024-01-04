@@ -34,3 +34,8 @@ variable "sg_allowed_ranges" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
+
+variable "backend" {
+  description = "S3 bucket name to store the remote state"
+  type    = string
+}
