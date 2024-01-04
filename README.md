@@ -78,9 +78,9 @@ variables.tf                    # Environment variables for the main instance. 
 
 [todo: automate this with CloudFormation]
 
-IAM user (access keys)
-S3 bucket
-DynamoDB table
+IAM user        [..., access keys]
+S3 bucket       [name:S3_BUCKET_NAME, versioning:enabled]
+DynamoDB table  [tableName:tfstate-lock-vmon, partitionKey:LockID]
 
 4.2.2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
 
@@ -101,7 +101,6 @@ cd aws-ec2-linux-docker/
 4.2.5. Initialize working directory, install required providers and create the state file in the remote backend;
 ```
 terraform init -backend-config="bucket=S3_BUCKET_NAME"
-terraform init -backend-config="bucket=tfstate-vmon-04012024"
 ```
 
 4.2.6. Create an execution plan and save to ...
