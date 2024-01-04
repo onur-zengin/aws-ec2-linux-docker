@@ -98,14 +98,16 @@ Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 
-4.2.5. Initialize the working directory and install required providers;
+4.2.5. Initialize working directory, install required providers and create the state file in the remote backend;
 ```
-terraform init --upgrade
+terraform init -backend-config="bucket=S3_BUCKET_NAME"
+terraform init -backend-config="bucket=tfstate-vmon-04012024"
 ```
 
 4.2.6. Create an execution plan and save to ...
 ```
 terraform plan -var="backend=S3_BUCKET_NAME" -out="tfplan"
+terraform plan -out="tfplan"
 ```
 
 4.2.7. Apply the planned configuration;
