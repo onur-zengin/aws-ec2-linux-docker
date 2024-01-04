@@ -67,6 +67,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 ## 4. CLOUD DEPLOYMENT (LINUX)
 
+#### 4.3. DEMO SETUP
 #### 4.1. PRE-REQUISITES
 
 * An AWS account (with administrative rights to execute #4.2.1)
