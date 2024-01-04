@@ -132,17 +132,22 @@ node_exporter binary to be installed on the target hosts
 #### 4.4. DASHBOARD SETUP
 
 
-## 5. LOCAL INSTALLATION (MacOS)
+## 5. REMOVING DEPLOYMENT
+```
+terraform destroy
+```
 
-#### 5.1. PRE-REQUISITES
+
+## 6. LOCAL INSTALLATION (MacOS)
+
+#### 6.1. PRE-REQUISITES
 
 docker
 docker compose
 
-#### 5.2. DEPLOYING WITH DOCKER COMPOSE
+#### 6.2. DEPLOYING WITH DOCKER COMPOSE
 
 
-## 6. ...
 ## 7. KNOWN ISSUES
 ## 8. PLANNED FEATURES
 

@@ -3,7 +3,7 @@ data "terraform_remote_state" "main" {
   backend = "s3"
 
   config = {
-    bucket = "tfstate-vmon"
+    bucket = "tfstate-vmon-04012024"
     key    = "global/main/vmon.tfstate"
     region = "eu-central-1"
   }
