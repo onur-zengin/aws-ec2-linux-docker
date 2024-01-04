@@ -78,6 +78,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 AWS_REGION = ""
 S3_BUCKET_NAME = "" #replace-all S3_BUCKET_NAME with a globally unique bucket name
+GRAFANA_PW = ""
 
 4.2.1. Create a user account & remote backend on AWS for Terraform 
 
@@ -86,6 +87,7 @@ S3_BUCKET_NAME = "" #replace-all S3_BUCKET_NAME with a globally unique bucket na
 IAM user        [..., access keys]
 S3 bucket       [name:S3_BUCKET_NAME, versioning:enabled]  
 DynamoDB table  [tableName:tfstate-lock-vmon, partitionKey:LockID]
+Secrets Manager [grafana_auth:GRAFANA_PW]
 
 Note: S3 bucket and DynamoDB table should be created in AWS_REGION.
 
@@ -111,7 +113,7 @@ terraform init -backend-config="bucket=S3_BUCKET_NAME"
 terraform init -backend-config="bucket=tfstate-vmon-04012024"
 ```
 
-4.2.6. Create an execution plan and save to ...
+4.2.6. Create an execution plan;
 ```
 terraform plan -out="tfplan"
 ```

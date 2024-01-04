@@ -26,15 +26,16 @@ data "aws_ami" "linux" {
   }
 }
 
-
+/*
 data "aws_secretsmanager_secret" "grafana_auth" {
   name = "grafana_auth"
 }
 
+
 data "aws_secretsmanager_secret_version" "latest" {
   secret_id = data.aws_secretsmanager_secret.grafana_auth.id
 }
-
+*/
 
 resource "aws_instance" "ec2" {
   ami                         = data.aws_ami.linux.id
