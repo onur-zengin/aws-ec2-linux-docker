@@ -74,17 +74,24 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 4.2. PROCEDURE
 
+4.2.0. Variables
+
+AWS_REGION = ""
+S3_BUCKET_NAME = "" #replace-all S3_BUCKET_NAME with a globally unique bucket name
+
 4.2.1. Create a user account & remote backend on AWS for Terraform 
 
-[todo: automate this with CloudFormation]
+[todo: automate this with Ansible / CloudFormation]
 
 IAM user        [..., access keys]
-S3 bucket       [name:S3_BUCKET_NAME, versioning:enabled] # replace all S3_BUCKET_NAME with a globally unique bucket name 
+S3 bucket       [name:S3_BUCKET_NAME, versioning:enabled]  
 DynamoDB table  [tableName:tfstate-lock-vmon, partitionKey:LockID]
+
+Note: S3 bucket and DynamoDB table should be created in AWS_REGION.
 
 4.2.2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
 
-[todo: automate this with Python / CloudFormation & merge into #4.2.1]
+[todo: automate this with Python / Ansible / CloudFormation & merge into #4.2.1]
 
 4.2.3. Configure AWS CLI with the access keys obtained from #4.2.1
 
