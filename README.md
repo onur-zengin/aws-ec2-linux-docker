@@ -1,14 +1,7 @@
 # morangie
 
-1. DESCRIPTION
-
 ![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
 
-Containerized Prometheus & Grafana installation with Docker Compose on AWS EC2 (Ubuntu Linux), packaged as a Terraform IaC project (codename: morangie).
-
-Designed as a single-instance monitoring & visualization solution that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
-
-### Table of Contents
 **[1. Description](#description)**<br>
 **[2. Directory Structure](#directory-structure)**<br>
 **[3. Dependencies](#dependencies)**<br>
@@ -18,7 +11,13 @@ Designed as a single-instance monitoring & visualization solution that can be co
 **[7. Known Issues](#known-issues)**<br>
 **[8. Planned Features](#planned-features)**<br>
 
-2. DIRECTORY STRUCTURE
+## 1. DESCRIPTION
+
+Containerized Prometheus & Grafana installation with Docker Compose on AWS EC2 (Ubuntu Linux), packaged as a Terraform IaC project (codename: morangie).
+
+Designed as a single-instance monitoring & visualization solution that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
+
+## 2. DIRECTORY STRUCTURE
 
 ```
 .
@@ -62,69 +61,79 @@ README.md                       # This file
 variables.tf                    # Environment variables for the main instance. Submodule variables under respective directories
 ```
 
-3. DEPENDENCIES
+## 3. DEPENDENCIES
 
-terraform cli installed
-aws cli installed
-git installed
 
-4. CLOUD INSTALLATION (LINUX)
 
-4.1. PRE-REQUISITES
+## 4. CLOUD DEPLOYMENT (LINUX)
 
-aws account
-aws terraform remote backend
-aws terraform user (access keys)
-conf aws cli
+### 4.1. PRE-REQUISITES
+
+* An AWS account (with administrative rights to execute #4.2.1)
+* AWS CLI, Terraform, and Git to be installed on the local machine
+
+### 4.2. PROCEDURE
+
+1. Create a user account & remote backend on AWS for Terraform 
+
+[todo: automate this with CloudFormation]
+
+IAM user (access keys)
+S3 bucket
+DynamoDB table
+
+2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
+
+[todo: automate this with Python / CloudFormation & merge into #4.2.1]
+
+3. Configure AWS CLI with the access keys obtained from #4.2.1
+
 ```
 $ aws configure
 ```
-follow the prompts to configure aws access key ID and secret access key
+Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-git clone ...
-cd vmon
+4. Clone the remote repository into local machine;
 
-tls cert on aws secrets manager
+git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
+cd aws-ec2-linux-docker/
 
-terraform installed on the local machine
 
-4.2. DEPLOYING WITH TERRAFORM
-
-4.2.a. Initialize the working directory and install required providers;
+#### 5. Initialize the working directory and install required providers;
 ```
 terraform init --upgrade
 ```
 
-4.2.b. Create an execution plan and save to ...
+#### 6. Create an execution plan and save to ...
 ```
 terraform plan --...
 ```
 
-4.2.c. Apply the planned configuration;
+#### 7. Apply the planned configuration;
 ```
 terraform apply --...
 ```
 
-4.3. DEMO SETUP
+### 4.3. DEMO SETUP
 
-node_exporter binary on the target hosts
+node_exporter binary to be installed on the target hosts
 
-4.4. DASHBOARD SETUP
+### 4.4. DASHBOARD SETUP
 
 
 
-5. LOCAL INSTALLATION (MacOS)
+## 5. LOCAL INSTALLATION (MacOS)
 
-5.1. PRE-REQUISITES
+### 5.1. PRE-REQUISITES
 
 docker
 docker compose
 
-5.2. DEPLOYING WITH DOCKER COMPOSE
+### 5.2. DEPLOYING WITH DOCKER COMPOSE
 
 
-6. ...
-7. KNOWN ISSUES
-8. PLANNED FEATURES
+## 6. ...
+## 7. KNOWN ISSUES
+## 8. PLANNED FEATURES
 
     . Alerts to be sent as emails
