@@ -1,0 +1,29 @@
+---
+- name: Create Terraform Backend on AWS
+  hosts: all
+  vars:
+    aws_region: "eu-west-2"
+    s3_bucket_name: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
+  tasks:
+    - name: Create S3 bucket 
+      amazon.aws.s3_bucket:
+        name: "{{ s3_bucket_name }}"
+        state: present
+        versioning: on
+        region: "{{ aws_region }}"
+      register: created_bucket 
+    - name: Create DDB table
+      community.aws.dynamodb_table:
+        name: tfstate-lock-vmon
+        hash_key_name: LockID
+        region: "{{ aws_region }}"
+      register: created_ddb_table
+    - name: Finish
+      debug:
+        msg: "You may now initialize Terraform using s3_bucket_name; {{ s3_bucket_name }}"
+    - name: Terraform initialize
+      command: terraform init -backend-config="bucket={{ s3_bucket_name }}"
+    - name: Terraform plan
+      command: terraform plan -out="tfplan"
+    - name: Terraform plan
+      command: terraform apply "tfplan"
