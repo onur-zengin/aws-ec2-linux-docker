@@ -1,14 +1,16 @@
+/*
 data "terraform_remote_state" "main" {
   
   backend = "s3"
 
   config = {
-    bucket = "tfstate-vmon-04012024"
+    #bucket = "tfstate-vmon-04012024" ###
+    bucket = terraform.backend.s3.bucket
     key    = "global/main/vmon.tfstate"
     region = "eu-central-1"
   }
 }
-
+*/
 data "aws_region" "current" {}
 
 data "aws_ami" "linux_amzn2" {

@@ -96,16 +96,16 @@ Note: S3 bucket and DynamoDB table should be created in AWS_REGION.
 [todo: automate this with Python / Ansible / CloudFormation & merge into #4.2.1]
 
 4.2.3. Configure AWS CLI with the access keys obtained from #4.2.1
-
 ```
-$ aws configure
+aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
 4.2.4. Clone the remote repository into local machine;
-
+```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
+```
 
 4.2.5. Initialize working directory, install required providers and create the state file in the remote backend;
 ```
