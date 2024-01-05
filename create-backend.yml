@@ -2,7 +2,7 @@
 - name: Create Terraform Backend on AWS
   hosts: all
   vars:
-    aws_region: "eu-west-2"
+    aws_region: "eu-central-1"
     s3_bucket_name: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
     - name: Create S3 bucket 
@@ -24,6 +24,6 @@
     - name: Terraform initialize
       command: terraform init -backend-config="bucket={{ s3_bucket_name }}"
     - name: Terraform plan
-      command: terraform plan -out="tfplan"
-    - name: Terraform plan
-      command: terraform apply "tfplan"
+      command: terraform plan -out="tfplan" --auto-approve
+#    - name: Terraform plan
+#      command: terraform apply "tfplan"
