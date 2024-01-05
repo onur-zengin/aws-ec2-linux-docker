@@ -61,23 +61,66 @@ README.md                       # This file
 variables.tf                    # Environment variables for the main instance. Submodule variables under respective directories
 ```
 
-## 3. DEPENDENCIES
+## 3. CLOUD DEPLOYMENT (AUTOMATED)
 
-</tbc>
+#### 3.1. PRE-REQUISITES
 
-## 4. CLOUD DEPLOYMENT (LINUX)
+* An AWS account (with administrative rights to execute #3.2.1)
+* AWS CLI, Terraform, and Git to be installed on the local machine
+* Python3, PIP3, Boto3, and Ansible to be installed on the local machine
+
+#### 3.2. PROCEDURE
+
+3.2.1. Go to AWS Console to create a dedicated user for automation tasks; 
+
+...
+Note: This step may be considered optional, however, recommended as an AWS account governance & security best practice.
+
+3.2.2. Configure AWS CLI environment on the local machine with the access keys obtained from #3.2.1
+```
+aws configure
+```
+Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
+
+3.2.3. Configure Ansible environment on the local machine;
+
+- Add the following line to /etc/ansible/hosts;
+```
+localhost              ansible_connection=local
+```
+
+- Add the following line to /etc/ansible/ansible.cfg 
+```
+interpreter_python=/usr/bin/python3
+display_args_to_stdout=True
+```
+
+3.2.4. Clone the remote repository into local machine;
+```
+git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
+cd aws-ec2-linux-docker/
+```
+
+3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
+```
+ansible-playbook create-backend.yml 
+```
+
+
+
+
+## 4. CLOUD DEPLOYMENT (MANUAL)
 
 #### 4.1. PRE-REQUISITES
 
 * An AWS account (with administrative rights to execute #4.2.1)
-* AWS CLI, Terraform, and Git to be installed on the local machine
+* AWS CLI, Terraform, Ansible, and Git to be installed on the local machine
 
 #### 4.2. PROCEDURE
 
 4.2.0. Variables
 
 AWS_REGION = ""
-S3_BUCKET_NAME = "" #replace-all S3_BUCKET_NAME with a globally unique bucket name
 GRAFANA_PW = ""
 
 4.2.1. Create a user account & remote backend on AWS for Terraform 
