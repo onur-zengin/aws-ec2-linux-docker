@@ -25,5 +25,5 @@
       command: terraform init -backend-config="bucket={{ s3_bucket_name }}"
     - name: Terraform plan
       command: terraform plan -out="tfplan" 
-#    - name: Terraform plan
-#      command: terraform apply "tfplan" --auto-approve
+    - name: Terraform plan
+      command: terraform apply "tfplan" --auto-approve
