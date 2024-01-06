@@ -22,12 +22,12 @@
         hash_key_name: LockID
         region: "{{ aws_region }}"
       register: created_ddb_table
-    - name: Terraform initialize
+    - name: Initialize Terraform
       command: terraform init -backend-config="bucket={{ backend_bucket }}"
       register: initialized_terraform
-    - name: Terraform plan
+    - name: Create execution plan
       command: terraform plan -var="content_bucket={{ content_bucket }}" -out="tfplan" 
       register: created_tfplan
-    - name: Terraform plan
+    - name: Deploy the planned configuration
       command: terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed

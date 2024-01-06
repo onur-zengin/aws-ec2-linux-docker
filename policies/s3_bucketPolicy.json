@@ -6,7 +6,8 @@
             "Principal": {
                 "Service": "ec2.amazonaws.com"
             },
-            "Action": "s3:*"
+            "Action": "s3:*",
+            "Resource": "arn:aws:s3:::*"
         }
     ]
 }

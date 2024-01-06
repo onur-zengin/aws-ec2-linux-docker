@@ -51,9 +51,11 @@ Designed as a single-instance monitoring & visualization solution that can be co
 │   ├── ec2_getSecrets.json
 ├── scripts                        
 │   ├── getSecrets.py           # Python script to download TLS cert from AWS Secrets Manager and configure Nginx 
+ansible.cfg                     # Ansible configuration with Python interpreter auto-detection disabled
 backend.tf                      # Terraform remote backend on AWS S3 & DynamoDB
 bootstrap.tf                    # Cloud-init configuration to upload files & install packages on EC2 instance during boot
 demo.tf                         # (optional) Configuration settings for the demo setup
+deploy-infrastructure.yml       # Ansible playbook file
 main.tf
 outputs.tf
 providers.tf
@@ -99,7 +101,6 @@ cd aws-ec2-linux-docker/
 ```
 ansible-playbook deploy-infrastructure.yml 
 ```
-
 
 
 

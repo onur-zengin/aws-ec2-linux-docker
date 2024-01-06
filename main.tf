@@ -177,7 +177,7 @@ resource "aws_s3_bucket_public_access_block" "content_bucket" {
 }
 
 
-resource "aws_s3_bucket_policy" "prod_media_bucket" {
+resource "aws_s3_bucket_policy" "content_bucket" {
   bucket = aws_s3_bucket.content_bucket.id
   policy = file("./policies/s3_bucketPolicy.json")
   depends_on = [aws_s3_bucket_public_access_block.content_bucket]
@@ -187,7 +187,7 @@ resource "aws_s3_bucket_policy" "prod_media_bucket" {
 resource "aws_s3_object" "coordinates" {
   bucket = aws_s3_bucket.content_bucket.id
   key    = "geo.json"
-  source = "configs/geo.json"
+  source = "configs/grafana/geo.json"
 }
 
 resource "aws_s3_object" "base_logo" {
@@ -201,27 +201,3 @@ resource "aws_s3_object" "red_logo" {
   key    = "red_logo.svg"
   source = "images/logo_circle_red.svg"
 }
-
-
-/*
-resource "aws_s3_bucket_policy" "bucket_policy" {
-    bucket = aws_s3_bucket.graf_config.id
-    policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid: "PublicReadGetObject",
-        Principal = "*"
-        Action = [
-          "s3:GetObject",
-        ]
-        Effect = "Allow"
-        Resource = [
-          "arn:aws:s3:::${aws_s3_bucket.graf_config.id}",
-          "arn:aws:s3:::${aws_s3_bucket.graf_config.id}/*"
-        ]
-      }
-    ]
-  })
-}
-*/
