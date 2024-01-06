@@ -6,16 +6,15 @@
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
     #content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
-    #- name: Debug
-    #  debug:
-    #    msg: "backend_bucket_name; {{ backend_bucket }}, content_bucket_name; {{ content_bucket }}"
+    - name: Debug
+      debug:
+        msg: "backend_bucket_name: {{ backend_bucket }}"
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
         state: present
         versioning: on
         region: "{{ aws_region }}"
-        msg: "{{ backend_bucket }} created"
       register: created_bucket 
     - name: Create DDB table
       community.aws.dynamodb_table:
