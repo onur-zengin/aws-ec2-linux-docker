@@ -178,9 +178,9 @@ resource "aws_s3_bucket_public_access_block" "content_bucket" {
 
 
 resource "aws_s3_bucket_policy" "prod_media_bucket" {
-  bucket = aws_s3_bucket.prod_media.id
+  bucket = aws_s3_bucket.content_bucket.id
   policy = file("./policies/s3_bucketPolicy.json")
-  depends_on = [aws_s3_bucket_public_access_block.example]
+  depends_on = [aws_s3_bucket_public_access_block.content_bucket]
 }
 
 

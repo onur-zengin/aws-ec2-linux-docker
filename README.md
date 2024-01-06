@@ -89,12 +89,6 @@ Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 localhost              ansible_connection=local
 ```
 
-- Add the following line to /etc/ansible/ansible.cfg 
-```
-interpreter_python=/usr/bin/python3
-display_args_to_stdout=True
-```
-
 3.2.4. Clone the remote repository into local machine;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
@@ -103,7 +97,7 @@ cd aws-ec2-linux-docker/
 
 3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
 ```
-ansible-playbook create-backend.yml 
+ansible-playbook deploy-infrastructure.yml 
 ```
 
 
