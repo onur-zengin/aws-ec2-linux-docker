@@ -6,12 +6,13 @@
   - name: aws_region
     prompt: AWS region to deploy
     default: "eu-central-1"
+    private: false
   vars:
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
     - name: Debug
       debug:
-        msg: "backend_bucket_name: {{ backend_bucket }}"
+        msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
