@@ -10,3 +10,15 @@ variable "grafana_org" {
   type        = string
   default     = "Company Name"
 }
+
+
+variable "content_bucket" {
+  type    = string
+}
+
+
+variable "prefix" {
+  description = "Name prefix for ease of resource identification on the AWS console"
+  type        = string
+  default     = "vmon"
+}
