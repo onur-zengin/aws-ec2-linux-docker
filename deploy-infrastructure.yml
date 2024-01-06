@@ -4,17 +4,18 @@
   vars:
     aws_region: "eu-central-1"
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
-    content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
+    #content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
-    - name: Debug
-      debug:
-        msg: "backend_bucket_name; {{ backend_bucket }}, content_bucket_name; {{ content_bucket }}"
+    #- name: Debug
+    #  debug:
+    #    msg: "backend_bucket_name; {{ backend_bucket }}, content_bucket_name; {{ content_bucket }}"
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
         state: present
         versioning: on
         region: "{{ aws_region }}"
+        msg: "{{ backend_bucket }} created"
       register: created_bucket 
     - name: Create DDB table
       community.aws.dynamodb_table:
@@ -26,8 +27,9 @@
       command: terraform init -backend-config="bucket={{ backend_bucket }}"
       register: initialized_terraform
     - name: Create execution plan
-      command: terraform plan -var="content_bucket={{ content_bucket }}" -out="tfplan" 
+      #command: terraform plan -var="content_bucket={{ content_bucket }}" -out="tfplan" 
+      command: terraform plan -out="tfplan" 
       register: created_tfplan
-    #- name: Deploy the planned configuration
-    #  command: terraform apply --auto-approve "tfplan" 
-    #  register: infrastructure_deployed
+    - name: Deploy the planned configuration
+      command: terraform apply --auto-approve "tfplan" 
+      register: infrastructure_deployed
