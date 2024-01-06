@@ -30,15 +30,15 @@ Designed as a single-instance monitoring & visualization solution that can be co
 │   │   ├── db_ne.json          #
 │   │   ├── geo.json            #
 │   ├── nginx
-│   │   ├── nginx_http.conf     # 
+│   │   ├── nginx_http.conf     # Basic (non-secure) web server configuration
 │   │   ├── nginx.conf          # Secure web server configuration
 │   ├── prometheus
 │   │   ├── alerts.yml
 │   │   ├── prometheus.yml      #
 │   │   ├── records.yml         #
-├── images                        
-│   ├── logo_circle_base.svg    # (optional) Company logo to be displayed as a node on Grafana Worldmap Dashboard
-│   ├── logo_circle_red.svg     # 
+├── images                      # (optional) image files to be displayed as nodes on Grafana dashboard  
+│   ├── logo_circle_base.svg    
+│   ├── logo_circle_red.svg      
 ├── keys                        
 │   ├── aws_linux.pub           # SSH public key file for remote access to main EC2 host
 │   ├── demo_linux.pub          # (optional) SSH public key file for remote access to demo EC2 hosts

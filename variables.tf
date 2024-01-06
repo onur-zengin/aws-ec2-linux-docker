@@ -34,3 +34,7 @@ variable "sg_allowed_ranges" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
+
+variable "content_bucket" {
+  type    = string
+}

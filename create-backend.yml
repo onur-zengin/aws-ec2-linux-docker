@@ -3,11 +3,12 @@
   hosts: all
   vars:
     aws_region: "eu-central-1"
-    s3_bucket_name: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
+    backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
+    content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
-        name: "{{ s3_bucket_name }}"
+        name: "{{ backend_bucket }}"
         state: present
         versioning: on
         region: "{{ aws_region }}"
@@ -18,12 +19,15 @@
         hash_key_name: LockID
         region: "{{ aws_region }}"
       register: created_ddb_table
-    - name: Finish
-      debug:
-        msg: "You may now initialize Terraform using s3_bucket_name; {{ s3_bucket_name }}"
+    #- name: Finish
+    #  debug:
+    #    msg: "You may now initialize Terraform using s3_bucket_name; {{ backend_bucket }}"
     - name: Terraform initialize
-      command: terraform init -backend-config="bucket={{ s3_bucket_name }}"
+      command: terraform init -backend-config="bucket={{ backend_bucket }}"
+      register: initialized_terraform
     - name: Terraform plan
       command: terraform plan -out="tfplan" 
+      register: created_tfplan
     - name: Terraform plan
-      command: terraform apply "tfplan" --auto-approve
+      command: terraform apply --auto-approve "tfplan" -var="content_bucket={{ content_bucket }}"
+      register: infrastructure_deployed

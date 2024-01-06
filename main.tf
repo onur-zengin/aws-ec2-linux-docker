@@ -142,8 +142,8 @@ resource "aws_security_group" "ec2_inbound" {
 }
 
 
-resource "aws_s3_bucket" "graf_config" {
-  bucket        = "graf-config"
+resource "aws_s3_bucket" "content_bucket" {
+  bucket        = var.content_bucket
   force_destroy = true
 
   tags = {
@@ -151,20 +151,59 @@ resource "aws_s3_bucket" "graf_config" {
   }
 }
 
+resource "aws_s3_bucket_acl" "content_bucket" {
+  bucket = aws_s3_bucket.content_bucket.id
+  acl = "public-read"
+  depends_on = [aws_s3_bucket_ownership_controls.content_bucket]
+}
+
+
+resource "aws_s3_bucket_ownership_controls" "content_bucket" {
+  bucket = aws_s3_bucket.content_bucket.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+  depends_on = [aws_s3_bucket_public_access_block.content_bucket]
+}
+
+
+resource "aws_s3_bucket_public_access_block" "content_bucket" {
+  bucket = aws_s3_bucket.content_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+
+resource "aws_s3_bucket_policy" "prod_media_bucket" {
+  bucket = aws_s3_bucket.prod_media.id
+  policy = file("./policies/s3_bucketPolicy.json")
+  depends_on = [aws_s3_bucket_public_access_block.example]
+}
+
 
 resource "aws_s3_object" "coordinates" {
-  bucket = aws_s3_bucket.graf_config.id
+  bucket = aws_s3_bucket.content_bucket.id
   key    = "geo.json"
   source = "configs/geo.json"
 }
 
-/*
-resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.graf_config.id
-  acl = "public-read"
+resource "aws_s3_object" "base_logo" {
+  bucket = aws_s3_bucket.content_bucket.id
+  key    = "base_logo.svg"
+  source = "images/logo_circle_base.svg"
+}
+
+resource "aws_s3_object" "red_logo" {
+  bucket = aws_s3_bucket.content_bucket.id
+  key    = "red_logo.svg"
+  source = "images/logo_circle_red.svg"
 }
 
 
+/*
 resource "aws_s3_bucket_policy" "bucket_policy" {
     bucket = aws_s3_bucket.graf_config.id
     policy = jsonencode({
