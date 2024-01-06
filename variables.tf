@@ -1,8 +1,6 @@
 variable "region" {
   description = "Prometheus & Grafana host region"
-  # Default Frankfurt, Germany.
   type    = string
-  default = "eu-central-1"
 }
 
 variable "instance_type" {

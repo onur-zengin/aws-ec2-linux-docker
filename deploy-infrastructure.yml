@@ -26,8 +26,7 @@
       command: terraform init -backend-config="bucket={{ backend_bucket }}"
       register: initialized_terraform
     - name: Create execution plan
-      #command: terraform plan -var="content_bucket={{ content_bucket }}" -out="tfplan" 
-      command: terraform plan -out="tfplan" 
+      command: terraform plan -var="region={{ aws_region }}" -out="tfplan" 
       register: created_tfplan
     - name: Deploy the planned configuration
       command: terraform apply --auto-approve "tfplan" 
