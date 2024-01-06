@@ -28,6 +28,6 @@
     - name: Create execution plan
       command: terraform plan -var="content_bucket={{ content_bucket }}" -out="tfplan" 
       register: created_tfplan
-    - name: Deploy the planned configuration
-      command: terraform apply --auto-approve "tfplan" 
-      register: infrastructure_deployed
+    #- name: Deploy the planned configuration
+    #  command: terraform apply --auto-approve "tfplan" 
+    #  register: infrastructure_deployed
