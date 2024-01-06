@@ -3,16 +3,22 @@
   hosts: all
   connection: local
   vars_prompt:
+
   - name: aws_region
     prompt: AWS region to deploy
     default: "eu-central-1"
     private: false
+
   vars:
+    
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
+  
   tasks:
+  
     - name: Debug
       debug:
         msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
+  
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
@@ -20,18 +26,22 @@
         versioning: on
         region: "{{ aws_region }}"
       register: created_bucket 
+  
     - name: Create DDB table
       community.aws.dynamodb_table:
         name: tfstate-lock-vmon
         hash_key_name: LockID
         region: "{{ aws_region }}"
       register: created_ddb_table
+  
     - name: Initialize Terraform
       command: terraform init -backend-config="bucket={{ backend_bucket }}"
       register: initialized_terraform
+  
     - name: Create execution plan
       command: terraform plan -var="region={{ aws_region }}" -out="tfplan" 
       register: created_tfplan
+  
     - name: Deploy the planned configuration
       command: terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed
