@@ -1,10 +1,13 @@
 ---
-- name: Create Terraform Backend on AWS
+- name: Create Terraform Infrastructure on AWS
   hosts: all
+  connection: local
+  vars_prompt:
+  - name: aws_region
+    prompt: AWS region to deploy
+    default: "eu-central-1"
   vars:
-    aws_region: "eu-central-1"
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
-    #content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
   tasks:
     - name: Debug
       debug:

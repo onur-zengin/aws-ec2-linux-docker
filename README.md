@@ -73,10 +73,9 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 3.2. PROCEDURE
 
-3.2.1. Go to AWS Console to create a dedicated user for automation tasks; 
+3.2.1. Go to AWS Console & create a dedicated user for automation tasks; 
 
-...
-Note: This step may be considered optional, however, recommended as an AWS account governance & security best practice.
+</tbc> define least privilege permissions </tbc> 
 
 3.2.2. Configure AWS CLI environment on the local machine with the access keys obtained from #3.2.1
 ```
@@ -84,24 +83,17 @@ aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-3.2.3. Configure Ansible environment on the local machine;
-
-- Add the following line to /etc/ansible/hosts;
-```
-localhost              ansible_connection=local
-```
-
-3.2.4. Clone the remote repository into local machine;
+3.2.3. Clone the remote repository into local machine;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
+3.2.4. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
 ```
-ansible-playbook deploy-infrastructure.yml 
+ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
-
+* Do note the trailing comma after localhost
 
 
 ## 4. CLOUD DEPLOYMENT (MANUAL)
