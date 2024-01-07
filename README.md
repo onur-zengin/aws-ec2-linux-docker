@@ -74,7 +74,7 @@ variables.tf                    # Environment variables for the main instance. 
 * An AWS account (with administrative rights to perform step #3.2.1)
 * Following packages & dependencies to be installed on the local machine (or a cloud-based IDE such as AWS Cloud9)
 
-| package        | release    |
+|                | release    |
 | -------------- | ----------:|
 | AWS CLI        | >= 2.11    |
 | Terraform      | >= 1.5.5   |
@@ -87,27 +87,27 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 3.2. PROCEDURE
 
-3.2.1. Go to AWS Console & create a dedicated user for automation tasks; 
+**3.2.1.** Go to AWS Console & create a dedicated user for automation tasks;
 
 </tbc> define least privilege permissions </tbc> 
 
-3.2.2. Configure AWS CLI environment on the local machine with the access keys obtained from #3.2.1
+**3.2.2.** Configure AWS CLI environment on the local machine with the access keys obtained from #3.2.1
 ```
 aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-3.2.3. Clone the remote repository into local machine;
+**3.2.3.** Clone the remote repository into local machine;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-3.2.4. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager;
+**3.2.4.** (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager;
 
 </tbc> [automate this with Python / Ansible / CloudFormation & merge into step #3.2.5]
 
-3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
+**3.2.5.** Execute the Ansible playbook to deploy the Infrastructure-as-Code;
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
@@ -137,14 +137,14 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 
 #### 4.2. PROCEDURE
 
-4.2.1. Edit the local configuration file (/prometheus/prometheus.yml to add targets, or other file(s) depending on the update scenario).
+**4.2.1.** Edit the local configuration file (/prometheus/prometheus.yml to add targets, or other file(s) depending on the update scenario).
 
-4.2.2. Create an execution plan;
+**4.2.2.** Create an execution plan;
 ```
 terraform plan -out="tfplan"
 ```
 
-4.2.3. Apply the planned configuration;
+**4.2.3.** Apply the planned configuration;
 ```
 terraform apply "tfplan" [-auto-approve]
 ```
@@ -174,7 +174,7 @@ For test & development purposes.
 
 * Following packages & dependencies to be installed on the local machine 
 
-| package        | release    |
+|                | release    |
 | -------------  | ----------:|
 | docker         | >=         |
 | docker-compose | >=         |
