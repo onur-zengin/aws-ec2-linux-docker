@@ -71,15 +71,15 @@ variables.tf                    # Environment variables for the main instance. 
 * An AWS account (with administrative rights to execute step #3.2.1)
 * Following packages & dependencies to be installed on the local machine (or a cloud-based IDE such as AWS Cloud9)
 
-|               |             |
-| ------------- | -----------:|
-| AWS CLI       | >= 2.11     |
-| Terraform     | >= 1.5.5    |
-| Git           | >= 2.42.0   |
-| Python3       | >= 3.9      |
-| Pip3          | >= 23.3.2   |
-| Boto3         | latest      |
-| Ansible       | core 2.15.8 |
+|               |            |
+| ------------- | ----------:|
+| AWS CLI       | >= 2.11    |
+| Terraform     | >= 1.5.5   |
+| Git           | >= 2.42.0  |
+| Python3       | >= 3.9.6   |
+| Pip3          | >= 23.3.2  |
+| Boto3         | latest     |
+| Ansible       | >= 2.15.8  |
 
 
 #### 3.2. PROCEDURE
