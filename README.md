@@ -8,8 +8,8 @@
 **[4. Updating Deployment]()**<br>
 **[5. Removing Deployment]()**<br>
 **[6. Local Deployment (MacOS)]()**<br>
-**[7. Known Issues](#known-issues)**<br>
-**[8. Planned Features](#planned-features)**<br>
+**[7. Known Issues](#7-known-issues)**<br>
+**[8. Planned Features](#8-planned-features)**<br>
 
 ## 1. DESCRIPTION
 
@@ -129,10 +129,6 @@ terraform apply "tfplan"
 ```
 
 
-#### 4.3. DEMO SETUP
-
-</tbc>optional</tbc>
-
 
 ## 5. REMOVING DEPLOYMENT
 
@@ -156,4 +152,5 @@ docker compose
 ## 7. KNOWN ISSUES
 ## 8. PLANNED FEATURES
 
-- Alerts to be sent as emails
+* Alerts to be sent out as emails
+* Prometheus records configuration to be optimized 
