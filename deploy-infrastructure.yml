@@ -30,6 +30,7 @@
     - name: Create DDB table
       community.aws.dynamodb_table:
         name: tfstate-lock-vmon
+        state: present
         hash_key_name: LockID
         region: "{{ aws_region }}"
       register: created_ddb_table
