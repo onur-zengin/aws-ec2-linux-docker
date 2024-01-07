@@ -2,12 +2,12 @@
 
 ![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
 
-**[1. Description](## 1. DESCRIPTION)**<br>
-**[2. Directory Structure](## 2. DIRECTORY STRUCTURE)**<br>
-**[3. Cloud Deployment (Linux VM)](## 3. CLOUD DEPLOYMENT)**<br>
-**[4. Updating Deployment]()**<br>
+**[1. Description](#1-description)**<br>
+**[2. Directory Structure](#2-directory-structure)**<br>
+**[3. Cloud Deployment](#3-cloud-deployment)**<br>
+**[4. Updating Deployment](#4-updating-deployment)**<br>
 **[5. Removing Deployment]()**<br>
-**[6. Local Deployment (MacOS)]()**<br>
+**[6. Local Deployment (MacOS)](#6-local-installation-macos)**<br>
 **[7. Known Issues](#7-known-issues)**<br>
 **[8. Planned Features](#8-planned-features)**<br>
 
@@ -129,7 +129,7 @@ terraform apply "tfplan"
 ```
 
 
-## 5. REMOVING DEPLOYMENT
+## 5. REMOVING DEPLOYMENT
 
 Execute the Ansible playbook to destroy the TF Infrastructure and Remote Backend;
 ```
