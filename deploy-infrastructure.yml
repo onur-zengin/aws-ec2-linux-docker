@@ -35,7 +35,7 @@
       register: created_ddb_table
   
     - name: Initialize Terraform
-      command: terraform init -backend-config="bucket={{ backend_bucket }}"
+      command: terraform init -backend-config="bucket={{ backend_bucket }}  -backend-config="region={{ aws_region }}"
       register: initialized_terraform
   
     - name: Create execution plan

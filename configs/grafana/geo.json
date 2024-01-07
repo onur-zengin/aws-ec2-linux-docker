@@ -14,13 +14,6 @@
       "provider": "aws"
    },
    {
-      "key": "us-east-1-nyc",
-      "latitude": 40.72050,
-      "longitude": -74.02033,
-      "name": "US East (New York)",
-      "provider": "aws"
-   },
-   {
       "key": "us-west-1",
       "latitude": 37.166111000000001,
       "longitude": -119.449444,
@@ -206,8 +199,8 @@
       "key": "eu-central-f",
       "latitude": 60.18439425309973,
       "longitude": 24.813820992608516,
-      "name": "Europe (Espoo)",
-      "provider": "company name"
+      "name": "Europe (Finland)",
+      "provider": "company_name"
    }
 ]
 
