@@ -55,7 +55,8 @@ ansible.cfg                     # Ansible configuration with Python interpreter 
 backend.tf                      # Terraform remote backend on AWS S3 & DynamoDB
 bootstrap.tf                    # Cloud-init configuration to upload files & install packages on EC2 instance during boot
 demo.tf                         # (optional) Configuration settings for the demo setup
-deploy-infrastructure.yml       # Ansible playbook file
+deploy-infrastructure.yml       # Ansible playbook file to deploy IaC 
+destroy-infrastructure.yml      # Ansible playbook file to destroy IaC
 main.tf
 outputs.tf
 providers.tf
@@ -134,9 +135,12 @@ terraform apply "tfplan"
 
 
 ## 5. REMOVING DEPLOYMENT
+
+Execute the Ansible playbook to destroy the TF Infrastructure and Remote Backend;
 ```
-terraform destroy
+ansible-playbook destroy-infrastructure.yml -i localhost,
 ```
+* The command will prompt for the AWS region and S3 backend bucket name that was used during the initial deployment, which may be found both in the deployment logs and the AWS S3 console.
 
 
 ## 6. LOCAL INSTALLATION (MacOS)

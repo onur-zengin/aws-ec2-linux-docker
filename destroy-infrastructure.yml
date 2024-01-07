@@ -6,7 +6,7 @@
 
   - name: aws_region
     prompt: AWS region 
-    default: "eu-central-1"
+    #default: "eu-central-1" // intentionally removed from the destroy playbook for safety reasons
     private: false
     
   - name: backend_bucket
@@ -14,8 +14,7 @@
     private: false
 
   tasks:
-  
-    #- name: Debug
+
     - debug:
         msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
   
@@ -35,7 +34,7 @@
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
         state: absent
-        versioning: on
+        force: true
         region: "{{ aws_region }}"
       register: destroyed_bucket 
 

@@ -14,8 +14,7 @@
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
   
   tasks:
-  
-    #- name: Debug
+
     - debug:
         msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
   
@@ -48,6 +47,6 @@
       register: infrastructure_deployed
 
     - debug:
-        msg: infrastructure_deployed.stdout_lines[-1]
+        var: infrastructure_deployed.stdout_lines[-1]
 
 
