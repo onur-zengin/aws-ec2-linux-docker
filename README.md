@@ -5,11 +5,12 @@
 **[1. Description](#1-description)**<br>
 **[2. Directory Structure](#2-directory-structure)**<br>
 **[3. Cloud Deployment](#3-cloud-deployment)**<br>
-**[4. Updating Deployment](#4-updating-deployment)**<br>
-**[5. Removing Deployment](#5-removing-deployment)**<br>
-**[6. Local Deployment (MacOS)](#6-local-installation-macos)**<br>
-**[7. Known Issues](#7-known-issues)**<br>
-**[8. Planned For Later](#8-planned-for-later)**<br>
+**[4. Updating Cloud Deployment](#4-updating-cloud-deployment)**<br>
+**[5. Removing Cloud Deployment](#5-removing-cloud-deployment)**<br>
+**[6. Local Deployment](#6-local-deployment)**<br>
+**[7. Changelog](#7-changelog)**<br>
+**[8. Known Issues](#8-known-issues)**<br>
+**[9. Planned For Later](#9-planned-for-later)**<br>
 
 ## 1. DESCRIPTION
 
@@ -24,19 +25,19 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 ├── configs                        
 │   ├── docker
 │   │   ├── compose.yml
-│   │   ├── daemon.json         #
+│   │   ├── daemon.json         # Setting Docker root directory on the EBS drive
 │   ├── grafana
-│   │   ├── db_map.json
-│   │   ├── db_ne.json          #
-│   │   ├── geo.json            #
+│   │   ├── db_map.json         # Dashboard configuration (world map view)
+│   │   ├── db_ne.json          # Dashboard configuration (CPU, Mem, Disk, & NW-interface utilization charts)
+│   │   ├── geo.json            # Geo-coordinates of AWS regions for visualization purposes on Grafana dashboard
 │   ├── nginx
-│   │   ├── nginx_http.conf     # Basic (non-secure) web server configuration
+│   │   ├── nginx_http.conf     # Basic (non-secure) web server configuration (used when TLS cert not found)
 │   │   ├── nginx.conf          # Secure web server configuration
 │   ├── prometheus
 │   │   ├── alerts.yml
 │   │   ├── prometheus.yml      #
 │   │   ├── records.yml         #
-├── images                      # (optional) image files to be displayed as nodes on Grafana dashboard  
+├── images                      # (optional) Image files to be displayed as nodes on Grafana dashboard  
 │   ├── logo_circle_base.svg    
 │   ├── logo_circle_red.svg      
 ├── keys                        
@@ -45,33 +46,34 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 ├── modules                        
 │   │   ├── demo_ec2            # (optional) Demo module to setup EC2 VMs as synthetic targets for Prometheus
 │   │   ├── demo_fargate        # (optional) Demo module to setup Fargate Containers as synthetic targets for Prometheus
-│   │   ├── grafana             # Grafana dashboard configuration as Terraform IaC
+│   │   ├── grafana             # Post-installation Grafana setup as Terraform IaC
 ├── policies                        
 │   ├── ec2_assumeRole.json
 │   ├── ec2_getSecrets.json
-├── scripts                        
-│   ├── getSecrets.py           # Python script to download TLS cert from AWS Secrets Manager and configure Nginx 
+│   ├── s3_bucketPolicy.json
+├── scripts                     # Python scripts to upload & download TLS certs to & from AWS Secrets Manager                   
+│   ├── getSecrets.py            
+│   ├── putSecrets.py           
 ansible.cfg                     # Ansible configuration with Python interpreter auto-detection disabled
 backend.tf                      # Terraform remote backend on AWS S3 & DynamoDB
 bootstrap.tf                    # Cloud-init configuration to upload files & install packages on EC2 instance during boot
 demo.tf                         # (optional) Configuration settings for the demo setup
-deploy-infrastructure.yml       # Ansible playbook file to deploy IaC 
-destroy-infrastructure.yml      # Ansible playbook file to destroy IaC
+deploy-infrastructure.yml       # Ansible playbook file to deploy Terraform IaC 
+destroy-infrastructure.yml      # Ansible playbook file to destroy Terraform IaC
 main.tf
 outputs.tf
 providers.tf
 README.md                       # This file
-variables.tf                    # Environment variables for the main instance. Submodule variables under respective directories
+variables.tf                    # Environment variables for the main instance. Sub-modules' variables placed under their respective directories.
 ```
 
 ## 3. CLOUD DEPLOYMENT
 
 #### 3.1. PRE-REQUISITES
 
-* An AWS account (with administrative rights to execute step #3.2.1)
+* An AWS account (with administrative rights to perform step #3.2.1)
 * Following packages & dependencies to be installed on the local machine (or a cloud-based IDE such as AWS Cloud9)
 
-|               |            |
 | ------------- | ----------:|
 | AWS CLI       | >= 2.11    |
 | Terraform     | >= 1.5.5   |
@@ -123,7 +125,7 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * If you had completed the optional step #3.2.4 above, then the web server will redirect you to the secure URLs instead.
 
 
-## 4. UPDATING DEPLOYMENT
+## 4. UPDATING CLOUD DEPLOYMENT
 
 - A typical use case to update the deployment may be to populate the Prometheus configuration with new targets. While the pre-requisites below apply to that specific use case, the procedure in step #4.2 is generic and can be used for update scenarios as well.
 
@@ -148,27 +150,48 @@ terraform apply "tfplan" [-auto-approve]
 * Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
 
 
-## 5. REMOVING DEPLOYMENT
+## 5. REMOVING CLOUD DEPLOYMENT
 
-Execute the Ansible playbook to destroy the TF Infrastructure and Remote Backend;
+#### 5.1. PRE-REQUISITES
+
+Same as #3.1
+
+#### 5.2. PROCEDURE
+
+Execute the following command to destroy the Terraform infrastructure and remote backend;
 ```
 ansible-playbook destroy-infrastructure.yml -i localhost,
 ```
 * The command will prompt for the AWS region and S3 backend bucket name that was used during the initial deployment, which may be found both in the deployment logs and the AWS S3 console.
 
 
-## 6. LOCAL INSTALLATION (MacOS)
+## 6. LOCAL DEPLOYMENT 
+
+For test & development purposes.
 
 #### 6.1. PRE-REQUISITES
 
-docker
-docker compose
+* Following packages & dependencies to be installed on the local machine 
 
-#### 6.2. DEPLOYING WITH DOCKER COMPOSE
+| -------------  | ----------:|
+| docker         | >=         |
+| docker compose | >=         |
+
+#### 6.2. PROCEDURE
+
+</tbc>
+
+## 7. CHANGELOG
+
+n/a
 
 
-## 7. KNOWN ISSUES
-## 8. PLANNED FOR LATER
+## 8. KNOWN ISSUES
+
+n/a
+
+
+## 9. PLANNED FOR LATER
 
 * Email alerts
 * Prometheus records & alerts configuration to be optimized 

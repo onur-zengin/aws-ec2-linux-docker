@@ -1,7 +1,6 @@
 ##      For demo purposes only      ##
 ## Not to be deployed in production ##
 
-
 locals {
   demo_dns_setup = (var.demo == false ? 0 : 1)
   instance_count = (var.demo == false ? 0 : var.demo_instance_count)
@@ -88,6 +87,17 @@ resource "aws_route53_record" "demo_dns_record-certbot_challenge" {
 }
 
 
+module "frankfurt" {
+  city_code               = "fra"
+  source                  = "./modules/demo_ec2"
+  zone                    = aws_route53_zone.demo_dns_zone
+  instance_count          = local.instance_count
+  prometheus_host_address = aws_eip.staticIP.public_ip
+  providers = {
+    aws = aws.eu-central-1
+  }
+}
+
 module "london" {
   city_code               = "lon"
   source                  = "./modules/demo_ec2"
@@ -97,17 +107,6 @@ module "london" {
   prometheus_host_address = aws_eip.staticIP.public_ip
   providers = {
     aws = aws.eu-west-2
-  }
-}
-
-module "frankfurt" {
-  city_code               = "fra"
-  source                  = "./modules/demo_ec2"
-  zone                    = aws_route53_zone.demo_dns_zone
-  instance_count          = local.instance_count
-  prometheus_host_address = aws_eip.staticIP.public_ip
-  providers = {
-    aws = aws.eu-central-1
   }
 }
 
@@ -144,4 +143,30 @@ module "tokyo" {
   providers = {
     aws = aws.ap-northeast-1
   }
+}
+
+
+provider "aws" {
+  alias  = "eu-central-1"
+  region = "eu-central-1"
+}
+
+provider "aws" {
+  alias  = "eu-west-2"
+  region = "eu-west-2"
+}
+
+provider "aws" {
+  alias  = "us-west-1"
+  region = "us-west-1"
+}
+
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
+provider "aws" {
+  alias  = "ap-northeast-1"
+  region = "ap-northeast-1"
 }
