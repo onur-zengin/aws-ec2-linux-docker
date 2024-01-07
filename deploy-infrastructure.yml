@@ -45,3 +45,8 @@
     - name: Deploy the planned configuration
       command: terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed
+
+    - debug:
+        var: infrastructure_deployed.stdout_lines
+
+
