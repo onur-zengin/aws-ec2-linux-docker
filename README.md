@@ -6,10 +6,10 @@
 **[2. Directory Structure](#2-directory-structure)**<br>
 **[3. Cloud Deployment](#3-cloud-deployment)**<br>
 **[4. Updating Deployment](#4-updating-deployment)**<br>
-**[5. Removing Deployment]()**<br>
+**[5. Removing Deployment](#5-removing-deployment)**<br>
 **[6. Local Deployment (MacOS)](#6-local-installation-macos)**<br>
 **[7. Known Issues](#7-known-issues)**<br>
-**[8. Planned Features](#8-planned-features)**<br>
+**[8. Planned For Later](#8-planned-for-later)**<br>
 
 ## 1. DESCRIPTION
 
@@ -69,8 +69,18 @@ variables.tf                    # Environment variables for the main instance. 
 #### 3.1. PRE-REQUISITES
 
 * An AWS account (with administrative rights to execute step #3.2.1)
-* AWS CLI, Terraform, and Git to be installed on the local machine
-* Python3, PIP3, Boto3, and Ansible to be installed on the local machine
+* Following packages & dependencies to be installed on the local machine (or a cloud-based IDE such as AWS Cloud9)
+
+|               |             |
+| ------------- | -----------:|
+| AWS CLI       | >= 2.11     |
+| Terraform     | >= 1.5.5    |
+| Git           | >= 2.42.0   |
+| Python3       | >= 3.9      |
+| Pip3          | >= 23.3.2   |
+| Boto3         | latest      |
+| Ansible       | core 2.15.8 |
+
 
 #### 3.2. PROCEDURE
 
@@ -115,18 +125,27 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 
 ## 4. UPDATING DEPLOYMENT
 
-- updating configuration - update prom config with new targets
-node_exporter binary to be installed on the target hosts
+- A typical use case to update the deployment may be to populate the Prometheus configuration with new targets. While the pre-requisites below apply to that specific use case, the procedure in step #4.2 is generic and can be used for update scenarios as well.
 
-4.2.6. Create an execution plan;
+#### 4.1. PRE-REQUISITES
+
+* Prometheus node_exporter binary to be installed on the target hosts. </tbc>add link
+* Any security group / FW fronting the target hosts ...
+
+#### 4.2. PROCEDURE
+
+4.2.1. Edit the local configuration file (/prometheus/prometheus.yml to add targets, or other file(s) depending on the update scenario).
+
+4.2.2. Create an execution plan;
 ```
 terraform plan -out="tfplan"
 ```
 
-4.2.7. Apply the planned configuration;
+4.2.3. Apply the planned configuration;
 ```
-terraform apply "tfplan"
+terraform apply "tfplan" [-auto-approve]
 ```
+* Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
 
 
 ## 5. REMOVING DEPLOYMENT
@@ -149,7 +168,7 @@ docker compose
 
 
 ## 7. KNOWN ISSUES
-## 8. PLANNED FEATURES
+## 8. PLANNED FOR LATER
 
-* Alerts to be sent out as emails
-* Prometheus records configuration to be optimized 
+* Email alerts
+* Prometheus records & alerts configuration to be optimized 
