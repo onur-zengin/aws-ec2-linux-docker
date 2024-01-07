@@ -15,8 +15,8 @@
   
   tasks:
   
-    - name: Debug
-      debug:
+    #- name: Debug
+    - debug:
         msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
   
     - name: Create S3 bucket 
@@ -47,6 +47,6 @@
       register: infrastructure_deployed
 
     - debug:
-        var: infrastructure_deployed.stdout_lines[-1]
+        msg: infrastructure_deployed.stdout_lines[-1]
 
 

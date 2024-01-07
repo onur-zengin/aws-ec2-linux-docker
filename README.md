@@ -2,20 +2,20 @@
 
 ![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
 
-**[1. Description](#description)**<br>
-**[2. Directory Structure](#directory-structure)**<br>
-**[3. Dependencies](#dependencies)**<br>
-**[4. How To Install (Linux)](#how-to-install-linux)**<br>
-**[5. How To Install (MacOS)](#how-to-install-macos)**<br>
-**[6. Demo Setup](#demo-setup)**<br>
+**[1. Description](## 1. DESCRIPTION)**<br>
+**[2. Directory Structure](## 2. DIRECTORY STRUCTURE)**<br>
+**[3. Cloud Deployment (Linux VM)](## 3. CLOUD DEPLOYMENT)**<br>
+**[4. Updating Deployment]()**<br>
+**[5. Removing Deployment]()**<br>
+**[6. Local Deployment (MacOS)]()**<br>
 **[7. Known Issues](#known-issues)**<br>
 **[8. Planned Features](#planned-features)**<br>
 
 ## 1. DESCRIPTION
 
-Containerized Prometheus & Grafana installation with Docker Compose on AWS EC2 (Ubuntu Linux), packaged as a Terraform IaC project (codename: morangie).
+Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project (codename: morangie).
 
-Designed as a single-instance monitoring & visualization solution that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
+Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
 
 ## 2. DIRECTORY STRUCTURE
 
@@ -67,7 +67,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 3.1. PRE-REQUISITES
 
-* An AWS account (with administrative rights to execute #3.2.1)
+* An AWS account (with administrative rights to execute step #3.2.1)
 * AWS CLI, Terraform, and Git to be installed on the local machine
 * Python3, PIP3, Boto3, and Ansible to be installed on the local machine
 
@@ -91,7 +91,7 @@ cd aws-ec2-linux-docker/
 
 3.2.4. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager;
 
-</tbc> [automate this with Python / Ansible / CloudFormation & merge into #3.2.5]
+</tbc> [automate this with Python / Ansible / CloudFormation & merge into step #3.2.5]
 
 3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
 ```
@@ -99,14 +99,23 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
 * Do note the trailing comma after localhost
 
-- verify prom console collecting metrics from itself
-
 </tbc> install grafana dashboards </tbc>
 
+#### 3.3. VERIFICATION
 
-## 4. UPDATING CONFIGURATION
+* Collect the HOST_IP_ADDRESS from the output of step #3.2.5, 
+
+* And try the following URLs on a web browser;
+    http://[HOST_IP_ADDRESS]/prom
+    http://[HOST_IP_ADDRESS]/graf
+    
+* If you had completed the optional step #3.2.4 above, then the web server will redirect you to the secure URLs instead.
+
+
+## 4. UPDATING DEPLOYMENT
 
 - updating configuration - update prom config with new targets
+node_exporter binary to be installed on the target hosts
 
 4.2.6. Create an execution plan;
 ```
@@ -121,8 +130,7 @@ terraform apply "tfplan"
 
 #### 4.3. DEMO SETUP
 
-node_exporter binary to be installed on the target hosts
-
+</tbc>optional</tbc>
 
 
 ## 5. REMOVING DEPLOYMENT

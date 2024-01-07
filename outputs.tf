@@ -1,4 +1,4 @@
-output "prometheus_host_address" {
+output "HOST_IP_ADDRESS" {
   value   = aws_eip.staticIP.public_ip
 }
 
