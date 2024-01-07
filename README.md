@@ -35,8 +35,8 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 │   │   ├── nginx.conf          # Secure web server configuration
 │   ├── prometheus
 │   │   ├── alerts.yml
-│   │   ├── prometheus.yml      #
-│   │   ├── records.yml         #
+│   │   ├── prometheus.yml      # Main configuration file for Prometheus (including targets)
+│   │   ├── records.yml         
 ├── images                      # (optional) Image files to be displayed as nodes on Grafana dashboard  
 │   ├── logo_circle_base.svg    
 │   ├── logo_circle_red.svg      
@@ -87,11 +87,11 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 3.2. PROCEDURE
 
-**3.2.1.** Go to AWS Console & create a dedicated user for automation tasks;
+**3.2.1.** Go to AWS Console & create a dedicated user for the infrastructure automation tasks;
 
 </tbc> define least privilege permissions </tbc> 
 
-**3.2.2.** Configure AWS CLI environment on the local machine with the access keys obtained from #3.2.1
+**3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1
 ```
 aws configure
 ```
@@ -123,28 +123,51 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
     http://[HOST_IP_ADDRESS]/prom
     http://[HOST_IP_ADDRESS]/graf
     
-* If you had completed the optional step #3.2.4 above, then the web server will redirect you to the secure URLs instead.
+* If you have completed the optional step #3.2.4 above, then the web server will redirect you to secure URLs instead.
 
 
 ## 4. UPDATING CLOUD DEPLOYMENT
 
-- A typical use case to update the deployment may be to populate the Prometheus configuration with new targets. While the pre-requisites below apply to that specific use case, the procedure in step #4.2 is generic and can be used for update scenarios as well.
+- A typical use case to update the deployment may be to add new targets to the Prometheus collector. While the pre-requisites below apply to that specific use case, the procedure in step #4.2 is generic and can be used for update scenarios as well.
+
+- Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
 
 #### 4.1. PRE-REQUISITES
 
-* Prometheus node_exporter binary to be installed on the target hosts. </tbc>add link
-* Any security group / FW fronting the target hosts ...
+* Prometheus node_exporter binary installed & running on the target hosts;
+
+|                | release    |
+| -------------  | ----------:|
+| node_exporter  | >= 1.6.1   |
+
+* Sample installation procedure for Ubuntu Linux;
+```
+sudo su -
+useradd... pne...
+mkdir -p /usr/local/bin/prometheus_ne
+cd /usr/local/bin/prometheus_ne
+wget -q https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
+chown -R pne:pne /usr/local/bin/prometheus_ne
+cd node_exporter-1.6.1.linux-amd64/
+su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
+```
+
+* Update any AWS Security Group or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was included in the output of step #3.2.5.
+
 
 #### 4.2. PROCEDURE
 
-**4.2.1.** Edit the local configuration file (/prometheus/prometheus.yml to add targets, or other file(s) depending on the update scenario).
+**4.2.0.** Make changes in the local working directory as necessary.
 
-**4.2.2.** Create an execution plan;
+* E.g.; To add new targets to the collector, the file that needs to be edited is /prometheus/prometheus.yml.
+
+**4.2.1.** Create a new execution plan (Terraform will auto-detect changes in the working directory);
 ```
 terraform plan -out="tfplan"
 ```
 
-**4.2.3.** Apply the planned configuration;
+**4.2.2.** Apply the planned configuration;
 ```
 terraform apply "tfplan" [-auto-approve]
 ```
