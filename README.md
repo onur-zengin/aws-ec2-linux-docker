@@ -69,7 +69,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 ## 3. CLOUD DEPLOYMENT
 
-#### 3.1. PRE-REQUISITES
+#### 3.1. PREREQUISITES
 
 * An AWS account (with administrative rights to perform step #3.2.1)
 * Following packages & dependencies to be installed on the local machine (or a cloud-based IDE such as AWS Cloud9)
@@ -97,7 +97,7 @@ aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-**3.2.3.** Clone the remote repository into local machine;
+**3.2.3.** Clone the remote repository into local machine and change working directory;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
@@ -128,11 +128,13 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 
 ## 4. UPDATING CLOUD DEPLOYMENT
 
-- A typical use case to update the deployment may be to add new targets to the Prometheus collector. While the pre-requisites below apply to that specific use case, the procedure in step #4.2 is generic and can be used for update scenarios as well.
+- A typical use case to update the deployment may be to add new targets to the Prometheus collector. 
+
+- While the prerequisites in step #4.1 below apply to that specific use case, the trailing procedure in step #4.2 is generic and can be used for update scenarios as well.
 
 - Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
 
-#### 4.1. PRE-REQUISITES
+#### 4.1. PREREQUISITES
 
 * Prometheus node_exporter binary installed & running on the target hosts;
 
@@ -143,26 +145,26 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * Sample installation procedure for Ubuntu Linux;
 ```
 sudo su -
-useradd... pne...
+useradd pne
 mkdir -p /usr/local/bin/prometheus_ne
 cd /usr/local/bin/prometheus_ne
 wget -q https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
 tar -xzvf node_exporter-1.6.1.linux-amd64.tar.gz
-chown -R pne:pne /usr/local/bin/prometheus_ne
+chown -R pne /usr/local/bin/prometheus_ne
 cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-* Update any AWS Security Group or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was included in the output of step #3.2.5.
+* **Important:** Update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was obtained from the output of step #3.2.5.
 
 
 #### 4.2. PROCEDURE
 
-**4.2.0.** Make changes in the local working directory as necessary.
+**4.2.0.** Make changes in the local working directory as necessary;
 
-* E.g.; To add new targets to the collector, the file that needs to be edited is /prometheus/prometheus.yml.
+* E.g. To add new targets to the collector, the file that has to be edited is configs/prometheus/prometheus.yml.
 
-**4.2.1.** Create a new execution plan (Terraform will auto-detect changes in the working directory);
+**4.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
 ```
 terraform plan -out="tfplan"
 ```
@@ -176,7 +178,7 @@ terraform apply "tfplan" [-auto-approve]
 
 ## 5. REMOVING CLOUD DEPLOYMENT
 
-#### 5.1. PRE-REQUISITES
+#### 5.1. PREREQUISITES
 
 Same as #3.1
 
