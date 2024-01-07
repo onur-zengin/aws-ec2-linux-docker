@@ -23,7 +23,7 @@ variable "sg_rule_description" {
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  default = [22, 80, 443, 9100, 9122]
+  default = [22, 80, 443, 9100]
 }
 
 variable "sg_allowed_ranges" {

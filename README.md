@@ -63,7 +63,7 @@ README.md                       # This file
 variables.tf                    # Environment variables for the main instance. Submodule variables under respective directories
 ```
 
-## 3. CLOUD DEPLOYMENT (AUTOMATED)
+## 3. CLOUD DEPLOYMENT
 
 #### 3.1. PRE-REQUISITES
 
@@ -89,59 +89,24 @@ git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-3.2.4. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
+3.2.4. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager;
+
+</tbc> [automate this with Python / Ansible / CloudFormation & merge into #3.2.5]
+
+3.2.5. Execute the Ansible playbook to deploy the Infrastructure-as-Code;
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
 * Do note the trailing comma after localhost
 
+- verify prom console collecting metrics from itself
 
-## 4. CLOUD DEPLOYMENT (MANUAL)
+</tbc> install grafana dashboards </tbc>
 
-#### 4.1. PRE-REQUISITES
 
-* An AWS account (with administrative rights to execute #4.2.1)
-* AWS CLI, Terraform, Ansible, and Git to be installed on the local machine
+## 4. UPDATING CONFIGURATION
 
-#### 4.2. PROCEDURE
-
-4.2.0. Variables
-
-AWS_REGION = ""
-GRAFANA_PW = ""
-
-4.2.1. Create a user account & remote backend on AWS for Terraform 
-
-[todo: automate this with Ansible / CloudFormation]
-
-IAM user        [..., access keys]
-S3 bucket       [name:S3_BUCKET_NAME, versioning:enabled]  
-DynamoDB table  [tableName:tfstate-lock-vmon, partitionKey:LockID]
-Secrets Manager [grafana_auth:GRAFANA_PW]
-
-Note: S3 bucket and DynamoDB table should be created in AWS_REGION.
-
-4.2.2. (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager
-
-[todo: automate this with Python / Ansible / CloudFormation & merge into #4.2.1]
-
-4.2.3. Configure AWS CLI with the access keys obtained from #4.2.1
-```
-aws configure
-```
-Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
-
-4.2.4. Clone the remote repository into local machine;
-```
-git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
-cd aws-ec2-linux-docker/
-```
-
-4.2.5. Initialize working directory, install required providers and create the state file in the remote backend;
-```
-terraform init -backend-config="bucket=S3_BUCKET_NAME"
-terraform init -backend-config="bucket=tfstate-vmon-04012024"
-```
+- updating configuration - update prom config with new targets
 
 4.2.6. Create an execution plan;
 ```
@@ -158,8 +123,6 @@ terraform apply "tfplan"
 
 node_exporter binary to be installed on the target hosts
 
-
-#### 4.4. DASHBOARD SETUP
 
 
 ## 5. REMOVING DEPLOYMENT

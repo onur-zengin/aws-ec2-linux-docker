@@ -2,17 +2,17 @@
 ## Not to be deployed in production ##
 
 
+locals {
+  demo_dns_setup = (var.demo == false ? 0 : 1)
+  instance_count = (var.demo == false ? 0 : var.demo_instance_count)
+}
+
+
 variable "demo" {
   description = "Creates demo DNS configuration & EC2 instances in a variety of regions as listed in the rest of this file."
   # Leave default (false) in Production.
   type    = bool
   default = false
-}
-
-
-locals {
-  demo_dns_setup = (var.demo == false ? 0 : 1)
-  instance_count = (var.demo == false ? 0 : var.demo_instance_count)
 }
 
 
