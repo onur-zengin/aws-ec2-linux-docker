@@ -129,7 +129,6 @@ terraform apply "tfplan"
 ```
 
 
-
 ## 5. REMOVING DEPLOYMENT
 
 Execute the Ansible playbook to destroy the TF Infrastructure and Remote Backend;
