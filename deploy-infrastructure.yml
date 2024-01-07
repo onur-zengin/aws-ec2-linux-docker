@@ -47,6 +47,6 @@
       register: infrastructure_deployed
 
     - debug:
-        var: infrastructure_deployed.stdout_lines
+        var: infrastructure_deployed.stdout_lines[-1]
 
 
