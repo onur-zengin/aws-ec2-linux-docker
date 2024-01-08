@@ -13,12 +13,13 @@ terraform {
 
 
 provider "aws" {
-  region = "eu-central-1"
+  region = var.region
 }
 
 
 provider "grafana" {
-  url  = var.grafana_web
+  url  = local.grafana_web
   #auth = "admin:${local.grafana_auth_pw["admin"]}"
   auth = "admin:admin"
 }
+

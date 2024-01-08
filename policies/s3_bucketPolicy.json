@@ -7,7 +7,7 @@
                 "Service": "ec2.amazonaws.com"
             },
             "Action": "s3:*",
-            "Resource": "arn:aws:s3:::*"
+            "Resource": "arn:aws:s3:::content-bucket-090909334"
         }
     ]
 }
