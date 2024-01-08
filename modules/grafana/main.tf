@@ -51,7 +51,7 @@ resource "aws_s3_bucket" "content_bucket" {
   force_destroy = true
 
   tags = {
-    Name = "${local.prefix}"
+    Name = "${var.prefix}"
   }
 }
 

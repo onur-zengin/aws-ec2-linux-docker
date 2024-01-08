@@ -107,7 +107,7 @@ cd aws-ec2-linux-docker/
 
 </tbc> [automate this with Python / Ansible / CloudFormation & merge into step #3.2.5]
 
-**3.2.5.** Execute the Ansible playbook to deploy the Infrastructure-as-Code;
+**3.2.5.** Execute the Ansible playbook to deploy the Terraform remote backend and infrastructure-as-code;
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
@@ -123,7 +123,7 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
     http://[HOST_IP_ADDRESS]/prom
     http://[HOST_IP_ADDRESS]/graf
     
-* If you have completed the optional step #3.2.4 above, then the web server will redirect you to secure URLs instead.
+* If you have completed the optional step #3.2.4 above, then the web server will redirect you to secure (HTTPS) URLs instead.
 
 
 ## 4. UPDATING CLOUD DEPLOYMENT

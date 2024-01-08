@@ -4,6 +4,12 @@ variable "region" {
 }
 
 
+variable "backend_bucket" {
+  description = "Name of the S3 bucket where the main remote state (global/main/vmon.tfstate) is stored"
+  type    = string
+}
+
+
 variable "content_bucket" {
   description = "Name of the S3 bucket where Grafana image & config files will be stored"
   type    = string
@@ -18,14 +24,13 @@ variable "grafana_org" {
 }
 
 
-/*
 variable "prefix" {
   description = "Name prefix for ease of resource identification on the AWS console"
   type        = string
   default     = "vmon"
 }
 
-
+/*
 variable "grafana_web" {
   description = "The URL under which the Grafana web interface resides"
   type        = string
