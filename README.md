@@ -130,7 +130,7 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 
 - A typical use case to update the deployment may be to add new targets to the Prometheus collector. 
 
-- While the prerequisites in step #4.1 below apply to that specific use case, the trailing procedure in step #4.2 is generic and can be used for update scenarios as well.
+- While the prerequisites in step #4.1 below apply to that specific use case, the trailing procedure in step #4.2 is generic and can be used for other update scenarios as well.
 
 - Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
 
@@ -155,7 +155,7 @@ cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-* **Important:** Update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was obtained from the output of step #3.2.5.
+* **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
 
 
 #### 4.2. PROCEDURE
@@ -195,7 +195,7 @@ ansible-playbook destroy-infrastructure.yml -i localhost,
 
 For test & development purposes.
 
-#### 6.1. PRE-REQUISITES
+#### 6.1. PRE-REQUISITES
 
 * Following packages & dependencies to be installed on the local machine 
 

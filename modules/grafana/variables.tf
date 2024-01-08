@@ -1,3 +1,9 @@
+variable "region" {
+  description = "Prometheus & Grafana host region"
+  type    = string
+}
+
+
 variable "grafana_web" {
   description = "The URL under which the Grafana web interface resides"
   type        = string

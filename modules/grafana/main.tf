@@ -1,9 +1,5 @@
-# Referencing the global remote backend to extract grafana_auth;
-
-locals {
-  grafana_auth_pw = jsondecode(data.terraform_remote_state.main.outputs.grafana_auth.secret_string)
-}
-
+/*
+# Referencing the global remote backend to extract grafana_auth & other local variables;
 
 data "terraform_remote_state" "main" {
   
@@ -16,6 +12,11 @@ data "terraform_remote_state" "main" {
   }
 }
 
+locals {
+  grafana_auth_pw = jsondecode(data.terraform_remote_state.main.outputs.grafana_auth.secret_string)
+  prefix = data.terraform_remote_state.main.outputs.resource_prefix
+}
+*/
 
 resource "grafana_organization" "org" {
   name = var.grafana_org

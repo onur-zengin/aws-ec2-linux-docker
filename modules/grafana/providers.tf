@@ -19,5 +19,6 @@ provider "aws" {
 
 provider "grafana" {
   url  = var.grafana_web
-  auth = "admin:${local.grafana_auth_pw["admin"]}"
+  #auth = "admin:${local.grafana_auth_pw["admin"]}"
+  auth = "admin:admin"
 }
