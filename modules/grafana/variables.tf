@@ -13,7 +13,6 @@ variable "backend_bucket" {
 variable "content_bucket" {
   description = "Name of the S3 bucket where Grafana image & config files will be stored"
   type    = string
-  default = "content-bucket-090909334"
 }
 
 

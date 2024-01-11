@@ -178,7 +178,9 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 
 #### 4.3. Grafana Dashboards Setup
 
-* This step is merged into #3.2.4.
+* This step is merged into #3.2.4; the Ansible playbook will install two dashboards (Sys Charts & World Map) into Grafana after creating the AWS infrastructure.
+
+* However, if you make any modifications to these pre-installed dashboards, then do not forget to export & backup the new configuration file(s) through the Grafana web interface.
 
 
 #### 4.4. Prometheus & Grafana Admin Password Resets
@@ -200,11 +202,13 @@ sudo docker exec -it $(docker ps | grep graf | awk {'print $1'}) grafana cli adm
 
 - **4.5.1.** Create a DNS record for the HOST_IP_ADDRESS
 
-- **4.5.2.** Obtain a TLS certificate 
+- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created in #4.5.1
 
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
-
-</tbc> [this step will be automated with Python (putSecrets.py)]
+```
+cd scripts/
+./putSecrets.py certs_encoded AWS_REGION DOMAIN_NAME
+```
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment
 
@@ -229,6 +233,8 @@ terraform plan -out="tfplan"
 terraform apply "tfplan" [-auto-approve]
 ```
 * Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
+
+* By design; changes made to configuration files will trigger the EC2 instance to be recreated, while the application data will be persisted in the EBS drive & re-mounted automatically during boot.
 
 
 ## 6. REMOVING CLOUD DEPLOYMENT
