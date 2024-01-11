@@ -12,11 +12,13 @@
 **[8. Known Issues](#8-known-issues)**<br>
 **[9. Planned For Later](#9-planned-for-later)**<br>
 
+
 ## 1. DESCRIPTION
 
-Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project (codename: morangie).
+Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project.
 
 Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
+
 
 ## 2. DIRECTORY STRUCTURE
 
@@ -91,7 +93,7 @@ variables.tf                    # Environment variables for the main instance. 
 
 </tbc> define least privilege permissions </tbc> 
 
-**3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1
+**3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1;
 ```
 aws configure
 ```
@@ -153,26 +155,49 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **4.1.4.** Go to step #5 Updating Cloud Deployment
 
-#### 4.2. Grafana Dashboards Setup
+
+#### 4.2. Updating Prometheus Alerting Rules
+
+**4.2.1.** Update /etc/prometheus/alerts.yml as necessary in the local directory
+
+**4.2.2.** Validate the syntax in the updated configuration file(s);
+```
+docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check rules /etc/prometheus/alerts.yml
+```
+
+**4.2.3.** Go to step #5 Updating Cloud Deployment
+
+Note: This procedure (#4.2.) can also be used to update /etc/prometheus/records.yml to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
+
+
+#### 4.3. Grafana Dashboards Setup
 
 * This step is merged into #3.2.4.
 
-#### 4.3. Prometheus & Grafana Password Resets
 
-* 
-* 
+#### 4.4. Prometheus & Grafana Admin Password Resets
 
-#### 4.3. Domain Setup (optional)
+* Prometheus; 
+```
+tbc
+```
 
-**4.3.1.** Create a DNS record for the HOST_IP_ADDRESS
+* Grafana;
+```
+docker exec -it 2543adad0829 grafana cli admin reset-admin-password [NEW_PASSWORD]
+```
 
-**4.3.2.** Obtain a TLS certificate 
+#### 4.5. Domain Setup (optional)
 
-**4.3.3.** Upload the TLS certificate to AWS Secrets Manager;
+**4.5.1.** Create a DNS record for the HOST_IP_ADDRESS
 
-</tbc> [this will be automated with Python (putSecrets.py)]
+**4.5.2.** Obtain a TLS certificate 
 
-**4.3.4.** Go to step #5 Updating Cloud Deployment
+**4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
+
+</tbc> [this step will be automated with Python (putSecrets.py)]
+
+**4.5.4.** Go to step #5 Updating Cloud Deployment
 
 
 ## 5. UPDATING CLOUD DEPLOYMENT
