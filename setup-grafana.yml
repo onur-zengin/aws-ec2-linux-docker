@@ -28,6 +28,6 @@
       command: chdir=modules/grafana terraform plan -var="backend_bucket={{ backend_bucket }}" -var="region={{ aws_region }}" -out="tfplan" 
       register: created_tfplan
   
-    - name: Deploy the planned configuration
-      command: chdir=modules/grafana terraform apply --auto-approve "tfplan" 
-      register: infrastructure_deployed
+    #- name: Deploy the planned configuration
+    #  command: chdir=modules/grafana terraform apply --auto-approve "tfplan" 
+    #  register: infrastructure_deployed
