@@ -87,11 +87,13 @@ variables.tf                    # Environment variables for the main instance. 
 | Boto3          | >= 1.33.2  |
 | Ansible        | >= 2.15.8  |
 
+
 #### 3.2. PROCEDURE
 
 **3.2.1.** Go to AWS Console & create a dedicated user for the infrastructure automation tasks;
 
 </tbc> define least privilege permissions </tbc> 
+
 
 **3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1;
 ```
@@ -99,11 +101,13 @@ aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
+
 **3.2.3.** Clone the remote repository into local machine and change working directory;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
+
 
 **3.2.4.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
@@ -111,7 +115,6 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
 * Do note the trailing comma after localhost
 
-</tbc> install grafana dashboards </tbc>
 
 #### 3.3. VERIFICATION
 
@@ -149,9 +152,12 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 * Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
 
+
 **4.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
 
+
 **4.1.3.** In the local directory; ... to add new targets to the collector, the file that has to be edited is configs/prometheus/prometheus.yml.
+
 
 **4.1.4.** Go to step #5 Updating Cloud Deployment
 
@@ -160,6 +166,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **4.2.1.** Update /etc/prometheus/alerts.yml as necessary in the local directory
 
+
 **4.2.2.** Validate the syntax in the updated configuration file(s);
 ```
 docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check rules /etc/prometheus/alerts.yml
@@ -167,7 +174,8 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 
 **4.2.3.** Go to step #5 Updating Cloud Deployment
 
-Note: This procedure (#4.2.) can also be used to update /etc/prometheus/records.yml to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
+
+**Note:** The steps in this procedure (#4.2) can also be used to update '/etc/prometheus/records.yml' to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
 
 
 #### 4.3. Grafana Dashboards Setup
@@ -186,6 +194,7 @@ tbc
 ```
 docker exec -it 2543adad0829 grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
+
 
 #### 4.5. Domain Setup (optional)
 
