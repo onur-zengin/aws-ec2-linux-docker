@@ -44,9 +44,9 @@
       command: terraform plan -var="region={{ aws_region }}" -out="tfplan" 
       register: created_tfplan
   
-    #- name: Deploy the planned configuration
-    #  command: terraform apply --auto-approve "tfplan" 
-    #  register: infrastructure_deployed
+    - name: Deploy the planned configuration
+      command: terraform apply --auto-approve "tfplan" 
+      register: infrastructure_deployed
 
     - debug:
         var: infrastructure_deployed.stdout_lines[-1]
