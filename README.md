@@ -122,8 +122,6 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * And try the following URLs on a web browser;
     http://[HOST_IP_ADDRESS]/prom
     http://[HOST_IP_ADDRESS]/graf
-    
-* If you have completed the optional step #3.2.4 above, then the web server will redirect you to secure (HTTPS) URLs instead.
 
 
 ## 4. POST-DEPLOYMENT ACTIONS
@@ -149,7 +147,7 @@ cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-* Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
+**Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
 
 
 - **4.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
@@ -182,12 +180,12 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 
 #### 4.4. Prometheus & Grafana Admin Password Resets
 
-* Prometheus; 
+Prometheus; 
 ```
 tbc
 ```
 
-* Grafana;
+Grafana;
 ```
 docker exec -it 2543adad0829 grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
