@@ -12,7 +12,7 @@ data "terraform_remote_state" "main" {
 
 locals {
   #grafana_auth_pw = jsondecode(data.terraform_remote_state.main.outputs.grafana_auth.secret_string)
-  prefix = data.terraform_remote_state.main.outputs.resource_prefix
+  #prefix = data.terraform_remote_state.main.outputs.resource_prefix
   host_ip_address = data.terraform_remote_state.main.outputs.HOST_IP_ADDRESS
   grafana_web = "http://${local.host_ip_address}/graf"
 }
@@ -31,19 +31,19 @@ resource "grafana_data_source" "prometheus" {
   basic_auth_enabled  = false
 }
 
-/*
+
 resource "grafana_dashboard" "node_view" {
   org_id = grafana_organization.org.org_id
   config_json = file("../../configs/grafana/dashboard_ne.json")
   depends_on = [ grafana_data_source.prometheus ]
 }
 
+
 resource "grafana_dashboard" "world_map" {
   org_id = grafana_organization.org.org_id
   config_json = file("../../configs/grafana/dashboard_map.json")
   depends_on = [ grafana_data_source.prometheus ]
 }
-*/
 
 
 resource "aws_s3_bucket" "content_bucket" {
@@ -56,10 +56,10 @@ resource "aws_s3_bucket" "content_bucket" {
 }
 
 
-resource "aws_s3_bucket_policy" "content_bucket" {
-  bucket = aws_s3_bucket.content_bucket.id
-  policy = file("../../policies/s3_bucketPolicy.json")
-}
+#resource "aws_s3_bucket_policy" "content_bucket" {
+#  bucket = aws_s3_bucket.content_bucket.id
+#  policy = file("../../policies/s3_bucketPolicy.json")
+#}
 
 
 resource "aws_s3_object" "coordinates" {

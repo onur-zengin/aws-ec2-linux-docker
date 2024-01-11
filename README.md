@@ -50,10 +50,10 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 ├── policies                        
 │   ├── ec2_assumeRole.json
 │   ├── ec2_getSecrets.json
-│   ├── s3_bucketPolicy.json
 ├── scripts                     # Python scripts to upload & download TLS certs to & from AWS Secrets Manager                   
-│   ├── getSecrets.py            
-│   ├── putSecrets.py           
+│   ├── getSecrets.py           # Executed on EC2 
+│   ├── putSecrets.py           # Executed on the local machine
+│   ├── requirements.txt        # Python requirements for putSecrets.py
 ansible.cfg                     # Ansible configuration with Python interpreter auto-detection disabled
 backend.tf                      # Terraform remote backend on AWS S3 & DynamoDB
 bootstrap.tf                    # Cloud-init configuration to upload files & install packages on EC2 instance during boot
@@ -66,6 +66,7 @@ providers.tf
 README.md                       # This file
 variables.tf                    # Environment variables for the main instance. Sub-modules' variables placed under their respective directories.
 ```
+
 
 ## 3. CLOUD DEPLOYMENT
 
@@ -81,9 +82,8 @@ variables.tf                    # Environment variables for the main instance. 
 | Git            | >= 2.42.0  |
 | Python3        | >= 3.9.6   |
 | Pip3           | >= 23.3.2  |
-| Boto3          | latest     |
+| Boto3          | >= 1.33.2  |
 | Ansible        | >= 2.15.8  |
-
 
 #### 3.2. PROCEDURE
 
@@ -103,11 +103,7 @@ git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-**3.2.4.** (optional) Upload the TLS certificate for Nginx Web Server to AWS Secrets Manager;
-
-</tbc> [automate this with Python / Ansible / CloudFormation & merge into step #3.2.5]
-
-**3.2.5.** Execute the Ansible playbook to deploy the Terraform remote backend and infrastructure-as-code;
+**3.2.4.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
@@ -126,17 +122,11 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * If you have completed the optional step #3.2.4 above, then the web server will redirect you to secure (HTTPS) URLs instead.
 
 
-## 4. UPDATING CLOUD DEPLOYMENT
+## 4. POST-DEPLOYMENT ACTIONS
 
-- A typical use case to update the deployment may be to add new targets to the Prometheus collector. 
+#### 4.1. Prometheus Targets Setup
 
-- While the prerequisites in step #4.1 below apply to that specific use case, the trailing procedure in step #4.2 is generic and can be used for other update scenarios as well.
-
-- Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
-
-#### 4.1. PREREQUISITES
-
-* Prometheus node_exporter binary installed & running on the target hosts;
+**4.1.1.** Install the Prometheus node_exporter binary on the target hosts and make sure it is running;
 
 |                | release    |
 | -------------  | ----------:|
@@ -155,28 +145,30 @@ cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-* **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
+* Note: If / when working with a large number of targets, these steps may also be automated with Ansible.
+
+**4.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
+
+**4.1.3.** In the local directory; ... to add new targets to the collector, the file that has to be edited is configs/prometheus/prometheus.yml.
+
+**4.1.4.** Go to step #5 Updating Cloud Deployment
+
+#### 4.2. Grafana Dashboards Setup
+
+#### 4.3. Domain Setup (optional)
+
+**4.3.1.** Create a DNS record for the HOST_IP_ADDRESS
+
+**4.3.2.** Obtain a TLS certificate 
+
+**4.3.3.** Upload the TLS certificate to AWS Secrets Manager;
+
+</tbc> [automate this with Python (putSecrets.py)]
+
+**4.3.4.** Go to step #5 Updating Cloud Deployment
 
 
-#### 4.2. PROCEDURE
-
-**4.2.0.** Make changes in the local working directory as necessary;
-
-* E.g. To add new targets to the collector, the file that has to be edited is configs/prometheus/prometheus.yml.
-
-**4.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
-```
-terraform plan -out="tfplan"
-```
-
-**4.2.2.** Apply the planned configuration;
-```
-terraform apply "tfplan" [-auto-approve]
-```
-* Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
-
-
-## 5. REMOVING CLOUD DEPLOYMENT
+## 5. UPDATING CLOUD DEPLOYMENT
 
 #### 5.1. PREREQUISITES
 
@@ -184,18 +176,40 @@ Same as #3.1
 
 #### 5.2. PROCEDURE
 
-Execute the following command to destroy the Terraform infrastructure and remote backend;
+**5.2.0.** Save the changes made in the local working directory / its subfolders.
+
+**5.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
+```
+terraform plan -out="tfplan"
+```
+
+**5.2.2.** Apply the planned configuration;
+```
+terraform apply "tfplan" [-auto-approve]
+```
+* Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
+
+
+## 6. REMOVING CLOUD DEPLOYMENT
+
+#### 6.1. PREREQUISITES
+
+Same as #3.1
+
+#### 6.2. PROCEDURE
+
+Execute the following Ansible playbook to destroy the Terraform infrastructure;
 ```
 ansible-playbook destroy-infrastructure.yml -i localhost,
 ```
 * The command will prompt for the AWS region and S3 backend bucket name that was used during the initial deployment, which may be found both in the deployment logs and the AWS S3 console.
 
 
-## 6. LOCAL DEPLOYMENT 
+## 7. LOCAL DEPLOYMENT 
 
 For test & development purposes.
 
-#### 6.1. PRE-REQUISITES
+#### 7.1. PRE-REQUISITES
 
 * Following packages & dependencies to be installed on the local machine 
 
@@ -204,21 +218,21 @@ For test & development purposes.
 | docker         | >=         |
 | docker-compose | >=         |
 
-#### 6.2. PROCEDURE
+#### 7.2. PROCEDURE
 
 </tbc>
 
-## 7. CHANGELOG
+## 8. CHANGELOG
 
 n/a
 
 
-## 8. KNOWN ISSUES
+## 9. KNOWN ISSUES
 
 n/a
 
 
-## 9. PLANNED FOR LATER
+## 10. PLANNED FOR LATER
 
 * Email alerts
 * Prometheus records & alerts configuration to be optimized 

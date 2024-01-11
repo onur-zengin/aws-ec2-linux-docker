@@ -96,7 +96,7 @@ resource "aws_key_pair" "ec2_key_pair" {
 
 
 resource "aws_iam_role" "ec2_boto3" {
-  name                = "cloudwatch-event-role"
+  name                = "ec2-getSecrets"
   assume_role_policy  = file("./policies/ec2_assumeRole.json")
   managed_policy_arns = [aws_iam_policy.get_secrets.arn]
 }
