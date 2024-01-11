@@ -14,8 +14,6 @@
   - name: backend_bucket
     prompt: S3_bucket_name (tfstate-vmon-[timestamp]) 
     private: false
-
-    backend_bucket: "tfstate-vmon-1704704802"
   
   tasks:
 
@@ -31,5 +29,5 @@
       register: created_tfplan
   
     - name: Deploy the planned configuration
-      command: terraform apply --auto-approve "tfplan" 
+      command: chdir=modules/grafana terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed

@@ -110,7 +110,9 @@ cd aws-ec2-linux-docker/
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
-* Do note the trailing comma after localhost
+* Do not skip the trailing comma (,) after localhost
+
+* Specify AWS deployment region at the prompt (default: eu-central-1)
 
 
 #### 3.3. VERIFICATION
