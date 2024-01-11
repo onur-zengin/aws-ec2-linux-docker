@@ -155,6 +155,13 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 #### 4.2. Grafana Dashboards Setup
 
+* This step is merged into #3.2.4.
+
+#### 4.3. Prometheus & Grafana Password Resets
+
+* 
+* 
+
 #### 4.3. Domain Setup (optional)
 
 **4.3.1.** Create a DNS record for the HOST_IP_ADDRESS
@@ -163,7 +170,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **4.3.3.** Upload the TLS certificate to AWS Secrets Manager;
 
-</tbc> [automate this with Python (putSecrets.py)]
+</tbc> [this will be automated with Python (putSecrets.py)]
 
 **4.3.4.** Go to step #5 Updating Cloud Deployment
 
@@ -236,3 +243,5 @@ n/a
 
 * Email alerts
 * Prometheus records & alerts configuration to be optimized 
+* Automate TLS cert upload to AWS Secrets Manager
+* Test & document local deployment procedure (on MacOS)
