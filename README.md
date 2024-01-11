@@ -94,13 +94,11 @@ variables.tf                    # Environment variables for the main instance. 
 
 </tbc> define least privilege permissions </tbc> 
 
-
 - **3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1;
 ```
 aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
-
 
 - **3.2.3.** Clone the remote repository into local machine and change working directory;
 ```
@@ -122,6 +120,10 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * And try the following URLs on a web browser;
     http://[HOST_IP_ADDRESS]/prom
     http://[HOST_IP_ADDRESS]/graf
+
+* Both Prometheus & Grafana will be installed with the default admin password: `password`. See procedure #4.4 below to change it.
+
+* If / when you also complete procedure #4.5 below (optional), then the web server will redirect connections to secure (HTTPS) URLs instead.
 
 
 ## 4. POST-DEPLOYMENT ACTIONS
@@ -148,7 +150,6 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
 **Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
-
 
 - **4.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
 
