@@ -164,7 +164,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 #### 4.2. Updating Prometheus Alerting Rules
 
-**4.2.1.** Update /etc/prometheus/alerts.yml as necessary in the local directory
+**4.2.1.** Update `/etc/prometheus/alerts.yml` as necessary in the local directory
 
 
 **4.2.2.** Validate the syntax in the updated configuration file(s);
@@ -175,7 +175,7 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 **4.2.3.** Go to step #5 Updating Cloud Deployment
 
 
-**Note:** The steps in this procedure (#4.2) can also be used to update '/etc/prometheus/records.yml' to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
+**Note:** The steps in this procedure (#4.2) can also be used to update `/etc/prometheus/records.yml` to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
 
 
 #### 4.3. Grafana Dashboards Setup
