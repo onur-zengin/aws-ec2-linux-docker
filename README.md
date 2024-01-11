@@ -180,14 +180,16 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 
 #### 4.4. Prometheus & Grafana Admin Password Resets
 
-Prometheus; 
+- **4.4.1.** SSH into the EC2 instance
+
+- **4.4.2.** Prometheus; 
 ```
 tbc
 ```
 
-Grafana;
+- **4.4.3.** Grafana;
 ```
-docker exec -it 2543adad0829 grafana cli admin reset-admin-password [NEW_PASSWORD]
+sudo docker exec -it $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
 
 
