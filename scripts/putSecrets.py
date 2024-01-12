@@ -54,7 +54,7 @@ def main(args):
     # If domain_name is provided, then update the Nginx configuration with it;
     if len(sys.argv) > 3:
 
-        write_domain = "sed -i 's/DOMAIN.NAME/%s/g' ../configs/nginx/nginx.conf" % (args[3])
+        write_domain = "sed -i 's/DOMAIN_NAME/%s/g' ../configs/nginx/nginx.conf" % (args[3])
 
         try:    
             os.system(write_domain)

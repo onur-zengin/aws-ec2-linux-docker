@@ -12,9 +12,13 @@
     private: false
 
   - name: backend_bucket
-    prompt: S3_bucket_name (tfstate-vmon-[timestamp]) 
+    prompt: S3_backend_bucket (tfstate-vmon-[timestamp]) 
     private: false
-  
+
+  - name: content_bucket
+    prompt: S3_content_bucket (content-vmon-[timestamp]) 
+    private: false
+
   tasks:
 
     - debug:
@@ -25,7 +29,7 @@
       register: initialized_terraform
   
     - name: Create execution plan
-      command: chdir=modules/grafana terraform plan -var="backend_bucket={{ backend_bucket }}" -var="region={{ aws_region }}" -out="tfplan" 
+      command: chdir=modules/grafana terraform plan -var="backend_bucket={{ backend_bucket }}" -var="region={{ aws_region }}" -var="content_bucket={{ content_bucket }}" -out="tfplan" 
       register: created_tfplan
   
     #- name: Deploy the planned configuration
