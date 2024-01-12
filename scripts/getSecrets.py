@@ -32,7 +32,7 @@ def get_secret(secret_name, region_name):
         os.system(fallback)
         sys.exit(3)
     except:
-        print("Unknown error (2). Falling back to non-secure HTTP URL.")
+        print("Unknown error (1). Falling back to non-secure HTTP URL.")
         os.system(fallback)
         sys.exit(3)
 

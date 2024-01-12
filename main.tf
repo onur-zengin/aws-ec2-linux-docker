@@ -115,7 +115,7 @@ resource "aws_iam_policy" "get_secrets" {
 
 
 resource "aws_security_group" "ec2_inbound" {
-  name        = "Allow inbound traffic"
+  name        = "Restrict inbound traffic"
   description = var.sg_rule_description
 
   dynamic "ingress" {

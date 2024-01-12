@@ -100,19 +100,28 @@ aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-- **3.2.3.** Clone the remote repository into local machine and change working directory;
+- **3.2.3.** Clone the remote repository onto the local machine and change working directory;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-- **3.2.4.** Execute the Ansible playbook to deploy the Terraform infrastructure;
+- **3.2.4.** (optional) Create an SSH key pair and move the public key here under the `./keys` directory;
+```
+ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
+mv ~/.ssh/aws_linux ~/.ssh/aws_linux.pem
+chmod 400 ~/.ssh/aws_linux.pem
+mv ~/.ssh/aws_linux.pub ./keys
+```
+* The key pair will be used for SSH access to the EC2 instance later. If you skip this step, you may still connect through the AWS Console (Instance Connect / Session Manager) instead.
+
+- **3.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
 ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
 * Do not skip the trailing comma (,) after localhost
 
-* Specify AWS deployment region at the prompt (default: eu-central-1)
+* Specify an AWS deployment region at the prompt or click enter to accept default (eu-central-1)
 
 
 #### 3.3. VERIFICATION
@@ -155,23 +164,18 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 - **4.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
 
-- **4.1.3.** In the local directory; ... to add new targets to the collector, the file that has to be edited is configs/prometheus/prometheus.yml.
+- **4.1.3.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add new targets to the configuration as applicable
 
 - **4.1.4.** Go to step #5 Updating Cloud Deployment
 
 
 #### 4.2. Updating Prometheus Alerting Rules
 
-- **4.2.1.** Update `/etc/prometheus/alerts.yml` as necessary in the local directory
+- **4.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary
 
+- **4.2.2.** Go to step #5 Updating Cloud Deployment
 
-- **4.2.2.** Validate the syntax in the updated configuration file(s);
-```
-docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check rules /etc/prometheus/alerts.yml
-```
-
-- **4.2.3.** Go to step #5 Updating Cloud Deployment
-
+**Note:** These steps may be replaced with a CI/CD pipeline.
 
 **Note:** The steps in this procedure (#4.2) can also be used to update `/etc/prometheus/records.yml` to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
 
@@ -180,12 +184,15 @@ docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check r
 
 * This step is merged into #3.2.4; the Ansible playbook will install two dashboards (Sys Charts & World Map) into Grafana after creating the AWS infrastructure.
 
-* However, if you make any modifications to these pre-installed dashboards, then do not forget to export & backup the new configuration file(s) through the Grafana web interface.
+* However, if you make any modifications to these pre-installed dashboards through the Grafana web interface, then do remember to save & export your updated configuration as JSON file(s). Those can then be placed under `configs/grafana/dashboard_*.json` to be auto-installed in a new deployment.
 
 
 #### 4.4. Prometheus & Grafana Admin Password Resets
 
-- **4.4.1.** SSH into the EC2 instance
+- **4.4.1.** Connect to the EC2 instance;
+```
+ssh -i ~/.ssh/aws_linux.pem ubuntu@[HOST_IP_ADRESS]
+```
 
 - **4.4.2.** Prometheus; 
 ```
@@ -200,7 +207,10 @@ sudo docker exec -it $(docker ps | grep graf | awk {'print $1'}) grafana cli adm
 
 #### 4.5. Domain Setup (optional)
 
-- **4.5.1.** Create a DNS record for the HOST_IP_ADDRESS
+- **4.5.1.** Go to your DNS zone configuration and create an A record for the static IP address;
+```
+DOMAIN_NAME     A       HOST_IP_ADDRESS
+```
 
 - **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created in #4.5.1
 
@@ -221,7 +231,7 @@ Same as #3.1
 
 #### 5.2. PROCEDURE
 
-- **5.2.0.** Save the changes made in the local working directory / its subfolders.
+- **5.2.0.** Save the changes made inside the local working directory and/or its subfolders.
 
 - **5.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
 ```
@@ -234,16 +244,41 @@ terraform apply "tfplan" [-auto-approve]
 ```
 * Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
 
-* By design; changes made to configuration files will trigger the EC2 instance to be recreated, while the application data will be persisted in the EBS drive & re-mounted automatically during boot.
+* By design; changes made to configuration files will trigger the EC2 instance to be recreated, while its static IP address and application data are persisted.
 
 
-## 6. REMOVING CLOUD DEPLOYMENT
+## 6. IN-SERVER CONFIG UPDATES >>> CONSIDER MOVING THIS UNDER LOCAL DEPL.
 
-#### 6.1. PREREQUISITES
+In certain use cases (esp. for test & development purposes), it may be handy to modify configuration directly on the server, rather than locally updating config files (#4) and then pushing a new deployment (#5).
+
+The following is an example of how #4.2 can be performed directly on the server; 
+
+#### 6.1. Prerequisites
+
+- SSH access aws_linux.pub
+
+#### 6.2. Updating Prometheus Alerting Rules
+
+- **6.2.1.** (optional) SSH into the EC2 instance, and edit `/etc/prometheus/alerts.yml` as necessary
+
+- **6.2.2.** Validate the syntax;
+```
+docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check rules /etc/prometheus/alerts.yml
+```
+- **6.2.3.** Restart the Prometheus container;
+```
+cd /etc/docker
+docker compose kill -s SIGHUP prometheus 
+```
+
+
+## 7. REMOVING CLOUD DEPLOYMENT
+
+#### 7.1. PREREQUISITES
 
 Same as #3.1
 
-#### 6.2. PROCEDURE
+#### 7.2. PROCEDURE
 
 Execute the following Ansible playbook to destroy the Terraform infrastructure;
 ```
@@ -252,36 +287,38 @@ ansible-playbook destroy-infrastructure.yml -i localhost,
 * The command will prompt for the AWS region and S3 backend bucket name that was used during the initial deployment, which may be found both in the deployment logs and the AWS S3 console.
 
 
-## 7. LOCAL DEPLOYMENT 
+## 8. LOCAL DEPLOYMENT 
 
 For test & development purposes.
 
-#### 7.1. PRE-REQUISITES
+#### 8.1. PRE-REQUISITES
 
-* Following packages & dependencies to be installed on the local machine 
+* Following packages & dependencies to be installed on the local machine;
 
 |                | release    |
 | -------------  | ----------:|
 | docker         | >=         |
 | docker-compose | >=         |
 
-#### 7.2. PROCEDURE
+#### 8.2. PROCEDURE
 
 </tbc>
 
-## 8. CHANGELOG
+
+## 9. CHANGELOG
 
 n/a
 
 
-## 9. KNOWN ISSUES
+## 10. KNOWN ISSUES
 
 n/a
 
 
-## 10. PLANNED FOR LATER
+## 11. PLANNED FOR LATER
 
 * Email alerts
-* Prometheus records & alerts configuration to be optimized 
+* Prometheus alerts & records configuration to be optimized 
 * Automate TLS cert upload to AWS Secrets Manager
 * Test & document local deployment procedure (on MacOS)
+* Complete the demo_fargate module to demonstrate container monitoring as well.

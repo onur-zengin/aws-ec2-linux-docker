@@ -32,16 +32,16 @@ resource "grafana_data_source" "prometheus" {
 }
 
 
-resource "grafana_dashboard" "node_view" {
+resource "grafana_dashboard" "sys_charts" {
   org_id = grafana_organization.org.org_id
-  config_json = file("../../configs/grafana/dashboard_ne.json")
+  config_json = file("../../configs/grafana/dashboard_syscharts.json")
   depends_on = [ grafana_data_source.prometheus ]
 }
 
 
 resource "grafana_dashboard" "world_map" {
   org_id = grafana_organization.org.org_id
-  config_json = file("../../configs/grafana/dashboard_map.json")
+  config_json = file("../../configs/grafana/dashboard_worldmap.json")
   depends_on = [ grafana_data_source.prometheus ]
 }
 

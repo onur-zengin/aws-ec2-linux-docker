@@ -17,7 +17,33 @@ def put_secret(secret_name, region_name):
     )
 
     try:
-        ...
+        response = client.create_secret(
+            Name='string',
+            ClientRequestToken='string',
+            Description='string',
+            KmsKeyId='string',
+            SecretBinary=b'bytes',
+            SecretString='string',
+            Tags=[
+                {
+                    'Key': 'string',
+                    'Value': 'string'
+                },
+            ],
+            AddReplicaRegions=[
+                {
+                    'Region': 'string',
+                    'KmsKeyId': 'string'
+                },
+            ],
+            ForceOverwriteReplicaSecret=True|False
+        )
+    except ClientError as e:
+        print("ClientError", e)
+        sys.exit(3)
+    except:
+        print("Unknown error (1).")
+        sys.exit(3)
 
 
 def main(args):
@@ -33,7 +59,7 @@ def main(args):
         try:    
             os.system(write_domain)
         except:
-            print("Unknown error (3). Falling back to non-secure HTTP URL.")
+            print("Unknown error (3).")
             os.system(fallback)
             sys.exit(3)
     

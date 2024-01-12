@@ -18,7 +18,7 @@ variable "prefix" {
 
 variable "sg_rule_description" {
   type    = string
-  default = "allow_inbound"
+  default = "restrict_inbound"
 }
 
 variable "sg_allowed_ports" {
