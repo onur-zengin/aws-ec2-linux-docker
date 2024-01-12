@@ -201,7 +201,7 @@ tbc
 
 - **4.4.3.** Grafana;
 ```
-sudo docker exec -it $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
+sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
 
 
@@ -235,7 +235,7 @@ Same as #3.1
 
 - **5.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
 ```
-terraform plan -out="tfplan"
+terraform plan -out="tfplan" -var .... region
 ```
 
 - **5.2.2.** Apply the planned configuration;

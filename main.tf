@@ -59,6 +59,7 @@ resource "aws_instance" "ec2" {
   tags = {
     Name = "${var.prefix}"
   }
+
 }
 
 
@@ -127,6 +128,13 @@ resource "aws_security_group" "ec2_inbound" {
       protocol    = "tcp"
       cidr_blocks = var.sg_allowed_ranges
     }
+  }
+
+  ingress {
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = aws_eip.staticIP.public_ip
   }
 
   egress {
