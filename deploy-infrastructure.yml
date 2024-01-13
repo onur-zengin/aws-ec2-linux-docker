@@ -48,8 +48,43 @@
     - name: Deploy the planned configuration
       command: terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed
+    
+    #- debug:
+    #    var: infrastructure_deployed.stdout_lines[-1] | regex_search('\d+.\d+.\d+.\d+')
 
-    - debug:
-        var: infrastructure_deployed.stdout_lines[-1]
+    - name: Extract host IP address from the Terraform output
+      ansible.builtin.set_fact:
+        host_ip_address: "{{ infrastructure_deployed.stdout_lines[-1] | regex_search('\\d+.\\d+.\\d+.\\d+') }}"
 
+    - name: Waiting for 90 seconds until the VM is booted up..
+      ansible.builtin.wait_for:
+        timeout: 90 # Sleep for 90 seconds
+    
+    - name: Retrying until the VM is booted up. This may take a moment, ignore transient failures..
+      uri:
+        url: "http://{{ host_ip_address }}/graf"
+        return_content: yes
+        validate_certs: no
+        status_code:
+          - 200
+      until: uri_output.status == 200
+      delay: 5 # Every 5 seconds
+      retries: 18 # Retries for another 90 seconds
+      register: uri_output
 
+    - name: Initialize Terraform Grafana Module
+      command: chdir=modules/grafana terraform init -backend-config="bucket={{ backend_bucket }}" -backend-config="region={{ aws_region }}"
+      register: initialized_module
+  
+    - name: Create execution plan
+      command: chdir=modules/grafana terraform plan -var="backend_bucket={{ backend_bucket }}" -var="region={{ aws_region }}" -var="content_bucket={{ content_bucket }}" -out="tfplan" 
+      register: created_tfplan
+  
+    - name: Deploy the planned configuration
+      command: chdir=modules/grafana terraform apply --auto-approve "tfplan" 
+      register: dashboards_deployed
+
+    - debug: 
+        msg: 
+          - "http://{{ host_ip_address }}/prom"
+          - "http://{{ host_ip_address }}/graf"

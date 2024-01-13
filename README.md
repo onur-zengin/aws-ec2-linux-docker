@@ -109,7 +109,6 @@ cd aws-ec2-linux-docker/
 - **3.2.4.** (optional) Create an RSA key pair and copy the public key here under the `./keys` directory;
 ```
 ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
-#mv ~/.ssh/aws_linux ~/.ssh/aws_linux.pem
 chmod 400 ~/.ssh/aws_linux
 cp ~/.ssh/aws_linux.pub ./keys
 ```
@@ -193,7 +192,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 - **4.4.1.** Connect to the EC2 instance;
 ```
-ssh -i ~/.ssh/aws_linux.pem ubuntu@[HOST_IP_ADRESS]
+ssh -i ~/.ssh/aws_linux ubuntu@[HOST_IP_ADRESS]
 ```
 
 - **4.4.2.** Prometheus; 

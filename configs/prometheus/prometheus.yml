@@ -12,29 +12,29 @@ rule_files:
 
 scrape_configs:
 
-  # The following job is for the embedded_exporter on the Prometheus app (i.e. the container) itself;
+  # The following job is for the embedded_exporter on the Prometheus app itself;
   
   #- job_name: 'host_embedded'
 
   #  static_configs:
 
-  #    - targets: ['localhost:9090']
+  #    - targets: ['localhost:9090'] # points to container localhost
   #      labels:
   #        country: 'Finland'
   #        region: 'eu-central-f'
   #        stage: 'prod'
 
 
-  # The following job is for the prom_node_exporter installed on the Prometheus host itself (which also hosts Grafana & Nginx containers, alongside it);
+  # The following job is for the prom_node_exporter installed on the Prometheus host (which also hosts Grafana & Nginx containers, alongside it);
 
   - job_name: 'pne_host'
 
     static_configs:
 
-      - targets: ['self.vmon.zenite.uk:9100'] # this points the VM's phy-IP and not the localhost, since node_exporter is running on the actual VM itself while the prometheus app is inside a docker network.
+      - targets: ['host.docker.internal:9100'] # this points the VM's phy-IP and not the container localhost, since node_exporter is running on the actual VM itself while the prometheus app is inside a docker network.
         labels:
           country: 'Finland'
-          region: 'eu-central-f'
+          region: 'eu-central-f' # Mock region for demonstration purposes on Grafana world map. Also see: configs/grafana/geo.json
           stage: 'prod'
 
 

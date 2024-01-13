@@ -40,4 +40,12 @@
         region: "{{ aws_region }}"
       register: destroyed_bucket 
 
-
+    - name: Cleanup local directory
+      shell: 
+        rm -rf .terraform/terraform.tfstate
+        rm .terraform.lock.hcl
+        rm tfplan
+        rm -rf modules/grafana/.terraform/terraform.tfstate
+        rm modules/grafana/.terraform.lock.hcl
+        rm modules/grafana/tfplan        
+      register: cleanup_complete
