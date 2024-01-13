@@ -43,3 +43,4 @@ test-*.tf
 *.pem
 *.pub
 modules/demo_fargate/src/*
+tfplan
