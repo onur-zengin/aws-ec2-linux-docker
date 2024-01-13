@@ -139,7 +139,7 @@ resource "aws_security_group" "ec2_inbound" {
     from_port   = 9100
     to_port     = 9100
     protocol    = "tcp"
-    cidr_blocks = [ aws_eip.static_ip.public_ip ]
+    cidr_blocks = [ "${aws_eip.static_ip.public_ip}/32" ]
   }
 
   egress {
@@ -152,4 +152,6 @@ resource "aws_security_group" "ec2_inbound" {
   tags = {
     Name = var.sg_rule_description
   }
+
+  depends_on = [ aws_eip.static_ip ]
 }

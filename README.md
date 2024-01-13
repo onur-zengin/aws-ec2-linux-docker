@@ -109,7 +109,7 @@ cd aws-ec2-linux-docker/
 - **3.2.4.** (optional) Create an RSA key pair and copy the public key here under the `./keys` directory;
 ```
 ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
-mv ~/.ssh/aws_linux ~/.ssh/aws_linux.pem
+#mv ~/.ssh/aws_linux ~/.ssh/aws_linux.pem
 chmod 400 ~/.ssh/aws_linux
 cp ~/.ssh/aws_linux.pub ./keys
 ```
