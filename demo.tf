@@ -63,7 +63,7 @@ resource "aws_route53_record" "demo_dns_record-web" {
   name    = var.demo_dns_record-web
   type    = "A"
   ttl     = 300
-  records = [aws_eip.staticIP.public_ip]
+  records = [aws_eip.static_ip.public_ip]
 }
 
 
@@ -73,7 +73,7 @@ resource "aws_route53_record" "demo_dns_record-collector" {
   name    = var.demo_dns_record-collector
   type    = "A"
   ttl     = 300
-  records = [aws_eip.staticIP.public_ip]
+  records = [aws_eip.static_ip.public_ip]
 }
 
 
@@ -83,7 +83,7 @@ resource "aws_route53_record" "demo_dns_record-certbot_challenge" {
   name    = var.demo_dns_record-certbot_challenge
   type    = "TXT"
   ttl     = 300
-  records = [aws_eip.staticIP.public_ip]
+  records = [aws_eip.static_ip.public_ip]
 }
 
 
@@ -92,7 +92,7 @@ module "frankfurt" {
   source                  = "./modules/demo_ec2"
   zone                    = aws_route53_zone.demo_dns_zone
   instance_count          = local.instance_count
-  prometheus_host_address = aws_eip.staticIP.public_ip
+  prometheus_host_address = aws_eip.static_ip.public_ip
   providers = {
     aws = aws.eu-central-1
   }
@@ -104,7 +104,7 @@ module "london" {
   zone                    = aws_route53_zone.demo_dns_zone
   instance_count          = local.instance_count
   instance_type           = "t3.nano"
-  prometheus_host_address = aws_eip.staticIP.public_ip
+  prometheus_host_address = aws_eip.static_ip.public_ip
   providers = {
     aws = aws.eu-west-2
   }
@@ -116,7 +116,7 @@ module "san_fran" {
   zone                    = aws_route53_zone.demo_dns_zone
   instance_count          = local.instance_count
   instance_type           = "t3.nano"
-  prometheus_host_address = aws_eip.staticIP.public_ip
+  prometheus_host_address = aws_eip.static_ip.public_ip
   providers = {
     aws = aws.us-west-1
   }
@@ -127,7 +127,7 @@ module "new_york" {
   source                  = "./modules/demo_ec2"
   zone                    = aws_route53_zone.demo_dns_zone
   instance_count          = local.instance_count
-  prometheus_host_address = aws_eip.staticIP.public_ip
+  prometheus_host_address = aws_eip.static_ip.public_ip
   providers = {
     aws = aws.us-east-1
   }
@@ -139,7 +139,7 @@ module "tokyo" {
   source                  = "./modules/demo_ec2"
   zone                    = aws_route53_zone.demo_dns_zone
   instance_count          = local.instance_count
-  prometheus_host_address = aws_eip.staticIP.public_ip
+  prometheus_host_address = aws_eip.static_ip.public_ip
   providers = {
     aws = aws.ap-northeast-1
   }

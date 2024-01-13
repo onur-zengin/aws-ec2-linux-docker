@@ -1,5 +1,5 @@
 output "HOST_IP_ADDRESS" {
-  value   = aws_eip.staticIP.public_ip
+  value   = aws_eip.static_ip.public_ip
 }
 
 /*

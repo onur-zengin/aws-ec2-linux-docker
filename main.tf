@@ -80,14 +80,14 @@ resource "aws_volume_attachment" "ec2_ebs" {
 }
 
 
-resource "aws_eip" "staticIP" {
+resource "aws_eip" "static_ip" {
   #instance = aws_instance.ec2.id
 }
 
 
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.ec2.id
-  allocation_id = aws_eip.staticIP.id
+  allocation_id = aws_eip.static_ip.id
 }
 
 
@@ -139,7 +139,7 @@ resource "aws_security_group" "ec2_inbound" {
     from_port   = 9100
     to_port     = 9100
     protocol    = "tcp"
-    cidr_blocks = aws_eip.staticIP.public_ip
+    cidr_blocks = [ aws_eip.static_ip.public_ip ]
   }
 
   egress {
