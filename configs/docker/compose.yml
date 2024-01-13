@@ -23,6 +23,8 @@ services:
       - '--web.external-url=/prom/'                                      # to allow path-based routing by the nginx-proxy. This is matched in the nginx.conf location block
     networks:
       - nr-vnet
+    extra_hosts:
+    - "host.docker.internal:host-gateway"                                # allow Prometheus container connect to the underlying host VM for polling
   grafana:
     image: grafana/grafana:latest
     ports:

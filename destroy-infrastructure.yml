@@ -12,7 +12,7 @@
     private: false
     
   - name: backend_bucket
-    prompt: S3_bucket_name (tfstate-vmon-[timestamp]) 
+    prompt: S3_backend_bucket (tfstate-vmon-[timestamp]) 
     private: false
 
   tasks:

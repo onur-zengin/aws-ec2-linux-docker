@@ -184,7 +184,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 * This step is merged into #3.2.4; the Ansible playbook will install two dashboards (Sys Charts & World Map) into Grafana after creating the AWS infrastructure.
 
-* However, if you make any modifications to these pre-installed dashboards through the Grafana web interface, then do remember to save & export your updated configuration as JSON file(s). Those can then be placed under `configs/grafana/dashboard_*.json` to be auto-installed in a new deployment.
+* However, if you make any modifications to these pre-installed dashboards through the Grafana web interface, then do remember to save & export your updated configuration as JSON file(s). Those then can be placed under `configs/grafana/dashboard_*.json` to be auto-installed in a new deployment.
 
 
 #### 4.4. Prometheus & Grafana Admin Password Resets
