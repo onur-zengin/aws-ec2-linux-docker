@@ -106,12 +106,12 @@ git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-- **3.2.4.** (optional) Create an SSH key pair and move the public key here under the `./keys` directory;
+- **3.2.4.** (optional) Create an RSA key pair and copy the public key here under the `./keys` directory;
 ```
 ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
 mv ~/.ssh/aws_linux ~/.ssh/aws_linux.pem
-chmod 400 ~/.ssh/aws_linux.pem
-mv ~/.ssh/aws_linux.pub ./keys
+chmod 400 ~/.ssh/aws_linux
+cp ~/.ssh/aws_linux.pub ./keys
 ```
 * The key pair will be used for SSH access to the EC2 instance later. If you skip this step, you may still connect through the AWS Console (Instance Connect / Session Manager) instead.
 
@@ -129,8 +129,10 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
 * Collect the HOST_IP_ADDRESS from the output of step #3.2.5, 
 
 * And try the following URLs on a web browser;
+```
     http://[HOST_IP_ADDRESS]/prom
     http://[HOST_IP_ADDRESS]/graf
+```
 
 * Both Prometheus & Grafana will be installed with the default admin password: `password`. See procedure #4.4 below to change it.
 

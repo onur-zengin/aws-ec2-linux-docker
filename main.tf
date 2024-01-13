@@ -59,7 +59,6 @@ resource "aws_instance" "ec2" {
   tags = {
     Name = "${var.prefix}"
   }
-
 }
 
 
@@ -82,7 +81,13 @@ resource "aws_volume_attachment" "ec2_ebs" {
 
 
 resource "aws_eip" "staticIP" {
-  instance = aws_instance.ec2.id
+  #instance = aws_instance.ec2.id
+}
+
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.ec2.id
+  allocation_id = aws_eip.staticIP.id
 }
 
 
