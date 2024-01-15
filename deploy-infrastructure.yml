@@ -15,6 +15,10 @@
     
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
     content_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    grafana_geo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/geo.json"
+    grafana_logo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_circle_base.svg"
   
   tasks:
 
@@ -55,6 +59,7 @@
     - name: Extract host IP address from the Terraform output
       ansible.builtin.set_fact:
         host_ip_address: "{{ infrastructure_deployed.stdout_lines[-1] | regex_search('\\d+.\\d+.\\d+.\\d+') }}"
+        grafana_url: "http://{{ host_ip_address }}/graf"
 
     - name: Waiting for 90 seconds until the VM is booted up..
       ansible.builtin.wait_for:
@@ -62,7 +67,7 @@
     
     - name: Retrying until the VM is booted up. This may take a moment, ignore transient failures..
       uri:
-        url: "http://{{ host_ip_address }}/graf"
+        url: "{{ grafana_url }}"
         return_content: yes
         validate_certs: no
         status_code:
@@ -72,17 +77,40 @@
       retries: 18 # Retries for another 90 seconds
       register: uri_output
 
-    - name: Initialize Terraform Grafana Module
-      command: chdir=modules/grafana terraform init -backend-config="bucket={{ backend_bucket }}" -backend-config="region={{ aws_region }}"
-      register: initialized_module
-  
-    - name: Create execution plan
-      command: chdir=modules/grafana terraform plan -var="backend_bucket={{ backend_bucket }}" -var="region={{ aws_region }}" -var="content_bucket={{ content_bucket }}" -out="tfplan" 
-      register: created_tfplan
-  
-    - name: Deploy the planned configuration
-      command: chdir=modules/grafana terraform apply --auto-approve "tfplan" 
-      register: dashboards_deployed
+    - name: Create Grafana Datasource
+      community.grafana.grafana_datasource:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        name: prometheus
+        ds_type: "prometheus"
+        ds_url: http://prometheus:9090/prom
+        is_default: true
+        uid: prometheusdatasource
+
+    - name: Import Sys Charts
+      community.grafana.grafana_dashboard:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        path: configs/grafana/dashboard_syscharts.json
+        overwrite: true
+    
+    - name: Prepare World Map 
+      shell: 
+        sed -i 's/GEO_FILE/{{ grafana_geo }}/g' configs/grafana/dashboard_worldmap.json
+        sed -i 's/LOGO_FILE/{{ grafana_logo }}/g' configs/grafana/dashboard_worldmap.json
+
+    - name: Import World Map
+      community.grafana.grafana_dashboard:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        path: configs/grafana/dashboard_worldmap.json
+        overwrite: true
 
     - debug: 
         msg: 

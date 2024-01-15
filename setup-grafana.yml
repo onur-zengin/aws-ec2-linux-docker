@@ -1,0 +1,43 @@
+---
+- name: Create Terraform Infrastructure on AWS
+
+  hosts: all
+  connection: local
+
+  vars:
+
+    grafana_url: http://54.215.171.200/graf
+    grafana_user: "admin"
+    grafana_password: "admin"
+  
+  tasks:
+
+    - name: create prometheus datasource
+      community.grafana.grafana_datasource:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        name: prometheus
+        ds_type: "prometheus"
+        ds_url: http://prometheus:9090/prom
+        is_default: true
+        uid: prometheusdatasource
+
+    - name: Import Sys Charts
+      community.grafana.grafana_dashboard:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        path: configs/grafana/dashboard_syscharts.json
+        overwrite: true
+
+    - name: Import World Map
+      community.grafana.grafana_dashboard:
+        grafana_url: "{{ grafana_url }}"
+        grafana_user: "{{ grafana_user }}"
+        grafana_password: "{{ grafana_password }}"
+        state: present
+        path: configs/grafana/Netradar-Worldmap-1705316925416.json
+        overwrite: true

@@ -133,7 +133,7 @@ ansible-playbook deploy-infrastructure.yml -i localhost,
     http://[HOST_IP_ADDRESS]/graf
 ```
 
-* Both Prometheus & Grafana will be installed with the default admin password: `password`. See procedure #4.4 below to change it.
+* Both Prometheus & Grafana will be installed with the default admin password: `admin`. See procedure #4.4 below to change it.
 
 * If / when you also complete procedure #4.5 below (optional), then the web server will redirect connections to secure (HTTPS) URLs instead.
 

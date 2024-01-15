@@ -11,7 +11,7 @@ variable "backend_bucket" {
 
 
 variable "content_bucket" {
-  description = "Name of the S3 bucket where Grafana image & config files will be stored"
+  description = "Name of the S3 bucket where Grafana image & config files are stored"
   type    = string
 }
 

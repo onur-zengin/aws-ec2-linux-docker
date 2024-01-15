@@ -58,7 +58,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "prometheusdatasource"
       },
       "fieldConfig": {
         "defaults": {
@@ -152,7 +152,7 @@
               "options": "B"
             },
             "location": {
-              "gazetteer": "https://test-bucket-18nov20231200.s3.eu-central-1.amazonaws.com/geo.json",
+              "gazetteer": "GEO_FILE",
               "lookup": "region",
               "mode": "lookup"
             },
@@ -201,7 +201,7 @@
               "options": "A"
             },
             "location": {
-              "gazetteer": "https://test-bucket-18nov20231200.s3.eu-central-1.amazonaws.com/geo.json",
+              "gazetteer": "GEO_FILE",
               "geohash": "country",
               "lookup": "region",
               "mode": "lookup"
@@ -252,7 +252,7 @@
               "options": "C"
             },
             "location": {
-              "gazetteer": "https://test-bucket-18nov20231200.s3.eu-central-1.amazonaws.com/geo.json",
+              "gazetteer": "GEO_FILE",
               "lookup": "region",
               "mode": "lookup"
             },
@@ -280,7 +280,7 @@
                   "min": 2
                 },
                 "symbol": {
-                  "fixed": "https://test-bucket-18nov20231200.s3.eu-central-1.amazonaws.com/logo_circle_base.svg",
+                  "fixed": "LOGO_FILE",
                   "mode": "fixed"
                 },
                 "symbolAlign": {
@@ -301,7 +301,7 @@
               "options": "D"
             },
             "location": {
-              "gazetteer": "https://test-bucket-18nov20231200.s3.eu-central-1.amazonaws.com/geo.json",
+              "gazetteer": "GEO_FILE",
               "lookup": "region",
               "mode": "lookup"
             },
@@ -326,7 +326,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheusdatasource"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -345,7 +345,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheusdatasource"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -364,7 +364,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheusdatasource"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -383,7 +383,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "prometheusdatasource"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -400,7 +400,7 @@
           "useBackend": false
         }
       ],
-      "title": "Netradar Worldmap",
+      "title": "Worldmap",
       "transformations": [
         {
           "id": "organize",
@@ -453,8 +453,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Netradar Worldmap",
-  "uid": "nr-w-map",
+  "title": "Worldmap",
+  "uid": "w-map",
   "version": 7,
   "weekStart": ""
 }
