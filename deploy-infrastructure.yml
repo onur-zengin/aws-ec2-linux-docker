@@ -110,10 +110,11 @@
         path: configs/grafana/dashboard_syscharts.json
         overwrite: true
     
-    - name: Prepare Dashboard Configuration
-      shell: 
-        sed -i'' -e 's,GEO_FILE,{{ grafana_geo }},g' configs/grafana/dashboard_worldmap.json
-        sed -i'' -e 's,LOGO_FILE,{{ grafana_logo }},g' configs/grafana/dashboard_worldmap.json
+    - name: Update Dashboard Configuration - I
+      command: sed -i'' -e 's,GEO_FILE,{{ grafana_geo }},g' configs/grafana/dashboard_worldmap.json
+    
+    - name: Update Dashboard Configuration - II
+      command: sed -i'' -e 's,LOGO_FILE,{{ grafana_logo }},g' configs/grafana/dashboard_worldmap.json
 
     - name: Import Dashboard - World Map
       community.grafana.grafana_dashboard:
