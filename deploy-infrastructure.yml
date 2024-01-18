@@ -101,7 +101,7 @@
         is_default: true
         uid: prometheusdatasource
 
-    - name: Import Sys Charts
+    - name: Import Dashboard - Sys Charts
       community.grafana.grafana_dashboard:
         grafana_url: "{{ grafana_url }}"
         grafana_user: "{{ grafana_user }}"
@@ -110,12 +110,12 @@
         path: configs/grafana/dashboard_syscharts.json
         overwrite: true
     
-    - name: Prepare World Map 
+    - name: Prepare Dashboard Configuration
       shell: 
-        sed -i 's/GEO_FILE/{{ grafana_geo }}/g' configs/grafana/dashboard_worldmap.json
-        sed -i 's/LOGO_FILE/{{ grafana_logo }}/g' configs/grafana/dashboard_worldmap.json
+        sed -i'' -e 's,GEO_FILE,{{ grafana_geo }},g' configs/grafana/dashboard_worldmap.json
+        sed -i'' -e 's,LOGO_FILE,{{ grafana_logo }},g' configs/grafana/dashboard_worldmap.json
 
-    - name: Import World Map
+    - name: Import Dashboard - World Map
       community.grafana.grafana_dashboard:
         grafana_url: "{{ grafana_url }}"
         grafana_user: "{{ grafana_user }}"
