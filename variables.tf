@@ -33,3 +33,8 @@ variable "sg_allowed_ranges" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
+
+variable "metacontent_bucket" {
+  description = "Name of the S3 bucket where Grafana image & config files are stored"
+  type    = string
+}

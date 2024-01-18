@@ -26,16 +26,6 @@ data "aws_ami" "linux" {
   }
 }
 
-/*
-data "aws_secretsmanager_secret" "grafana_auth" {
-  name = "grafana_auth"
-}
-
-
-data "aws_secretsmanager_secret_version" "latest" {
-  secret_id = data.aws_secretsmanager_secret.grafana_auth.id
-}
-*/
 
 resource "aws_instance" "ec2" {
   ami                         = data.aws_ami.linux.id
@@ -154,4 +144,41 @@ resource "aws_security_group" "ec2_inbound" {
   }
 
   depends_on = [ aws_eip.static_ip ]
+}
+
+
+resource "aws_s3_bucket" "content_bucket" {
+  bucket        = var.metacontent_bucket
+  force_destroy = true
+
+  tags = {
+    Name = "${var.prefix}"
+  }
+}
+
+
+#resource "aws_s3_bucket_policy" "content_bucket" {
+#  bucket = aws_s3_bucket.content_bucket.id
+#  policy = file("../../policies/s3_bucketPolicy.json")
+#}
+
+
+resource "aws_s3_object" "coordinates" {
+  bucket = aws_s3_bucket.content_bucket.id
+  key    = "geo.json"
+  source = "../../configs/grafana/geo.json"
+}
+
+
+resource "aws_s3_object" "base_logo" {
+  bucket = aws_s3_bucket.content_bucket.id
+  key    = "base_logo.svg"
+  source = "../../images/logo_base.svg"
+}
+
+
+resource "aws_s3_object" "red_logo" {
+  bucket = aws_s3_bucket.content_bucket.id
+  key    = "red_logo.svg"
+  source = "../../images/logo_alert.svg"
 }

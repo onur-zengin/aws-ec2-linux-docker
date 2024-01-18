@@ -18,8 +18,9 @@
     grafana_user: "admin"
     grafana_password: "admin"
     grafana_geo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/geo.json"
-    grafana_logo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_base.svg"
-  
+    grafana_base: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_base.svg"
+    grafana_alert: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_alert.svg"
+
   tasks:
 
     - debug:
@@ -114,7 +115,10 @@
       command: sed -i'' -e 's,GEO_FILE,{{ grafana_geo }},g' configs/grafana/dashboard_worldmap.json
     
     - name: Update Dashboard Configuration - II
-      command: sed -i'' -e 's,LOGO_FILE,{{ grafana_logo }},g' configs/grafana/dashboard_worldmap.json
+      command: sed -i'' -e 's,LOGO_BASE,{{ grafana_base }},g' configs/grafana/dashboard_worldmap.json
+
+    - name: Update Dashboard Configuration - III
+      command: sed -i'' -e 's,LOGO_ALERT,{{ grafana_alert }},g' configs/grafana/dashboard_worldmap.json
 
     - name: Import Dashboard - World Map
       community.grafana.grafana_dashboard:
@@ -127,5 +131,5 @@
 
     - debug: 
         msg: 
-          - "http://{{ host_ip_address }}/prom"
-          - "http://{{ host_ip_address }}/graf"
+          - "Prometheus Homepage:\thttp://{{ host_ip_address }}/prom"
+          - "Grafana Homepage:\thttp://{{ host_ip_address }}/graf"

@@ -280,7 +280,7 @@
                   "min": 2
                 },
                 "symbol": {
-                  "fixed": "LOGO_FILE",
+                  "fixed": "LOGO_BASE",
                   "mode": "fixed"
                 },
                 "symbolAlign": {
