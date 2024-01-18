@@ -10,6 +10,13 @@ variable "instance_type" {
   default = "t2.micro"
 }
 
+variable "ubuntu_release" {
+  description = "Ubuntu release for the host instance"
+  # major release changes should be bound to UAT
+  type    = string
+  default = "jammy-22"
+}
+
 variable "prefix" {
   description = "Name prefix for ease of resource identification on the AWS console"
   type        = string
@@ -34,7 +41,7 @@ variable "sg_allowed_ranges" {
   default = ["0.0.0.0/0"]
 }
 
-variable "metacontent_bucket" {
+variable "meta_bucket" {
   description = "Name of the S3 bucket where Grafana image & config files are stored"
   type    = string
 }

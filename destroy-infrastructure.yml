@@ -11,17 +11,22 @@
     default: "eu-central-1" 
     private: false
     
-  - name: backend_bucket
-    prompt: S3_backend_bucket (tfstate-vmon-[timestamp]) 
+  - name: bucket_timestamp
+    prompt: Timestamp suffix on the backend bucket (tfstate-vmon-[timestamp]) 
     private: false
 
   tasks:
 
+    - name: Set S3 bucket names
+      ansible.builtin.set_fact:
+        backend_bucket: "tfstate-vmon-{{ bucket_timestamp }}"
+        meta_bucket: "meta-vmon-{{ bucket_timestamp }}"
+
     - debug:
-        msg: "backend_bucket_name: {{ backend_bucket }}, aws_region: {{ aws_region }}"
+        msg: "backend_bucket: {{ backend_bucket }}, meta_bucket: {{ meta_bucket }}, aws_region: {{ aws_region }}"
   
     - name: Destroy the configuration
-      command: terraform destroy -var="region={{ aws_region }}" --auto-approve 
+      command: terraform destroy -var="meta_bucket={{ meta_bucket }}" -var="region={{ aws_region }}" --auto-approve 
       register: tf_infrastructure_destroyed
 
     - name: Destroy DDB table

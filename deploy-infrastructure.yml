@@ -14,17 +14,17 @@
   vars:
     
     backend_bucket: "tfstate-vmon-{{ ansible_facts.date_time.epoch }}"
-    metacontent_bucket: "content-vmon-{{ ansible_facts.date_time.epoch }}"
+    meta_bucket: "meta-vmon-{{ ansible_facts.date_time.epoch }}"
     grafana_user: "admin"
     grafana_password: "admin"
-    grafana_geo: "https://{{ metacontent_bucket }}.s3.{{ aws_region }}.amazonaws.com/geo.json"
-    grafana_base: "https://{{ metacontent_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_base.svg"
-    grafana_alert: "https://{{ metacontent_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_alert.svg"
+    grafana_geo: "https://{{ meta_bucket }}.s3.{{ aws_region }}.amazonaws.com/geo.json"
+    grafana_base: "https://{{ meta_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_base.svg"
+    grafana_alert: "https://{{ meta_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_alert.svg"
 
   tasks:
 
     - debug:
-        msg: "S3_backend_bucket: {{ backend_bucket }}, aws_region: {{ aws_region }}, S3_metacontent_bucket: {{ metacontent_bucket }}"
+        msg: "S3_backend_bucket: {{ backend_bucket }}, aws_region: {{ aws_region }}, S3_meta_bucket: {{ meta_bucket }}"
   
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
@@ -56,7 +56,7 @@
       register: initialized_terraform
   
     - name: Create execution plan
-      command: terraform plan -var="region={{ aws_region }}" -var="metacontent_bucket={{ metacontent_bucket }}" -out="tfplan" 
+      command: terraform plan -var="meta_bucket={{ meta_bucket }}" -var="region={{ aws_region }}" -out="tfplan" 
       register: created_tfplan
   
     - name: Deploy the planned configuration

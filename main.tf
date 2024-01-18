@@ -14,7 +14,7 @@ data "aws_ami" "linux" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.*"] # Major release upgrades should be bound to UAT, hence the version number is hardcoded (possible to configure as a variable).
+    values = ["ubuntu/images/hvm-ssd/ubuntu-${var.ubuntu_release}.*"] 
   }
   filter {
     name   = "description"
@@ -66,7 +66,7 @@ resource "aws_volume_attachment" "ec2_ebs" {
   device_name                    = "/dev/sdf" # Depending on the block device driver of the kernel, the device could be attached with a different name than you specified. For example, if you specify a device name of /dev/sdh, your device could be renamed /dev/xvdh.
   instance_id                    = aws_instance.ec2.id
   volume_id                      = aws_ebs_volume.ebs.id
-  stop_instance_before_detaching = true # Workaround to known issue #8602. https://github.com/hashicorp/terraform-provider-aws/pull/21144
+  stop_instance_before_detaching = true # Workaround to known issue #8602 for terraform-provider-aws.
 }
 
 
@@ -147,8 +147,8 @@ resource "aws_security_group" "ec2_inbound" {
 }
 
 
-resource "aws_s3_bucket" "metacontent_bucket" {
-  bucket        = var.metacontent_bucket
+resource "aws_s3_bucket" "meta_bucket" {
+  bucket        = var.meta_bucket
   force_destroy = true
 
   tags = {
@@ -157,28 +157,28 @@ resource "aws_s3_bucket" "metacontent_bucket" {
 }
 
 
-#resource "aws_s3_bucket_policy" "metacontent_bucket" {
-#  bucket = aws_s3_bucket.metacontent_bucket.id
+#resource "aws_s3_bucket_policy" "meta_bucket" {
+#  bucket = aws_s3_bucket.meta_bucket.id
 #  policy = file("../../policies/s3_bucketPolicy.json")
 #}
 
 
 resource "aws_s3_object" "coordinates" {
-  bucket = aws_s3_bucket.metacontent_bucket.id
+  bucket = aws_s3_bucket.meta_bucket.id
   key    = "geo.json"
-  source = "../../configs/grafana/geo.json"
+  source = "./configs/grafana/geo.json"
 }
 
 
 resource "aws_s3_object" "base_logo" {
-  bucket = aws_s3_bucket.metacontent_bucket.id
+  bucket = aws_s3_bucket.meta_bucket.id
   key    = "base_logo.svg"
-  source = "../../images/logo_base.svg"
+  source = "./images/logo_base.svg"
 }
 
 
 resource "aws_s3_object" "red_logo" {
-  bucket = aws_s3_bucket.metacontent_bucket.id
+  bucket = aws_s3_bucket.meta_bucket.id
   key    = "red_logo.svg"
-  source = "../../images/logo_alert.svg"
+  source = "./images/logo_alert.svg"
 }
