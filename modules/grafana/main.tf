@@ -74,12 +74,12 @@ resource "aws_s3_object" "coordinates" {
 resource "aws_s3_object" "base_logo" {
   bucket = aws_s3_bucket.content_bucket.id
   key    = "base_logo.svg"
-  source = "../../images/logo_circle_base.svg"
+  source = "../../images/logo_base.svg"
 }
 
 
 resource "aws_s3_object" "red_logo" {
   bucket = aws_s3_bucket.content_bucket.id
   key    = "red_logo.svg"
-  source = "../../images/logo_circle_red.svg"
+  source = "../../images/logo_alert.svg"
 }

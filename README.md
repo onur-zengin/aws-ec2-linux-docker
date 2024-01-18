@@ -40,8 +40,8 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 │   │   ├── prometheus.yml      # Main configuration file for Prometheus (including targets)
 │   │   ├── records.yml         
 ├── images                      # (optional) Image files to be displayed as nodes on Grafana dashboard  
-│   ├── logo_circle_base.svg    
-│   ├── logo_circle_red.svg      
+│   ├── logo_base.svg    
+│   ├── logo_alert.svg      
 ├── keys                        
 │   ├── aws_linux.pub           # SSH public key file for remote access to main EC2 host
 │   ├── demo_linux.pub          # (optional) SSH public key file for remote access to demo EC2 hosts

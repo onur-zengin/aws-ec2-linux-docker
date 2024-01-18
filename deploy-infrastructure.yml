@@ -18,7 +18,7 @@
     grafana_user: "admin"
     grafana_password: "admin"
     grafana_geo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/geo.json"
-    grafana_logo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_circle_base.svg"
+    grafana_logo: "https://{{ content_bucket }}.s3.{{ aws_region }}.amazonaws.com/logo_base.svg"
   
   tasks:
 
@@ -41,6 +41,17 @@
         region: "{{ aws_region }}"
       register: created_ddb_table
   
+    - name: Check if public key file exists
+      stat:
+        path: keys/demo_linux.pub
+      register: stat_result
+
+    - name: Create a mock file for Terraform, if it doesn't exist already
+      file:
+        path: /keys/demo_linux.pub
+        state: touch
+      when: not stat_result.stat.exists
+
     - name: Initialize Terraform
       command: terraform init -backend-config="bucket={{ backend_bucket }}" -backend-config="region={{ aws_region }}"
       register: initialized_terraform
