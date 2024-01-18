@@ -43,12 +43,12 @@
   
     - name: Check if public key file exists
       stat:
-        path: keys/demo_linux.pub
+        path: keys/aws_linux.pub
       register: stat_result
 
-    - name: Create a mock file for Terraform, if it doesn't exist already
+    - name: Create a mock file for Terraform, if a public key not found
       file:
-        path: /keys/demo_linux.pub
+        path: keys/aws_linux.pub
         state: touch
       when: not stat_result.stat.exists
 
@@ -70,6 +70,9 @@
     - name: Extract host IP address from the Terraform output
       ansible.builtin.set_fact:
         host_ip_address: "{{ infrastructure_deployed.stdout_lines[-1] | regex_search('\\d+.\\d+.\\d+.\\d+') }}"
+    
+    - name: Set Grafana URL
+      ansible.builtin.set_fact:
         grafana_url: "http://{{ host_ip_address }}/graf"
 
     - name: Waiting for 90 seconds until the VM is booted up..
