@@ -56,7 +56,7 @@
       register: initialized_terraform
   
     - name: Create execution plan
-      command: terraform plan -var="region={{ aws_region }}" -out="tfplan" 
+      command: terraform plan -var="region={{ aws_region }}" -var="metacontent_bucket={{ metacontent_bucket }}" -out="tfplan" 
       register: created_tfplan
   
     - name: Deploy the planned configuration
