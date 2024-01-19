@@ -157,10 +157,30 @@ resource "aws_s3_bucket" "meta_bucket" {
 }
 
 
-#resource "aws_s3_bucket_policy" "meta_bucket" {
-#  bucket = aws_s3_bucket.meta_bucket.id
-#  policy = file("../../policies/s3_bucketPolicy.json")
-#}
+resource "aws_s3_bucket_public_access_block" "off" {
+  bucket = aws_s3_bucket.meta_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = false
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+
+resource "aws_s3_bucket_ownership_controls" "bucket_owner" {
+  bucket = aws_s3_bucket.prod_media.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+  depends_on = [aws_s3_bucket_public_access_block.off]
+}
+
+
+resource "aws_s3_bucket_policy" "public_access" {
+  bucket = aws_s3_bucket.meta_bucket.id
+  policy = file("../../policies/s3_bucketPolicy.json")
+  depends_on = [aws_s3_bucket_public_access_block.off]
+}
 
 
 resource "aws_s3_object" "coordinates" {
