@@ -1,13 +1,19 @@
 variable "region" {
-  description = "Prometheus & Grafana host region"
+  description = "AWS host region for the Prometheus & Grafana deployment"
   type    = string
 }
 
 variable "instance_type" {
-  description = "Host VM instance type"
+  description = "AWS EC2 instance type for the host VM"
   # t2.micro is free-tier eligible
   type    = string
   default = "t2.micro"
+}
+
+variable "prefix" {
+  description = "Resource name prefix for ease of identification on the AWS console"
+  type        = string
+  default     = "vmon"
 }
 
 variable "ubuntu_release" {
@@ -17,12 +23,6 @@ variable "ubuntu_release" {
   default = "jammy-22"
 }
 
-variable "prefix" {
-  description = "Name prefix for ease of resource identification on the AWS console"
-  type        = string
-  default     = "vmon"
-}
-
 variable "sg_rule_description" {
   type    = string
   default = "restrict_inbound"
@@ -30,7 +30,6 @@ variable "sg_rule_description" {
 
 variable "sg_allowed_ports" {
   type    = list(number)
-  #default = [22, 80, 443, 9100]
   default = [22, 80, 443]
 }
 

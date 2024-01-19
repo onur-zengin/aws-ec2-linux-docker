@@ -213,7 +213,7 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 ```
 
-- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created in #4.5.1
+- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created in #4.5.1 (wildcard certs also accepted)
 
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
