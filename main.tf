@@ -186,8 +186,7 @@ resource "aws_s3_bucket_ownership_controls" "bucket_owner" {
 resource "aws_s3_bucket_acl" "bucket_acl" {
   bucket     = aws_s3_bucket.meta_bucket.id
   acl        = "public-read"
-  #depends_on = [aws_s3_bucket_ownership_controls.bucket_owner]
-  depends_on = [aws_s3_bucket_public_access_block.off]
+  depends_on = [aws_s3_bucket_ownership_controls.bucket_owner]
 }
 
 
