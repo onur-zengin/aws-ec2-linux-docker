@@ -168,7 +168,7 @@ resource "aws_s3_bucket_public_access_block" "off" {
 
 
 resource "aws_s3_bucket_ownership_controls" "bucket_owner" {
-  bucket = aws_s3_bucket.prod_media.id
+  bucket = aws_s3_bucket.meta_bucket.id
   rule {
     object_ownership = "BucketOwnerPreferred"
   }
