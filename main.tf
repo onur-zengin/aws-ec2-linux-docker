@@ -160,10 +160,17 @@ resource "aws_s3_bucket" "meta_bucket" {
 resource "aws_s3_bucket_public_access_block" "off" {
   bucket = aws_s3_bucket.meta_bucket.id
 
-  block_public_acls       = true
+  block_public_acls       = false
+  ignore_public_acls      = false
   block_public_policy     = false
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  restrict_public_buckets = false
+}
+
+
+resource "aws_s3_bucket_policy" "public_access" {
+  bucket = aws_s3_bucket.meta_bucket.id
+  policy = file("./policies/s3_bucketPolicy.json")
+  depends_on = [aws_s3_bucket_public_access_block.off]
 }
 
 
@@ -176,9 +183,10 @@ resource "aws_s3_bucket_ownership_controls" "bucket_owner" {
 }
 
 
-resource "aws_s3_bucket_policy" "public_access" {
-  bucket = aws_s3_bucket.meta_bucket.id
-  policy = file("./policies/s3_bucketPolicy.json")
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  bucket     = aws_s3_bucket.meta_bucket.id
+  acl        = "public-read"
+  #depends_on = [aws_s3_bucket_ownership_controls.bucket_owner]
   depends_on = [aws_s3_bucket_public_access_block.off]
 }
 
