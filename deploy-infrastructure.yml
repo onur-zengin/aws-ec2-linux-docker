@@ -52,7 +52,7 @@
       when: not stat_result.stat.exists
 
     - name: Update S3 bucket policy
-      command: sed -i'' -e 's,META_BUCKET,{{ meta_bucket }},g' configs/policies/s3_bucketPolicy.json
+      command: sed -i'' -e 's,META_BUCKET,{{ meta_bucket }},g' policies/s3_bucketPolicy.json
 
     - name: Initialize Terraform
       command: terraform init -backend-config="bucket={{ backend_bucket }}" -backend-config="region={{ aws_region }}"
