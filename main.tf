@@ -178,7 +178,7 @@ resource "aws_s3_bucket_ownership_controls" "bucket_owner" {
 
 resource "aws_s3_bucket_policy" "public_access" {
   bucket = aws_s3_bucket.meta_bucket.id
-  policy = file("../../policies/s3_bucketPolicy.json")
+  policy = file("./policies/s3_bucketPolicy.json")
   depends_on = [aws_s3_bucket_public_access_block.off]
 }
 
