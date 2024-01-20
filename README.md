@@ -26,8 +26,8 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 .
 ├── configs                        
 │   ├── docker
-│   │   ├── compose.yml
-│   │   ├── daemon.json         # Setting Docker root directory on the EBS drive
+│   │   ├── compose.yml         # Sets up Docker bridge network and container runtime
+│   │   ├── daemon.json         # Sets Docker root directory on the EBS drive
 │   ├── grafana
 │   │   ├── db_map.json         # Dashboard configuration (world map view)
 │   │   ├── db_ne.json          # Dashboard configuration (CPU, Mem, Disk, & NW-interface utilization charts)
@@ -210,7 +210,12 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 ```
 
-- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created in #4.5.1 (wildcard certs also accepted)
+- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (wildcard certs also accepted).
+
+Sample instructions for Let's Encrypt;
+```
+https://certbot.eff.org/instructions?ws=nginx&os=debianbuster
+```
 
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```

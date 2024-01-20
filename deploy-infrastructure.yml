@@ -29,7 +29,8 @@
       register: stat_result
 
     - name: Stop if the public key is not found
-      fail: msg = "keys/aws_linux.pub is missing"
+      ansible.builtin.fail:
+        msg: "keys/aws_linux.pub is missing"
       when: not stat_result.stat.exists
 
     - debug:
