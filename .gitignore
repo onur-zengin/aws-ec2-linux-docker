@@ -42,6 +42,5 @@ tfplan
 backup_files/
 test-*.tf
 *.pem
-*.pub
 modules/demo_fargate/src/*
 configs/prometheus/ref/*
