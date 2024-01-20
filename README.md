@@ -38,13 +38,12 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 │   ├── prometheus
 │   │   ├── alerts.yml
 │   │   ├── prometheus.yml      # Main configuration file for Prometheus (including targets)
-│   │   ├── records.yml         
+│   │   ├── records.yml         # Frequently queried metrics to pre-populate TSDB
 ├── images                      # (optional) Image files to be displayed as nodes on Grafana dashboard  
 │   ├── logo_base.svg    
 │   ├── logo_alert.svg      
 ├── keys                        
-│   ├── aws_linux.pub           # SSH public key file for remote access to main EC2 host
-│   ├── demo_linux.pub          # (optional) SSH public key file for remote access to demo EC2 hosts
+│   ├── aws_linux.pub           # SSH public key file for remote access to the main EC2 host
 ├── modules                        
 │   │   ├── demo_ec2            # (optional) Demo module to setup EC2 VMs as synthetic targets for Prometheus
 │   │   ├── demo_fargate        # (optional) Demo module to setup Fargate Containers as synthetic targets for Prometheus
@@ -106,13 +105,13 @@ git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-- **3.2.4.** (optional) Create an RSA key pair and copy the public key here under the `./keys` directory;
+- **3.2.4.** Create an RSA key pair in your home directory and copy the public key `aws_linux.pub` here under the `./keys` directory;
 ```
 ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
 chmod 400 ~/.ssh/aws_linux
 cp ~/.ssh/aws_linux.pub ./keys
 ```
-* The key pair will be used for SSH access to the EC2 instance later. If you skip this step, you may still connect through the AWS Console (Instance Connect / Session Manager) instead.
+* The key pair will be used for SSH access to the EC2 instance later.
 
 - **3.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
@@ -178,8 +177,6 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **Note:** These steps may be replaced with a CI/CD pipeline.
 
-**Note:** The steps in this procedure (#4.2) can also be used to update `/etc/prometheus/records.yml` to optimize Prometheus performance by pre-populating the TSDB with most frequently queried metrics.
-
 
 #### 4.3. Grafana Dashboards Setup
 
@@ -218,8 +215,9 @@ DOMAIN_NAME     A       HOST_IP_ADDRESS
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
 cd scripts/
-./putSecrets.py certs_encoded AWS_REGION DOMAIN_NAME
+./putSecrets.py certs_encoded AWS_REGION DOMAIN_NAME FILE_PATH
 ```
+* The Python script expects to find ... inside the specified FILE_PATH
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment
 
