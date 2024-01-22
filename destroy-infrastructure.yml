@@ -4,23 +4,27 @@
   hosts: all
   connection: local
 
-  vars_prompt:
+#  vars_prompt:
 
-  - name: aws_region
-    prompt: AWS region 
-    default: "eu-central-1" 
-    private: false
+#  - name: aws_region
+#    prompt: AWS region 
+#    default: "eu-central-1" 
+#    private: false
     
-  - name: bucket_timestamp
-    prompt: Timestamp suffix on the backend bucket (tfstate-vmon-[timestamp]) 
-    private: false
+#  - name: bucket_timestamp
+#    prompt: Timestamp suffix on the backend bucket (tfstate-vmon-[timestamp]) 
+#    private: false
 
   tasks:
 
-    - name: Set S3 bucket names
-      ansible.builtin.set_fact:
-        backend_bucket: "tfstate-vmon-{{ bucket_timestamp }}"
-        meta_bucket: "meta-vmon-{{ bucket_timestamp }}"
+    - name: Capture deployment variables from local file
+      ansible.builtin.include_vars:
+        file: deployment_vars.json
+  
+#    - name: Set S3 bucket names
+#      ansible.builtin.set_fact:
+#        backend_bucket: "tfstate-vmon-{{ bucket_timestamp }}"
+#        meta_bucket: "meta-vmon-{{ bucket_timestamp }}"
 
     - debug:
         msg: "backend_bucket: {{ backend_bucket }}, meta_bucket: {{ meta_bucket }}, aws_region: {{ aws_region }}"

@@ -33,9 +33,18 @@
         msg: "keys/aws_linux.pub is missing"
       when: not stat_result.stat.exists
 
-    - debug:
-        msg: "S3_backend_bucket: {{ backend_bucket }}, aws_region: {{ aws_region }}, S3_meta_bucket: {{ meta_bucket }}"
+    #- debug:
+    #    msg: "S3_backend_bucket: {{ backend_bucket }}, aws_region: {{ aws_region }}, S3_meta_bucket: {{ meta_bucket }}"
   
+    - name: Print vars to file
+      ansible.builtin.copy:
+        content: {
+          "aws_region": "{{ aws_region }}",
+          "backend_bucket": "{{ backend_bucket }}",
+          "meta_bucket": "{{ meta_bucket }}"
+          }
+        dest: deployment_vars.json
+
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
         name: "{{ backend_bucket }}"
