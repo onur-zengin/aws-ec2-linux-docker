@@ -248,7 +248,7 @@ terraform apply "tfplan" [-auto-approve]
 ```
 * Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
 
-* By design; changes made to configuration files will trigger the EC2 instance to be recreated, while its static IP address and application data are persisted.
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
 
 ## 6. IN-SERVER CONFIG UPDATES >>> CONSIDER MOVING THIS UNDER LOCAL DEPL.

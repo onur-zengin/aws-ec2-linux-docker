@@ -36,14 +36,14 @@
     #- debug:
     #    msg: "S3_backend_bucket: {{ backend_bucket }}, aws_region: {{ aws_region }}, S3_meta_bucket: {{ meta_bucket }}"
   
-    - name: Print vars to file
+    - name: Print deployment variables to file
       ansible.builtin.copy:
         content: {
           "aws_region": "{{ aws_region }}",
           "backend_bucket": "{{ backend_bucket }}",
           "meta_bucket": "{{ meta_bucket }}"
           }
-        dest: deployment_vars.json
+        dest: deployment_state.json
 
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:
