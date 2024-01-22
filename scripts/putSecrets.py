@@ -7,7 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def put_secret(secret_name, region_name):
+def put_secret(secret_string, region_name):
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -18,25 +18,10 @@ def put_secret(secret_name, region_name):
 
     try:
         response = client.create_secret(
-            Name='string',
-            ClientRequestToken='string',
-            Description='string',
-            KmsKeyId='string',
-            SecretBinary=b'bytes',
-            SecretString='string',
-            Tags=[
-                {
-                    'Key': 'string',
-                    'Value': 'string'
-                },
-            ],
-            AddReplicaRegions=[
-                {
-                    'Region': 'string',
-                    'KmsKeyId': 'string'
-                },
-            ],
-            ForceOverwriteReplicaSecret=True|False
+            Name='cert_encoded40',
+            Description='created by putSecrets.py for vmon',
+            SecretString = json.dumps(secret_string),
+            ForceOverwriteReplicaSecret=True
         )
     except ClientError as e:
         print("ClientError", e)
@@ -46,26 +31,56 @@ def put_secret(secret_name, region_name):
         sys.exit(3)
 
 
+def update_nginx(domain_name):
+
+    sed_cmd = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/nginx/nginx.conf" % (domain_name)
+
+    # Update the Nginx configuration with domain_name;
+    try:    
+        os.system(sed_cmd)
+    except:
+        print("Unknown error (3).")
+        os.system(fallback)
+        sys.exit(3)
+
+
+def encode_pem(path, file_name):
+
+    try:   
+        # OS command to encode the contents in base64 format (to protect file integrity during transfer)
+        encoded = os.popen("openssl base64 -in %s/%s  | tr -d '\n'" % (path, file_name)).read()
+    except:
+        print("Unknown error (1). *.pem files could not be read")
+        sys.exit(3)
+    finally:
+        return(encoded)
+
+
 def main(args):
-
-    # Make an API call to AWS Secrets Manager using the command-line arguments (usage: ./putSecrets.py [secret_name] [region_name] [domain_name])
-    secret      = put_secret(args[1], args[2])
-
-    # If domain_name is provided, then update the Nginx configuration with it;
-    if len(sys.argv) > 3:
-
-        write_domain = "sed -i 's/DOMAIN_NAME/%s/g' ../configs/nginx/nginx.conf" % (args[3])
-
-        try:    
-            os.system(write_domain)
-        except:
-            print("Unknown error (3).")
-            os.system(fallback)
-            sys.exit(3)
     
-    else:
-        
-        print("TLS certificate successfully uploaded.")
+    # Usage: ./putSecrets.py [path_to_pem_files] [domain_name] [region_name]
+    
+    # Locate the certificate files;
+
+    path =  args[1]
+
+    if path[-1] == "/":
+        path = path[:-1]
+
+    cert = {
+        "fullchain" : encode_pem(path, "fullchain.pem"),
+        "privkey" : encode_pem(path, "privkey.pem")
+    }
+
+    # Make an API call to AWS Secrets Manager;
+
+    put_secret(cert, args[3])
+    print("TLS certificate successfully uploaded.")
+    
+    # Update Nginx configuration;
+    
+    update_nginx(args[2])
+    print("Nginx configuration updated.")
 
 
 if __name__ == '__main__':

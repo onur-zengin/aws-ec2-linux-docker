@@ -210,19 +210,34 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 ```
 
-- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (wildcard certs also accepted).
+- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (existing wildcard certs also accepted).
 
-Sample instructions for Let's Encrypt;
+Sample instructions for Let's Encrypt can be found at;
 ```
-https://certbot.eff.org/instructions?ws=nginx&os=debianbuster
+https://certbot.eff.org/
+```
+
+Sample output;
+```
+sudo certbot certonly --dns-route53 -d *.domain_name
+
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Requesting a certificate for *.domain_name
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/domain_name/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/domain_name/privkey.pem
+This certificate expires on 2024-04-21.
+These files will be updated when the certificate renews.
 ```
 
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
 cd scripts/
-./putSecrets.py certs_encoded AWS_REGION DOMAIN_NAME FILE_PATH
+chmod +x putSecrets.py
+./putSecrets.py DOMAIN_NAME PATH_TO_PEM_FILES
 ```
-* The Python script expects to find ... inside the specified FILE_PATH
+* The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager in the deployment region.
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment
 
