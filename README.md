@@ -115,7 +115,8 @@ cp ~/.ssh/aws_linux.pub ./keys
 
 - **3.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
-ansible-playbook deploy-infrastructure.yml -i localhost,
+ansible-playbook dep
+loy-infrastructure.yml -i localhost,
 ```
 * Do not skip the trailing comma (,) after localhost
 
@@ -241,7 +242,7 @@ sudo ./putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 
 Sample usage;
 ```
-sudo ./putSecrets.py /etc/letsencrypt/live/zenite.uk/ zenite.uk eu-central-1
+sudo ./putSecrets.py /etc/letsencrypt/live/zenite.uk/ vmon.zenite.uk eu-central-1
 ```
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment

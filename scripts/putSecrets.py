@@ -7,7 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def create_secret(secret_string, region_name):
+def create_secret(secret_string, region_name, domain_name):
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -19,7 +19,7 @@ def create_secret(secret_string, region_name):
     try:
         response = client.create_secret(
             Name='cert_encoded',
-            Description='Certificate chain and private key file. Created by putSecrets.py for vmon.',
+            Description='Certificate chain and private key file for %s. Created by putSecrets.py.' % domain_name,
             SecretString = json.dumps(secret_string),
             ForceOverwriteReplicaSecret=True
         )
@@ -41,17 +41,32 @@ def create_secret(secret_string, region_name):
         sys.exit(3)
 
 
-def update_nginx(domain_name):
-
-    sed_cmd = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/nginx/nginx.conf" % (domain_name)
+def edit_conf(path, file_name, domain_name):
 
     # Update the Nginx configuration with domain_name;
     try:    
-        os.system(sed_cmd)
+        f = open("../configs/%s/%s" % (path, file_name), 'a+')
+        f.seek(0)
+        lines = f.readlines()
+        for line in lines:
+            if "DOMAIN_NAME" in line:
+                line.replace("DOMAIN_NAME", domain_name)
+                if line[0] == "#":
+                    f.write(line[1:])
+        f.close()
     except:
-        print("Unknown error (3).")
-        os.system(fallback)
-        sys.exit(3)
+        raise
+
+    #sed_cmd = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/%s/%s" % (domain_name, path, file_name)
+
+    # Update the Nginx configuration with domain_name;
+    #try:    
+    #    os.system(sed_cmd)
+    #except:
+    #    print("Unknown error (3).")
+    #    sys.exit(3)
+
+
 
 
 def encode_pem(path, file_name):
@@ -87,10 +102,16 @@ def main(args):
     create_secret(cert, args[3])
     print("TLS certificate successfully uploaded.")
     
-    # Update Nginx configuration;
+    # Update Nginx & Docker configurations;
     
-    update_nginx(args[2])
-    print("Nginx configuration updated.")
+    conf = {
+        "nginx" : "nginx.conf",
+        "docker" : "compose.yml"
+    }
+    
+    for i in conf:
+        edit_conf(i, conf[i], args[2])
+    print("Nginx & Docker configurations updated to include domain name.")
 
 
 if __name__ == '__main__':
