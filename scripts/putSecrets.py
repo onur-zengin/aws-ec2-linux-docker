@@ -7,7 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def put_secret(secret_string, region_name):
+def create_secret(secret_string, region_name):
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -18,14 +18,24 @@ def put_secret(secret_string, region_name):
 
     try:
         response = client.create_secret(
-            Name='cert_encoded40',
-            Description='created by putSecrets.py for vmon',
+            Name='cert_encoded',
+            Description='Certificate chain and private key file. Created by putSecrets.py for vmon.',
             SecretString = json.dumps(secret_string),
             ForceOverwriteReplicaSecret=True
         )
     except ClientError as e:
-        print("ClientError", e)
-        sys.exit(3)
+        if "ResourceExistsException" in str(e):
+            print("A version of cert_encoded already exists. Trying to update..")
+            response = client.put_secret_value(
+                SecretId='cert_encoded',
+                SecretString=json.dumps(secret_string),
+                VersionStages=[
+                    'latest',
+                ]
+            )
+        else:
+            print("ClientError", e)
+            sys.exit(3)
     except:
         print("Unknown error (1).")
         sys.exit(3)
@@ -74,7 +84,7 @@ def main(args):
 
     # Make an API call to AWS Secrets Manager;
 
-    put_secret(cert, args[3])
+    create_secret(cert, args[3])
     print("TLS certificate successfully uploaded.")
     
     # Update Nginx configuration;

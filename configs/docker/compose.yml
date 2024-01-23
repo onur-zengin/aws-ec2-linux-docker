@@ -34,7 +34,7 @@ services:
     volumes:
       - graf_data:/var/lib/grafana                                        # named volume on the EBS data-disk to persist dashboard data (path relative to Docker root directory)
     environment:
-      #GF_SERVER_DOMAIN: vmon.zenite.uk
+      #GF_SERVER_DOMAIN: DOMAIN_NAME
       #GF_SERVER_HTTP_PORT: 80
       GF_SERVER_SERVE_FROM_SUB_PATH: true                                 # to allow path-based routing by the nginx-proxy.
       GF_SERVER_ROOT_URL:	'%(protocol)s://%(domain)s:%(http_port)s/graf/' # this is matched in the nginx.conf location block

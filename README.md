@@ -235,9 +235,14 @@ These files will be updated when the certificate renews.
 ```
 cd scripts/
 chmod +x putSecrets.py
-./putSecrets.py DOMAIN_NAME PATH_TO_PEM_FILES
+sudo ./putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 ```
 * The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager in the deployment region.
+
+Sample usage;
+```
+sudo ./putSecrets.py /etc/letsencrypt/live/zenite.uk/ zenite.uk eu-central-1
+```
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment
 

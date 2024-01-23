@@ -19,7 +19,7 @@
 
     - name: Capture deployment variables from local file
       ansible.builtin.include_vars:
-        file: deployment_state.json
+        file: deployment-state.json
   
 #    - name: Set S3 bucket names
 #      ansible.builtin.set_fact:
