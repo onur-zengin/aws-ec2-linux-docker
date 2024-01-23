@@ -115,8 +115,7 @@ cp ~/.ssh/aws_linux.pub ./keys
 
 - **3.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
-ansible-playbook dep
-loy-infrastructure.yml -i localhost,
+ansible-playbook deploy-infrastructure.yml -i localhost,
 ```
 * Do not skip the trailing comma (,) after localhost
 

@@ -7,7 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def create_secret(secret_string, region_name, domain_name):
+def create_secret(secret_string, domain_name, region_name):
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -99,7 +99,7 @@ def main(args):
 
     # Make an API call to AWS Secrets Manager;
 
-    create_secret(cert, args[3])
+    create_secret(cert, args[2], args[3])
     print("TLS certificate successfully uploaded.")
     
     # Update Nginx & Docker configurations;
