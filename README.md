@@ -208,25 +208,26 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 - **4.5.1.** Go to your DNS zone configuration and create an A record for the static IP address;
 ```
 DOMAIN_NAME     A       HOST_IP_ADDRESS
+vmon.foo.com    A       XX.XX.XX.XX
 ```
 
-- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (existing wildcard certs also accepted).
+- **4.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
 
-Sample instructions for Let's Encrypt can be found at;
+Sample instructions for requesting a certificate from Let's Encrypt can be found at;
 ```
 https://certbot.eff.org/
 ```
 
 Sample output;
 ```
-sudo certbot certonly --dns-route53 -d *.domain_name
+sudo certbot certonly --dns-route53 -d *.foo.com
 
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Requesting a certificate for *.domain_name
+Requesting a certificate for *.foo.com
 
 Successfully received certificate.
-Certificate is saved at: /etc/letsencrypt/live/domain_name/fullchain.pem
-Key is saved at:         /etc/letsencrypt/live/domain_name/privkey.pem
+Certificate is saved at: /etc/letsencrypt/live/foo.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/foo.com/privkey.pem
 This certificate expires on 2024-04-21.
 These files will be updated when the certificate renews.
 ```
@@ -237,11 +238,11 @@ cd scripts/
 chmod +x putSecrets.py
 sudo ./putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 ```
-* The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager in the deployment region.
+* The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager.
 
 Sample usage;
 ```
-sudo ./putSecrets.py /etc/letsencrypt/live/zenite.uk/ vmon.zenite.uk eu-central-1
+sudo ./putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
 ```
 
 - **4.5.4.** Go to step #5 Updating Cloud Deployment
@@ -343,6 +344,5 @@ n/a
 
 * Email alerts
 * Prometheus alerts & records configuration to be optimized 
-* Automate TLS cert upload to AWS Secrets Manager
 * Test & document local deployment procedure (on MacOS)
 * Complete the demo_fargate module to demonstrate container monitoring as well.

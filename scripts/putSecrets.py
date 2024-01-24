@@ -7,6 +7,20 @@ import boto3
 from botocore.exceptions import ClientError
 
 
+def encode_pem(path, file_name):
+
+    # OS command to encode the contents in base64 format (to protect file integrity during transfer)
+    cmd = "openssl base64 -in %s/%s  | tr -d '\n'" % (path, file_name)
+
+    try:   
+        encoded = os.popen(cmd).read()
+    except:
+        print("Unknown error (1). *.pem files could not be read")
+        sys.exit(3)
+    
+    return(encoded)
+
+
 def create_secret(secret_string, domain_name, region_name):
 
     # Create a Secrets Manager client
@@ -57,21 +71,7 @@ def edit_conf(path, file_name, domain_name):
     #    sys.exit(3)
 
 
-def encode_pem(path, file_name):
-
-    try:   
-        # OS command to encode the contents in base64 format (to protect file integrity during transfer)
-        encoded = os.popen("openssl base64 -in %s/%s  | tr -d '\n'" % (path, file_name)).read()
-    except:
-        print("Unknown error (1). *.pem files could not be read")
-        sys.exit(3)
-    finally:
-        return(encoded)
-
-
 def main(args):
-    
-    # Usage: ./putSecrets.py [path_to_pem_files] [domain_name] [region_name]
     
     # Locate the certificate files;
 
@@ -103,4 +103,7 @@ def main(args):
 
 
 if __name__ == '__main__':
+
     main(sys.argv)
+
+    # Usage: ./putSecrets.py [path_to_pem_files] [domain_name] [region_name]

@@ -60,7 +60,7 @@ def decoder(secrets_dct):
 
 def main(args):
 
-    # Make an API call to AWS Secrets Manager using the command-line arguments (usage: ./getSecrets.py [secret_name] [region_name])
+    # Make an API call to AWS Secrets Manager using the command-line arguments;
     secret      = get_secret(args[1], args[2])
     secrets_dct = json.loads(secret)
 
@@ -72,4 +72,7 @@ def main(args):
 
 
 if __name__ == '__main__':
+    
     main(sys.argv)
+
+    # Usage: ./getSecrets.py [secret_name] [region_name]
