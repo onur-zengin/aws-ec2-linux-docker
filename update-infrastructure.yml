@@ -1,0 +1,56 @@
+---
+- name: Update Terraform Infrastructure on AWS
+
+  hosts: all
+  connection: local
+
+  tasks:
+
+    - name: Capture deployment variables from local file
+      ansible.builtin.include_vars:
+        file: deployment-state.json
+
+    - debug:
+        msg: "backend_bucket: {{ backend_bucket }}, meta_bucket: {{ meta_bucket }}, aws_region: {{ aws_region }}"
+
+    - name: Create execution plan
+      command: terraform plan -var="meta_bucket={{ meta_bucket }}" -var="region={{ aws_region }}" -out="tfplan" 
+      register: created_tfplan
+
+    - name: Deploy the planned configuration
+      command: terraform apply --auto-approve "tfplan" 
+      register: infrastructure_deployed
+
+    #- debug:
+    #    var: infrastructure_deployed.stdout_lines[-1] | regex_search('\d+.\d+.\d+.\d+')
+
+    - name: Extract host IP address from the Terraform output
+      ansible.builtin.set_fact:
+        host_ip_address: "{{ infrastructure_deployed.stdout_lines[-1] | regex_search('\\d+.\\d+.\\d+.\\d+') }}"
+    
+    - name: Set Grafana URL
+      ansible.builtin.set_fact:
+        grafana_url: "http://{{ host_ip_address }}/graf"
+
+    - name: Waiting for 90 seconds for the VM to be booted up..
+      ansible.builtin.wait_for:
+        timeout: 90 # Sleep for 90 seconds
+    
+    - name: Retrying until the VM is booted up. This may take a moment, ignore transient failures..
+      uri:
+        url: "{{ grafana_url }}"
+        return_content: yes
+        validate_certs: no
+        status_code:
+          - 200
+      until: uri_output.status == 200
+      delay: 5 # Every 5 seconds
+      retries: 18 # Retries for another 90 seconds
+      register: uri_output
+
+    - debug: 
+        msg: 
+          - "World Map Dashboard:    http://{{ host_ip_address }}/map"
+          - "Sys Charts Dashboard:   http://{{ host_ip_address }}/charts"
+          - "Grafana Homepage:       http://{{ host_ip_address }}/graf"
+          - "Prometheus Homepage:    http://{{ host_ip_address }}/prom"

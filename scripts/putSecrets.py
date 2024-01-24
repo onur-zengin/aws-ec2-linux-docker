@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import boto3
+import subprocess
 from botocore.exceptions import ClientError
 
 
@@ -15,8 +16,11 @@ def encode_pem(path, file_name):
     try:   
         encoded = os.popen(cmd).read()
     except:
-        print("Unknown error (1). *.pem files could not be read")
-        sys.exit(3)
+        raise
+    else:
+        if encoded == "":
+            print("Error (1). *.pem files could not be read")
+            sys.exit(3)
     
     return(encoded)
 
@@ -57,8 +61,8 @@ def create_secret(secret_string, domain_name, region_name):
 
 def edit_conf(path, file_name, domain_name):
 
-    sed_cmd1 = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/%s/%s" % (domain_name, path, file_name) 
-    sed_cmd2 = "sed -i '' -e 's/#py#//g' ../configs/%s/%s" % (path, file_name)
+    sed_cmd1 = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ./configs/%s/%s" % (domain_name, path, file_name) 
+    sed_cmd2 = "sed -i '' -e 's/#py#//g' ./configs/%s/%s" % (path, file_name)
 
     # Update the configuration files with domain_name;
     
@@ -99,7 +103,7 @@ def main(args):
     
     for i in conf:
         edit_conf(i, conf[i], args[2])
-    print("Nginx & Docker configurations updated to include domain name.")
+    print("Nginx & Docker configurations updated to include the domain name.")
 
 
 if __name__ == '__main__':

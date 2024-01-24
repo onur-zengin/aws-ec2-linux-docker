@@ -91,6 +91,12 @@ variables.tf                    # Environment variables for the main instance. 
 
 - **3.2.1.** Go to AWS Console & create a dedicated user for the infrastructure automation tasks;
 
+IAM > Users > Create User 
+- Specify User Name
+- Set Permissions > Attach Policies Directly > Choose Administrator Access
+- Create Access Key > Other
+
+
 </tbc> define least privilege permissions </tbc> 
 
 - **3.2.2.** Configure AWS CLI environment on the local machine (or cloud-based IDE) with the access keys obtained from #3.2.1;
@@ -171,9 +177,15 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 #### 4.2. Updating Prometheus Alerting Rules
 
-- **4.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary
+- **4.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary.
 
-- **4.2.2.** Go to step #5 Updating Cloud Deployment
+- **4.2.2.** Save the changes made inside the local working directory and/or its subfolders.
+
+- **4.2.3.** Apply changes;
+```
+ansible-playbook update-infrastructure.yml -i localhost,
+```
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
 **Note:** These steps may be replaced with a CI/CD pipeline.
 
@@ -234,42 +246,22 @@ These files will be updated when the certificate renews.
 
 - **4.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
-cd scripts/
-chmod +x putSecrets.py
-sudo ./putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
+chmod +x ./scripts/putSecrets.py
+sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 ```
 * The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager.
 
 Sample usage;
 ```
-sudo ./putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
+sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
 ```
 
-- **4.5.4.** Go to step #5 Updating Cloud Deployment
-
-
-## 5. UPDATING CLOUD DEPLOYMENT
-
-#### 5.1. PREREQUISITES
-
-Same as #3.1
-
-#### 5.2. PROCEDURE
-
-- **5.2.0.** Save the changes made inside the local working directory and/or its subfolders.
-
-- **5.2.1.** Create a new execution plan (Terraform will auto-detect the changes);
+- **4.5.4.** Apply changes;
 ```
-terraform plan -out="tfplan" -var .... region
+ansible-playbook update-infrastructure.yml -i localhost,
 ```
-
-- **5.2.2.** Apply the planned configuration;
-```
-terraform apply "tfplan" [-auto-approve]
-```
-* Review changes and respond with 'yes' to the prompt, or use the '-auto-approve' option.
-
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
+
 
 
 ## 6. IN-SERVER CONFIG UPDATES >>> CONSIDER MOVING THIS UNDER LOCAL DEPL.
@@ -345,4 +337,5 @@ n/a
 * Email alerts
 * Prometheus alerts & records configuration to be optimized 
 * Test & document local deployment procedure (on MacOS)
-* Complete the demo_fargate module to demonstrate container monitoring as well.
+* Complete the demo_fargate module to demonstrate container monitoring 
+* Automate certificate renewal
