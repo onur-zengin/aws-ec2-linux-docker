@@ -6,7 +6,7 @@
 
   tasks:
 
-    - name: Capture deployment variables from local file
+    - name: Capture deployment variables from local state file
       ansible.builtin.include_vars:
         file: ansible-state.json
 

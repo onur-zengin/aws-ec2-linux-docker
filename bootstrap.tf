@@ -111,7 +111,7 @@ data "cloudinit_config" "config" {
         - echo "## Importing TLS certificate from AWS Secrets Manager"
         - [ chown, -R, docker:docker, /etc/docker ]
         - [ cd, /etc/docker/nginx/ssl ]
-        - [ su, docker, -c, "./getSecrets.py cert_encoded ${var.region}" ]
+        - [ su, docker, -c, "./getSecrets.py cert-encoded ${var.region}" ]
         #- [ deactivate ]
         # The following is executed in place of its copy under bootcmd during first boot
         - echo "## Downloading & Booting up containers" 

@@ -36,19 +36,19 @@ def create_secret(secret_string, domain_name, region_name):
 
     try:
         response = client.create_secret(
-            Name='cert_encoded',
+            Name='cert-encoded',
             Description='Certificate chain and private key file for %s. Created by putSecrets.py.' % domain_name,
             SecretString = json.dumps(secret_string),
             ForceOverwriteReplicaSecret=True
         )
     except ClientError as e:
         if "ResourceExistsException" in str(e):
-            print("A version of cert_encoded already exists. Trying to update..")
+            print("A version of cert-encoded already exists. Trying to update..")
             response = client.put_secret_value(
-                SecretId='cert_encoded',
+                SecretId='cert-encoded',
                 SecretString=json.dumps(secret_string),
                 VersionStages=[
-                    'latest',
+                    'AWSCURRENT',
                 ]
             )
         else:
@@ -85,8 +85,8 @@ def main(args):
         path = path[:-1]
 
     cert = {
-        "fullchain" : encode_pem(path, "fullchain.pem"),
-        "privkey" : encode_pem(path, "privkey.pem")
+        "fullchain.pem_encoded" : encode_pem(path, "fullchain.pem"),
+        "privkey.pem_encoded" : encode_pem(path, "privkey.pem")
     }
 
     # Make an API call to AWS Secrets Manager;

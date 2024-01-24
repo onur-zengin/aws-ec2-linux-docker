@@ -89,13 +89,12 @@ variables.tf                    # Environment variables for the main instance. 
 
 #### 3.2. PROCEDURE
 
-- **3.2.1.** Go to AWS Console & create a dedicated user for the infrastructure automation tasks;
+- **3.2.1.** Go to AWS Console & create an IAM user for the infrastructure automation tasks;
 
 IAM > Users > Create User 
 - Specify User Name
 - Set Permissions > Attach Policies Directly > Choose Administrator Access
 - Create Access Key > Other
-
 
 </tbc> define least privilege permissions </tbc> 
 
@@ -121,7 +120,7 @@ cp ~/.ssh/aws_linux.pub ./keys
 
 - **3.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
-ansible-playbook deploy-infrastructure.yml -i localhost,
+ansible-playbook ansible-deploy.yml -i localhost,
 ```
 * Do not skip the trailing comma (,) after localhost
 
@@ -200,7 +199,7 @@ ansible-playbook update-infrastructure.yml -i localhost,
 #### 4.4. Prometheus & Grafana Admin Password Resets
 
 - **4.4.1.** Connect to the EC2 instance;
-```
+``
 ssh -i ~/.ssh/aws_linux ubuntu@[HOST_IP_ADRESS]
 ```
 
@@ -258,9 +257,9 @@ sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-centr
 
 - **4.5.4.** Apply changes;
 ```
-ansible-playbook update-infrastructure.yml -i localhost,
+ansible-playbook ansible-update.yml -i localhost,
 ```
-* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are going to be persisted.
 
 
 
@@ -297,12 +296,16 @@ Same as #3.1
 
 #### 7.2. PROCEDURE
 
-Execute the following Ansible playbook to destroy the Terraform infrastructure;
+- **7.2.1.** Execute the following Ansible playbook to destroy the Terraform infrastructure;
 ```
-ansible-playbook destroy-infrastructure.yml -i localhost,
+ansible-playbook ansible-destroy.yml -i localhost,
 ```
-* The command will prompt for the AWS region and S3 backend bucket name that was used during the initial deployment, which may be found both in the deployment logs and the AWS S3 console.
+* The command will look for the AWS region information and S3 bucket names inside `ansible-state.json` which was auto-created during the initial deployment.
 
+- **7.2.2.** If you had also uploaded your TLS certificate to AWS Secrets Manager (as shown in #4.5.3), then remove it with the following command;
+```
+aws secretsmanager delete-secret --secret-id cert-encoded --force-delete-without-recovery --region [AWS_REGION]
+```
 
 ## 8. LOCAL DEPLOYMENT 
 

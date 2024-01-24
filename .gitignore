@@ -44,3 +44,4 @@ test-*.tf
 *.pem
 modules/demo_fargate/src/*
 configs/prometheus/ref/*
+ansible-state.json
