@@ -43,7 +43,7 @@
           "backend_bucket": "{{ backend_bucket }}",
           "meta_bucket": "{{ meta_bucket }}"
           }
-        dest: deployment-state.json
+        dest: ansible-state.json
 
     - name: Create S3 bucket 
       amazon.aws.s3_bucket:

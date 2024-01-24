@@ -8,7 +8,7 @@
 
     - name: Capture deployment variables from local file
       ansible.builtin.include_vars:
-        file: deployment-state.json
+        file: ansible-state.json
 
     - debug:
         msg: "backend_bucket: {{ backend_bucket }}, meta_bucket: {{ meta_bucket }}, aws_region: {{ aws_region }}"
