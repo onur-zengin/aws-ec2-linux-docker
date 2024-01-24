@@ -4,7 +4,6 @@ import os
 import sys
 import json
 import boto3
-import subprocess
 from botocore.exceptions import ClientError
 
 
@@ -55,8 +54,9 @@ def create_secret(secret_string, domain_name, region_name):
             print("ClientError", e)
             sys.exit(3)
     except:
-        print("Unknown error (1).")
-        sys.exit(3)
+        raise
+    #    print("Unknown error (1).")
+    #    sys.exit(3)
 
 
 def edit_conf(path, file_name, domain_name):
