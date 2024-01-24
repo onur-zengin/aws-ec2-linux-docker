@@ -43,30 +43,18 @@ def create_secret(secret_string, domain_name, region_name):
 
 def edit_conf(path, file_name, domain_name):
 
-    # Update the Nginx configuration with domain_name;
+    sed_cmd1 = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/%s/%s" % (domain_name, path, file_name) 
+    sed_cmd2 = "sed -i '' -e 's/#py#//g' ../configs/%s/%s" % (path, file_name)
+
+    # Update the configuration files with domain_name;
+    
     try:    
-        f = open("../configs/%s/%s" % (path, file_name), 'a+')
-        f.seek(0)
-        lines = f.readlines()
-        for line in lines:
-            if "DOMAIN_NAME" in line:
-                line.replace("DOMAIN_NAME", domain_name)
-                if line[0] == "#":
-                    f.write(line[1:])
-        f.close()
+        os.system(sed_cmd1)
+        os.system(sed_cmd2)
     except:
         raise
-
-    #sed_cmd = "sed -i '' -e 's/DOMAIN_NAME/%s/g' ../configs/%s/%s" % (domain_name, path, file_name)
-
-    # Update the Nginx configuration with domain_name;
-    #try:    
-    #    os.system(sed_cmd)
-    #except:
     #    print("Unknown error (3).")
     #    sys.exit(3)
-
-
 
 
 def encode_pem(path, file_name):
