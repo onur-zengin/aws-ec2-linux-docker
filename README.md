@@ -41,32 +41,31 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 
 #### 2.2. PROCEDURE
 
-- **2.2.1.** Go to AWS Console & create an IAM user for the infrastructure automation tasks;
+**2.2.1.** Go to AWS Console & create an IAM user for the infrastructure automation tasks;
 
 * It is strongly recommended by AWS not to create access keys for the root account.
-
 ```
 AWS Console > IAM > Users:
 - Create User > Specify User Name
-- Set Permissions > Attach Policies Directly > Choose 'Administrator Access'
+- Set Permissions > Attach Policies Directly > Choose 'Administrator Access'*
 - Create Access Key > Other
-
-* 'Administrator Access' may be replaced with a custom least-privilege permissions policy later. 
 ```
+* 'Administrator Access' may be replaced with a custom least-privilege permissions policy in a future release. 
 
-- **2.2.2.** Configure AWS CLI environment on the local terminal (or cloud-based IDE) with the access keys obtained from #2.2.1;
+
+**2.2.2.** Configure AWS CLI environment on the local terminal (or cloud-based IDE) with the access keys obtained from #2.2.1;
 ```
 aws configure
 ```
 Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
-- **2.2.3.** Clone the remote repository onto the local terminal and change working directory;
+**2.2.3.** Clone the remote repository onto the local terminal and change working directory;
 ```
 git clone https://github.com/onur-zengin/aws-ec2-linux-docker.git
 cd aws-ec2-linux-docker/
 ```
 
-- **2.2.4.** Create an RSA key pair in your home directory and copy the public key `aws_linux.pub` here under the `./keys` directory;
+**2.2.4.** Create an RSA key pair in your home directory and copy the public key `aws_linux.pub` here under the `./keys` directory;
 ```
 ssh-keygen -t rsa -m PEM -f ~/.ssh/aws_linux
 chmod 400 ~/.ssh/aws_linux
@@ -74,7 +73,7 @@ cp ~/.ssh/aws_linux.pub ./keys
 ```
 * The key pair will be used for SSH access to the EC2 instance later.
 
-- **2.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
+**2.2.5.** Execute the Ansible playbook to deploy the Terraform infrastructure;
 ```
 ansible-playbook ansible-deploy.yml -i localhost,
 ```
