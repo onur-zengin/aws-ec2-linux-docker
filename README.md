@@ -101,7 +101,7 @@ ansible-playbook ansible-deploy.yml -i localhost,
 
 #### 3.1. Prometheus Targets Setup
 
-- **3.1.1.** Install the Prometheus node_exporter binary on the target hosts and make sure it is running;
+**3.1.1.** Install the Prometheus node_exporter binary on the target hosts and make sure it is running;
 
 |                | release    |
 | -------------  | ----------:|
@@ -120,28 +120,28 @@ cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-**Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
+- **Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
 
-- **3.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
+**3.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
 
-- **3.1.3.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add new targets to the configuration as applicable
+**3.1.3.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add new targets to the configuration as applicable
 
-- **3.1.4.** Go to step #4 Updating Cloud Deployment
+**3.1.4.** Go to step #4 Updating Cloud Deployment
 
 
 #### 3.2. Updating Prometheus Alerting Rules
 
-- **3.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary.
+**3.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary.
 
-- **3.2.2.** Save the changes made inside the local working directory and/or its subfolders.
+**3.2.2.** Save the changes made inside the local working directory and/or its subfolders.
 
-- **3.2.3.** Apply changes;
+**3.2.3.** Apply changes;
 ```
 ansible-playbook update-infrastructure.yml -i localhost,
 ```
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
-**Note:** These steps may be replaced with a CI/CD pipeline.
+- **Note:** These steps may be replaced with a CI/CD pipeline.
 
 
 #### 3.3. Grafana Dashboards Setup
@@ -153,17 +153,17 @@ ansible-playbook update-infrastructure.yml -i localhost,
 
 #### 3.4. Prometheus & Grafana Admin Password Resets
 
-- **3.4.1.** Connect to the EC2 instance;
+**3.4.1.** Connect to the EC2 instance;
 ```
 ssh -i ~/.ssh/aws_linux ubuntu@[HOST_IP_ADRESS]
 ```
 
-- **3.4.2.** Prometheus; 
+**3.4.2.** Prometheus; 
 ```
 tbc
 ```
 
-- **3.4.3.** Grafana;
+**3.4.3.** Grafana;
 ```
 sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
@@ -171,20 +171,20 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 
 #### 3.5. Domain Setup (optional)
 
-- **3.5.1.** Go to your DNS zone configuration and create an A record for the static IP address;
+**3.5.1.** Go to your DNS zone configuration and create an A record for the static IP address;
 ```
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 vmon.foo.com    A       XX.XX.XX.XX
 ```
 
-- **3.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
+**3.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
 
-Sample instructions for requesting a certificate from Let's Encrypt can be found at;
+* Sample instructions for requesting a certificate from Let's Encrypt can be found at;
 ```
 https://certbot.eff.org/
 ```
 
-Sample output;
+* Sample output;
 ```
 sudo certbot certonly --dns-route53 -d *.foo.com
 
@@ -198,19 +198,19 @@ This certificate expires on 2024-04-21.
 These files will be updated when the certificate renews.
 ```
 
-- **3.5.3.** Upload the TLS certificate to AWS Secrets Manager;
+**3.5.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
 chmod +x ./scripts/putSecrets.py
 sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 ```
-* The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager.
+* The Python script will look for `fullchain.pem` and `privkey.pem` inside the specified path and upload them to AWS Secrets Manager. Subsequently, it will update the local configuration files for Docker & Nginx.
 
-Sample usage;
+* Sample usage;
 ```
 sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
 ```
 
-- **3.5.4.** Apply changes;
+**3.5.4.** Apply changes;
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```

@@ -21,8 +21,8 @@
       command: terraform apply --auto-approve "tfplan" 
       register: infrastructure_deployed
 
-    #- debug:
-    #    var: infrastructure_deployed.stdout_lines[-1] | regex_search('\d+.\d+.\d+.\d+')
+    - debug:
+        var: infrastructure_deployed.stdout_lines[-1] | regex_search('\d+.\d+.\d+.\d+')
 
     - name: Extract host IP address from the Terraform output
       ansible.builtin.set_fact:
