@@ -47,7 +47,7 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 ```
 AWS Console > IAM > Users:
 - Create User > Specify User Name
-- Set Permissions > Attach Policies Directly > Choose 'Administrator Access'*
+- Set Permissions > Attach Policies Directly > Choose 'Administrator Access'
 - Create Access Key > Other
 ```
 * 'Administrator Access' may be replaced with a custom least-privilege permissions policy in a future release. 
@@ -57,7 +57,7 @@ AWS Console > IAM > Users:
 ```
 aws configure
 ```
-Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
+* Follow the prompts to configure AWS Access Key ID and the Secret Access Key.
 
 **2.2.3.** Clone the remote repository onto the local terminal and change working directory;
 ```
@@ -293,8 +293,11 @@ n/a
 ## 11. PLANNED FOR LATER
 
 * Email alerts
+* Add authentication to Prometheus web interface
 * Prometheus alerts & records configuration to be optimized 
+* Optimize memory usage on the main host
 * Test & document local deployment procedure (on MacOS)
+* Define least-privilege permissions for AWS IAM policies
 * Complete the demo_fargate module to demonstrate container monitoring 
 * Automate certificate renewal
 
