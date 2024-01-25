@@ -3,14 +3,14 @@
 ![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
 
 **[1. Description](#1-description)**<br>
-**[2. Directory Structure](#2-directory-structure)**<br>
-**[3. Cloud Deployment](#3-cloud-deployment)**<br>
-**[4. Updating Cloud Deployment](#4-updating-cloud-deployment)**<br>
-**[5. Removing Cloud Deployment](#5-removing-cloud-deployment)**<br>
-**[6. Local Deployment](#6-local-deployment)**<br>
-**[7. Changelog](#7-changelog)**<br>
-**[8. Known Issues](#8-known-issues)**<br>
-**[9. Planned For Later](#9-planned-for-later)**<br>
+**[2. Cloud Deployment](#3-cloud-deployment)**<br>
+**[3. Updating Cloud Deployment](#4-updating-cloud-deployment)**<br>
+**[4. Removing Cloud Deployment](#5-removing-cloud-deployment)**<br>
+**[5. Local Deployment](#6-local-deployment)**<br>
+**[6. Changelog](#7-changelog)**<br>
+**[7. Known Issues](#8-known-issues)**<br>
+**[8. Planned For Later](#9-planned-for-later)**<br>
+**[Appendix. Directory Structure](#2-directory-structure)**<br>
 
 
 ## 1. DESCRIPTION
@@ -48,10 +48,10 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 ```
 AWS Console > IAM > Users:
 - Create User > Specify User Name
-- Set Permissions > Attach Policies Directly > Choose _'Administrator Access'_
+- Set Permissions > Attach Policies Directly > Choose 'Administrator Access'
 - Create Access Key > Other
 
-* _This_ may be replaced with a least-privilege permissions policy later. 
+* 'Administrator Access' may be replaced with a custom least-privilege permissions policy later. 
 ```
 
 - **2.2.2.** Configure AWS CLI environment on the local terminal (or cloud-based IDE) with the access keys obtained from #2.2.1;
@@ -327,8 +327,8 @@ n/a
 ├── modules                        
 │   │   ├── demo_ec2            # (optional) Demo module to setup EC2 VMs as synthetic targets for Prometheus
 │   │   ├── demo_fargate        # (optional) Demo module to setup Fargate Containers as synthetic targets for Prometheus
-│   │   ├── grafana             # Post-installation Grafana setup as Terraform IaC (deprecated & replaced with Ansible)
-├── policies                    # AWS IAM resource policies                        
+│   │   ├── grafana             # Post-installation Grafana setup as Terraform IaC (deprecated & replaced with Ansible tasks)
+├── policies                    # AWS IAM resource-based policies                        
 │   ├── ec2_assumeRole.json
 │   ├── ec2_getSecrets.json
 │   ├── s3_bucketPolicy.json
