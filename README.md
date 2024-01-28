@@ -15,7 +15,7 @@
 
 ## 1. DESCRIPTION
 
-Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project.
+Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project with Ansible deployment automation.
 
 Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
 
@@ -126,7 +126,11 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **3.1.3.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add new targets to the configuration as applicable
 
-**3.1.4.** Go to step #4 Updating Cloud Deployment
+**3.1.4.** Apply changes;
+```
+ansible-playbook ansible-update.yml -i localhost,
+```
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
 
 #### 3.2. Updating Prometheus Alerting Rules
@@ -137,7 +141,7 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 
 **3.2.3.** Apply changes;
 ```
-ansible-playbook update-infrastructure.yml -i localhost,
+ansible-playbook ansible-update.yml -i localhost,
 ```
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
@@ -214,7 +218,7 @@ sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-centr
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```
-* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are going to be persisted.
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
 
 
@@ -293,12 +297,13 @@ n/a
 ## 11. PLANNED FOR LATER
 
 * Email alerts
-* Add authentication to Prometheus web interface
+* Optimize memory usage on the main host (records.yml & swap space)
 * Prometheus alerts & records configuration to be optimized 
-* Optimize memory usage on the main host
-* Test & document local deployment procedure (on MacOS)
+* Add authentication to Prometheus web interface
 * Define least-privilege permissions for AWS IAM policies
-* Complete the demo_fargate module to demonstrate container monitoring 
+* EBS Data Snapshot & Backup 
+* Complete the demo_fargate module to test container monitoring 
+* Test & document local deployment procedure (on MacOS)
 * Automate certificate renewal
 
 
@@ -321,7 +326,7 @@ n/a
 │   │   ├── alerts.yml
 │   │   ├── prometheus.yml      # Main configuration file for Prometheus (including targets)
 │   │   ├── records.yml         # Frequently queried metrics to pre-populate TSDB
-├── images                      # (optional) Image files to be displayed as nodes on Grafana dashboard  
+├── images                      # Logo images to differentiate the vmon host from other nodes on the world map dashboard  
 │   ├── logo_base.svg    
 │   ├── logo_alert.svg      
 ├── keys                        

@@ -52,5 +52,5 @@
         msg: 
           - "World Map Dashboard:    http://{{ host_ip_address }}/map"
           - "Sys Charts Dashboard:   http://{{ host_ip_address }}/charts"
-          - "Grafana Homepage:       http://{{ host_ip_address }}/graf"
-          - "Prometheus Homepage:    http://{{ host_ip_address }}/prom"
+          - "Grafana Console:        http://{{ host_ip_address }}/graf"
+          - "Prometheus Console:     http://{{ host_ip_address }}/prom"
