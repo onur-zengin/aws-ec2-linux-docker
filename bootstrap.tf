@@ -116,7 +116,8 @@ data "cloudinit_config" "config" {
         # The following is executed in place of its copy under bootcmd during first boot
         - echo "## Downloading & Booting up containers" 
         - [ cd, /etc/docker/ ]
-        - [ su, docker, -c, "docker compose up -d" ]
+        - [ su, docker, -c, "docker compose up --quiet-pull
+         -d" ]
       final_message: "## The system is up after $UPTIME seconds"
     EOF
   }
