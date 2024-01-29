@@ -1,6 +1,6 @@
 # morangie
 
-![readme_image](https://github.com/onur-zengin/morangie/assets/10590811/023dd08c-0832-4d85-a358-5c84890d438e)
+![image](https://github.com/onur-zengin/aws-ec2-linux-docker/assets/10590811/dea45622-92dd-4ef0-98e9-6b2120af6946)
 
 **[1. Description](#1-description)**<br>
 **[2. Cloud Deployment](#3-cloud-deployment)**<br>
