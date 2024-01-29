@@ -24,6 +24,7 @@ data "cloudinit_config" "config" {
           #groups: [root]
           sudo: ["ALL=(ALL) NOPASSWD:ALL"]
           shell: /bin/bash
+          homedir: /etc/docker
       # Cloud-init documentation confirms that disk definitions for AWS not yet implemented at the time of writing. https://cloudinit.readthedocs.io/en/23.2.2/reference/examples.html
       # fs_setup:
       #  - filesystem: xfs

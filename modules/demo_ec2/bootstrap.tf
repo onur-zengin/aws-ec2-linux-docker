@@ -17,7 +17,7 @@ data "cloudinit_config" "demo_config" {
       write_files:
         - path: /etc/cron.d/stress
           content: |
-            */5 * * * * root stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 90s
+            */5 * * * * root stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 120s
           owner: root:root
           permissions: '0644'
       bootcmd:

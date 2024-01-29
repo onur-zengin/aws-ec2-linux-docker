@@ -212,13 +212,13 @@ resource "aws_s3_object" "coordinates" {
 
 resource "aws_s3_object" "base_logo" {
   bucket = aws_s3_bucket.meta_bucket.id
-  key    = "base_logo.svg"
+  key    = "logo_base.svg"
   source = "./images/logo_base.svg"
 }
 
 
 resource "aws_s3_object" "red_logo" {
   bucket = aws_s3_bucket.meta_bucket.id
-  key    = "red_logo.svg"
+  key    = "logo_alert.svg"
   source = "./images/logo_alert.svg"
 }

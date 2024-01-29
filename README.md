@@ -94,7 +94,7 @@ ansible-playbook ansible-deploy.yml -i localhost,
 
 * Both Prometheus & Grafana will be installed with the default admin password: `admin`. See procedure #3.4 below to change it.
 
-* If / when you also complete procedure #3.5 (optional), then the web server will redirect connections to secure (HTTPS) URLs instead.
+* If / when you also complete procedure #3.3 (optional), then the web server will redirect connection attempts to secure (HTTPS) URLs instead.
 
 
 ## 3. POST-DEPLOYMENT ACTIONS
@@ -107,7 +107,7 @@ ansible-playbook ansible-deploy.yml -i localhost,
 | -------------  | ----------:|
 | node_exporter  | >= 1.6.1   |
 
-* Sample installation procedure for Ubuntu Linux;
+* Sample installation procedure for Ubuntu Linux 22 - x64;
 ```
 sudo su -
 useradd pne
@@ -120,26 +120,28 @@ cd node_exporter-1.6.1.linux-amd64/
 su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 
-- **Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
+**3.1.2.** Verify that the node-exporter on the target host is responsive;
+```
+curl http://[TARGET_IP_ADDRESS]:9100/metrics
+```
+**3.1.3.** **Important:** Make sure to update the AWS Security Group and / or other firewalls in front of the target host(s), to allow incoming connections on TCP port 9100 and **only from** the HOST_IP_ADDRESS that was listed in the output of step #2.2.5.
 
-**3.1.2.** **Important:** Make sure to update the AWS Security Group and / or external firewalls fronting the target hosts, to allow incoming connections on TCP port 9100 **only from** the HOST_IP_ADDRESS which was listed in the output of step #3.2.5.
+**3.1.4.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add the new targets to the configuration as applicable.
 
-**3.1.3.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add new targets to the configuration as applicable
-
-**3.1.4.** Apply changes;
+**3.1.5.** Apply changes;
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
+- **Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
 
-#### 3.2. Updating Prometheus Alerting Rules
+
+#### 3.2. Updating Prometheus Alerting Rules (optional)
 
 **3.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary.
 
-**3.2.2.** Save the changes made inside the local working directory and/or its subfolders.
-
-**3.2.3.** Apply changes;
+**3.2.2.** Apply changes;
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```
@@ -148,40 +150,15 @@ ansible-playbook ansible-update.yml -i localhost,
 - **Note:** These steps may be replaced with a CI/CD pipeline.
 
 
-#### 3.3. Grafana Dashboards Setup
+#### 3.3. Domain Setup (optional)
 
-* This step is merged into #3.2.4; the Ansible playbook will install two dashboards (Sys Charts & World Map) into Grafana after creating the AWS infrastructure.
-
-* However, if you make any modifications to these pre-installed dashboards through the Grafana web interface, then do remember to save & export your updated configuration as JSON file(s). Those then can be placed under `configs/grafana/dashboard_*.json` to be auto-installed in a new deployment.
-
-
-#### 3.4. Prometheus & Grafana Admin Password Resets
-
-**3.4.1.** Connect to the EC2 instance;
-```
-ssh -i ~/.ssh/aws_linux ubuntu@[HOST_IP_ADRESS]
-```
-
-**3.4.2.** Prometheus; 
-```
-tbc
-```
-
-**3.4.3.** Grafana;
-```
-sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
-```
-
-
-#### 3.5. Domain Setup (optional)
-
-**3.5.1.** Go to your DNS zone configuration and create an A record for the static IP address;
+**3.3.1.** Go to your DNS zone configuration and create an A record for the static IP address;
 ```
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 vmon.foo.com    A       XX.XX.XX.XX
 ```
 
-**3.5.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
+**3.3.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
 
 * Sample instructions for requesting a certificate from Let's Encrypt can be found at;
 ```
@@ -202,7 +179,7 @@ This certificate expires on 2024-04-21.
 These files will be updated when the certificate renews.
 ```
 
-**3.5.3.** Upload the TLS certificate to AWS Secrets Manager;
+**3.3.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
 chmod +x ./scripts/putSecrets.py
 sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
@@ -214,63 +191,55 @@ sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
 ```
 
-**3.5.4.** Apply changes;
+**3.3.4.** Apply changes;
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
 
 
+#### 3.4. Prometheus & Grafana Admin Password Resets
 
-## 6. IN-SERVER CONFIG UPDATES >>> CONSIDER MOVING THIS UNDER LOCAL DEPL.
-
-In certain use cases (esp. for test & development purposes), it may be handy to modify configuration directly on the server, rather than locally updating config files (#4) and then pushing a new deployment (#5).
-
-The following is an example of how #4.2 can be performed directly on the server; 
-
-#### 6.1. Prerequisites
-
-- SSH access aws_linux.pub
-
-#### 6.2. Updating Prometheus Alerting Rules
-
-- **6.2.1.** (optional) SSH into the EC2 instance, and edit `/etc/prometheus/alerts.yml` as necessary
-
-- **6.2.2.** Validate the syntax;
+**3.4.1.** Connect to the EC2 instance;
 ```
-docker exec -u root $(docker ps | grep prom | awk {'print $1'}) promtool check rules /etc/prometheus/alerts.yml
+ssh -i ~/.ssh/aws_linux ubuntu@[HOST_IP_ADRESS]
 ```
-- **6.2.3.** Restart the Prometheus container;
+
+**3.4.2.** Prometheus; 
 ```
-cd /etc/docker
-docker compose kill -s SIGHUP prometheus 
+tbc
+```
+
+**3.4.3.** Grafana;
+```
+sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli admin reset-admin-password [NEW_PASSWORD]
 ```
 
 
-## 7. REMOVING CLOUD DEPLOYMENT
+## 4. REMOVING CLOUD DEPLOYMENT
 
-#### 7.1. PREREQUISITES
+#### 4.1. PREREQUISITES
 
 Same as #3.1
 
-#### 7.2. PROCEDURE
+#### 4.2. PROCEDURE
 
-- **7.2.1.** Execute the following Ansible playbook to destroy the Terraform infrastructure;
+- **4.2.1.** Execute the following Ansible playbook to destroy the Terraform infrastructure;
 ```
 ansible-playbook ansible-destroy.yml -i localhost,
 ```
 * The command will look for the AWS region information and S3 bucket names inside `ansible-state.json` which was auto-created during the initial deployment.
 
-- **7.2.2.** If you had also uploaded your TLS certificate to AWS Secrets Manager (as shown in #4.5.3), then remove it with the following command;
+- **4.2.2.** If you had also uploaded your TLS certificate to AWS Secrets Manager (as shown in #4.5.3), then remove it with the following command;
 ```
 aws secretsmanager delete-secret --secret-id cert-encoded --force-delete-without-recovery --region [AWS_REGION]
 ```
 
-## 8. LOCAL DEPLOYMENT 
+## 5. LOCAL DEPLOYMENT 
 
 For test & development purposes.
 
-#### 8.1. PRE-REQUISITES
+#### 5.1. PRE-REQUISITES
 
 * Following packages & dependencies to be installed on the local terminal;
 
@@ -279,22 +248,22 @@ For test & development purposes.
 | docker         | >=         |
 | docker-compose | >=         |
 
-#### 8.2. PROCEDURE
+#### 5.2. PROCEDURE
 
 </tbc>
 
 
-## 9. CHANGELOG
+## 6. CHANGELOG
 
 n/a
 
 
-## 10. KNOWN ISSUES
+## 7. KNOWN ISSUES
 
 n/a
 
 
-## 11. PLANNED FOR LATER
+## 8. PLANNED FOR LATER
 
 * Email alerts
 * Optimize memory usage on the main host (records.yml & swap space)

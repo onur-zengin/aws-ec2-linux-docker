@@ -93,7 +93,7 @@ resource "aws_route53_record" "a_record" {
 resource "aws_key_pair" "demo_key_pair" {
   count      = local.count                                                # Avoid orphan resources being created in demo regions with no EC2 present
   key_name   = "demo_linux"
-  public_key = file("./keys/aws_linux.pub")
+  public_key = file("${path.root}/keys/aws_linux.pub")
 
   tags = {
     Name = "${var.prefix}"
