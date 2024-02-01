@@ -18,7 +18,7 @@ variable "prefix" {
 
 variable "ubuntu_release" {
   description = "Ubuntu release for the host instance"
-  # major release changes should be bound to UAT
+  # Major release changes should be bound to regression testing. Note the dependencies inside bootstrap.tf file.
   type    = string
   default = "jammy-22"
 }

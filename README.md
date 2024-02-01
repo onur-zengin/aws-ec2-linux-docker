@@ -3,13 +3,12 @@
 ![image](https://github.com/onur-zengin/aws-ec2-linux-docker/assets/10590811/dea45622-92dd-4ef0-98e9-6b2120af6946)
 
 **[1. Description](#1-description)**<br>
-**[2. Cloud Deployment](#3-cloud-deployment)**<br>
-**[3. Updating Cloud Deployment](#4-updating-cloud-deployment)**<br>
-**[4. Removing Cloud Deployment](#5-removing-cloud-deployment)**<br>
-**[5. Local Deployment](#6-local-deployment)**<br>
-**[6. Changelog](#7-changelog)**<br>
-**[7. Known Issues](#8-known-issues)**<br>
-**[8. Planned For Later](#9-planned-for-later)**<br>
+**[2. Initial Deployment](#3-cloud-deployment)**<br>
+**[3. Updating Deployment](#4-updating-cloud-deployment)**<br>
+**[4. Removing Deployment](#5-removing-cloud-deployment)**<br>
+**[5. Changelog](#7-changelog)**<br>
+**[6. Known Issues](#8-known-issues)**<br>
+**[7. Planned For Later](#9-planned-for-later)**<br>
 **[Appendix. Directory Structure](#2-directory-structure)**<br>
 
 
@@ -20,7 +19,7 @@ Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Li
 Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
 
 
-## 2. CLOUD DEPLOYMENT
+## 2. INITIAL DEPLOYMENT
 
 #### 2.1. PREREQUISITES
 
@@ -97,7 +96,7 @@ ansible-playbook ansible-deploy.yml -i localhost,
 * If / when you also complete procedure #3.3 (optional), then the web server will redirect connection attempts to secure (HTTPS) URLs instead.
 
 
-## 3. POST-DEPLOYMENT ACTIONS
+## 3. UPDATING DEPLOYMENT
 
 #### 3.1. Prometheus Targets Setup
 
@@ -216,7 +215,7 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 ```
 
 
-## 4. REMOVING CLOUD DEPLOYMENT
+## 4. REMOVING DEPLOYMENT
 
 #### 4.1. PREREQUISITES
 
@@ -235,44 +234,26 @@ ansible-playbook ansible-destroy.yml -i localhost,
 aws secretsmanager delete-secret --secret-id cert-encoded --force-delete-without-recovery --region [AWS_REGION]
 ```
 
-## 5. LOCAL DEPLOYMENT 
 
-For test & development purposes.
-
-#### 5.1. PRE-REQUISITES
-
-* Following packages & dependencies to be installed on the local terminal;
-
-|                | release    |
-| -------------  | ----------:|
-| docker         | >=         |
-| docker-compose | >=         |
-
-#### 5.2. PROCEDURE
-
-</tbc>
-
-
-## 6. CHANGELOG
+## 5. CHANGELOG
 
 n/a
 
 
-## 7. KNOWN ISSUES
+## 6. KNOWN ISSUES
 
 n/a
 
 
-## 8. PLANNED FOR LATER
+## 7. PLANNED FOR LATER
 
-* Email alerts
-* Optimize memory usage on the main host (records.yml & swap space)
-* Prometheus alerts & records configuration to be optimized 
+* Add email alerting 
+* Optimize memory usage 
 * Add authentication to Prometheus web interface
 * Define least-privilege permissions for AWS IAM policies
-* EBS Data Snapshot & Backup 
+* Add Grafana deeplinks to worldmap dashboard
+* Add EBS Data Snapshot & Backup 
 * Complete the demo_fargate module to test container monitoring 
-* Test & document local deployment procedure (on MacOS)
 * Automate certificate renewal
 
 

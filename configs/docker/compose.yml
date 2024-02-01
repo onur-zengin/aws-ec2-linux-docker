@@ -12,7 +12,7 @@ volumes:
 
 services:
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:2.49.1                                        # Intentionally not using the :latest tag. Release upgrades should be bound to regression testing.
     ports:
       - 127.0.0.1:9090:9090
     volumes:
@@ -26,7 +26,7 @@ services:
     extra_hosts:
     - "host.docker.internal:host-gateway"                                # allow Prometheus container connect to the underlying host VM for HTTP scraping
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.3.1                                        # Intentionally not using the :latest tag. Release upgrades should be bound to regression testing.
     ports:
       - 127.0.0.1:3000:3000
     links:
@@ -40,7 +40,7 @@ services:
     networks:
       - nr-vnet
   nginx-proxy:
-    image: nginx
+    image: nginx:1.25.3                                                   # Intentionally not using the :latest tag. Release upgrades should be bound to regression testing.
     ports:
       - "80:80"
       - "443:443"
@@ -50,6 +50,5 @@ services:
     volumes:
       - /etc/docker/nginx/conf.d:/etc/nginx/conf.d
       - /etc/docker/nginx/ssl:/etc/nginx/ssl
-    #  - /etc/docker/www:/var/www
     networks:
       - nr-vnet
