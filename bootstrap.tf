@@ -23,6 +23,7 @@ data "cloudinit_config" "config" {
           shell: /bin/bash
           sudo: ALL=(ALL) NOPASSWD:ALL
           lock_passwd: true
+          homedir: /etc/docker
       # Cloud-init documentation confirms that disk definitions for AWS not yet implemented at the time of writing. https://cloudinit.readthedocs.io/en/23.2.2/reference/examples.html
       # fs_setup:
       #  - filesystem: xfs
@@ -69,7 +70,7 @@ data "cloudinit_config" "config" {
           permissions: '0744'
       bootcmd:
       # bootcmd runs on every boot.
-        # During first boot, runcmd (at the bottom) will take over & complete. 
+        # During the first boot, runcmd (at the bottom) will take over & complete this part. 
         - [ echo, "## Booting up containers (ignore warnings during first boot)" ]
         - [ cd, /etc/docker/ ]
         - [ su, docker, -c, "docker compose up -d" ]
