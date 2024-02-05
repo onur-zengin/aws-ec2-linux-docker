@@ -7,7 +7,7 @@ data "cloudinit_config" "config" {
     content      = <<-EOF
       package_update: true
       package_upgrade: true
-      packages:
+      # packages:
       # Replaced by manual installation. See "runcmd:" below.
       #  - docker.io
       #  - docker-compose
@@ -77,7 +77,7 @@ data "cloudinit_config" "config" {
       # runcmd runs only during first boot, after bootcmd.
         - [ echo, "## Mounting data volume" ]
         # If there is an existing filesystem on the data volume, mkfs (by default) will detect it & skip.
-        - export EBS_DEVICE_NAME = "$(lsblk | grep disk | grep -v 8G | awk {'print $1'})"
+        - export EBS_DEVICE_NAME="$(lsblk | grep disk | grep -v 8G | awk {'print $1'})"
         - [ mkfs, -t, xfs, /dev/$EBS_DEVICE_NAME ]
         - [ xfs_admin, -L, data, /dev/$EBS_DEVICE_NAME ]
         - [ mkdir, /data ]
