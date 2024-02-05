@@ -12,7 +12,7 @@ volumes:
 
 services:
   prometheus:
-    image: prom/prometheus:2.49.1                                        # Intentionally not using the :latest tag. Release upgrades should be bound to regression testing.
+    image: prom/prometheus:v2.49.1                                       # Intentionally not using the :latest tag. Release upgrades should be bound to regression testing.
     ports:
       - 127.0.0.1:9090:9090
     volumes:
