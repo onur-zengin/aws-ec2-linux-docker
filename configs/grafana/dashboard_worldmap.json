@@ -443,7 +443,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "label_replace(label_replace(ALERTS{alertname!=\"Node down\", job=\"pne_clients\", alertstate=\"firing\"}, \"region\", \"us-east-1\", \"instance\", \"nyc(.*)\"), \"region\", \"us-west-1\", \"instance\", \"sfc(.*)\")",
+          "expr": "label_replace(ALERTS{alertname!=\"Node down\", job=\"pne_clients\", alertstate=\"firing\"}, \"region\", \"eu-central-1\", \"instance\", \"fra(.*)\")",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,

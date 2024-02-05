@@ -69,8 +69,8 @@ data "cloudinit_config" "config" {
           permissions: '0744'
       bootcmd:
       # bootcmd runs on every boot.
-        # During first boot, runcmd (see below) will take this over & complete. 
-        - [ echo, "## Booting up containers" ]
+        # During first boot, runcmd (at the bottom) will take over & complete. 
+        - [ echo, "## Booting up containers (ignore warnings during first boot)" ]
         - [ cd, /etc/docker/ ]
         - [ su, docker, -c, "docker compose up -d" ]
       runcmd:
@@ -83,7 +83,7 @@ data "cloudinit_config" "config" {
         - mkdir /data
         - mount -t xfs -o defaults,nofail /dev/$EBS_DEVICE_NAME /data
         - [ echo, "## Updating fstab for future reboots" ]
-        - echo $(sudo blkid | grep -i 'label=\"data\"' |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab
+        - echo $(sudo blkid | grep -i "label=\"data\"" |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab
         - echo $(cat /etc/fstab)
         - [ echo, "## Downloading & installing node exporter" ]
         - [ mkdir, -p, /usr/local/bin/prometheus_ne ]
