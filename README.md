@@ -34,7 +34,6 @@ Designed as a single-instance monitoring & visualization solution (on AWS EC2) t
 | Python3        | >= 3.9.6   |
 | Pip3           | >= 23.3.2  |
 | Boto3          | >= 1.34.23 |
-| Botocore       | >= 1.34.23 |
 | Ansible        | >= 2.15.8  |
 
 

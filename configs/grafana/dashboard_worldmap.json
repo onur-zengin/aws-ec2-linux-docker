@@ -2,7 +2,7 @@
   "__inputs": [
     {
       "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
+      "label": "prometheus",
       "description": "",
       "type": "datasource",
       "pluginId": "prometheus",
@@ -21,7 +21,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.2.2"
+      "version": "10.3.1"
     },
     {
       "type": "datasource",
@@ -58,7 +58,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheusdatasource"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -72,6 +72,7 @@
               "viz": false
             }
           },
+          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -85,7 +86,8 @@
                 "value": 1000
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -149,7 +151,7 @@
             },
             "filterData": {
               "id": "byRefId",
-              "options": "B"
+              "options": "E"
             },
             "location": {
               "gazetteer": "GEO_FILE",
@@ -198,7 +200,7 @@
             },
             "filterData": {
               "id": "byRefId",
-              "options": "A"
+              "options": "C"
             },
             "location": {
               "gazetteer": "GEO_FILE",
@@ -218,7 +220,7 @@
                 "color": {
                   "fixed": "red"
                 },
-                "opacity": 0.4,
+                "opacity": 0.6,
                 "rotation": {
                   "fixed": 0,
                   "max": 360,
@@ -231,6 +233,7 @@
                   "min": 2
                 },
                 "symbol": {
+                  "field": "",
                   "fixed": "img/icons/marker/circle.svg",
                   "mode": "fixed"
                 },
@@ -249,7 +252,7 @@
             },
             "filterData": {
               "id": "byRefId",
-              "options": "C"
+              "options": "D"
             },
             "location": {
               "gazetteer": "GEO_FILE",
@@ -275,11 +278,12 @@
                   "mode": "mod"
                 },
                 "size": {
-                  "fixed": 14,
+                  "fixed": 12,
                   "max": 15,
                   "min": 2
                 },
                 "symbol": {
+                  "field": "",
                   "fixed": "LOGO_BASE",
                   "mode": "fixed"
                 },
@@ -298,7 +302,7 @@
             },
             "filterData": {
               "id": "byRefId",
-              "options": "D"
+              "options": "A"
             },
             "location": {
               "gazetteer": "GEO_FILE",
@@ -306,6 +310,56 @@
               "mode": "lookup"
             },
             "name": "Base",
+            "tooltip": true,
+            "type": "markers"
+          },
+          {
+            "config": {
+              "showLegend": false,
+              "style": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "opacity": 0.6,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 15,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "field": "",
+                  "fixed": "LOGO_ALERT",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "filterData": {
+              "id": "byRefId",
+              "options": "B"
+            },
+            "location": {
+              "gazetteer": "GEO_FILE",
+              "lookup": "region",
+              "mode": "lookup"
+            },
+            "name": "Base_Warning",
             "tooltip": true,
             "type": "markers"
           }
@@ -316,22 +370,22 @@
         "view": {
           "allLayers": true,
           "id": "coords",
-          "lat": 30,
-          "lon": 14,
-          "zoom": 1
+          "lat": 32.616166,
+          "lon": 15.521817,
+          "zoom": 2.4
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheusdatasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "max by(instance, country, region) (go_info{job=\"nrv_clients\"})",
+          "expr": "max by(instance, country, region, stage, job) (go_info{job=\"pne_host\"})",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -345,12 +399,12 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheusdatasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "go_info{job=\"nrv_host\"}",
+          "expr": "ALERTS{job=\"pne_host\", alertstate=\"firing\"}",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -358,37 +412,38 @@
           "instant": true,
           "legendFormat": "",
           "range": false,
-          "refId": "D",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheusdatasource"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "exemplar": false,
-          "expr": "ALERTS{alertname=\"Node down\"}",
-          "format": "table",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
           "refId": "B",
           "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheusdatasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "label_replace(label_replace(label_replace(ALERTS{alertname!=\"Node down\"}, \"region\", \"eu-west-2\", \"instance\", \"lon(.*)\"), \"region\", \"us-west-1\", \"instance\", \"sfc(.*)\"), \"region\", \"us-east-nyc\", \"instance\", \"nyc(.*)\")",
+          "expr": "max by(instance, country, region, stage, job) (go_info{job=\"pne_clients\"})",
+          "format": "table",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "range": false,
+          "refId": "C",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "label_replace(label_replace(ALERTS{alertname!=\"Node down\", job=\"pne_clients\", alertstate=\"firing\"}, \"region\", \"us-east-1\", \"instance\", \"nyc(.*)\"), \"region\", \"us-west-1\", \"instance\", \"sfc(.*)\")",
           "format": "table",
           "fullMetaSearch": false,
           "hide": false,
@@ -396,43 +451,44 @@
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
-          "refId": "C",
+          "refId": "D",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "exemplar": false,
+          "expr": "ALERTS{alertname=\"Node down\", alertstate=\"firing\"}",
+          "format": "table",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "E",
           "useBackend": false
         }
       ],
       "title": "Worldmap",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": true
-            },
-            "indexByName": {
-              "Time": 0,
-              "Value": 4,
-              "country": 2,
-              "instance": 3,
-              "region": 1
-            },
-            "renameByName": {}
-          }
-        }
-      ],
+      "transformations": [],
       "type": "geomap"
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "Prometheus",
-          "value": "f381f27f-d5e6-41b6-9941-6ef6d23be05b"
+          "text": "prometheus",
+          "value": "prometheusdatasource"
         },
         "hide": 0,
         "includeAll": false,
@@ -444,6 +500,28 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "3.79.164.232",
+          "value": "3.79.164.232"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "host",
+        "multi": false,
+        "name": "host",
+        "options": [
+          {
+            "selected": true,
+            "text": "3.79.164.232",
+            "value": "3.79.164.232"
+          }
+        ],
+        "query": "3.79.164.232",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -451,10 +529,12 @@
     "from": "now-15m",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "hidden": false
+  },
   "timezone": "",
   "title": "World Map",
   "uid": "w-map",
-  "version": 7,
+  "version": 31,
   "weekStart": ""
 }
