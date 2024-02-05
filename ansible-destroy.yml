@@ -33,7 +33,7 @@
       command: terraform destroy -var="meta_bucket={{ meta_bucket }}" -var="region={{ aws_region }}" --auto-approve 
       register: tf_infrastructure_destroyed
 
-    - name: Destroy the configuration
+    - name: Disable DDB Deletion Protection
       command: aws dynamodb update-table --table-name tfstate-lock-vmon --no-deletion-protection-enabled
       register: ddb_protection_disabled
 

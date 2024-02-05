@@ -75,16 +75,16 @@ data "cloudinit_config" "config" {
         - [ su, docker, -c, "docker compose up -d" ]
       runcmd:
       # runcmd runs only during first boot, after bootcmd.
-        - [ echo, "## Mounting data volume" ]
         # If there is an existing filesystem on the data volume, mkfs (by default) will detect it & skip.
-        - export EBS_DEVICE_NAME="$(lsblk | grep disk | grep -v 8G | awk {'print $1'})"
-        - [ mkfs, -t, xfs, /dev/$EBS_DEVICE_NAME ]
-        - [ xfs_admin, -L, data, /dev/$EBS_DEVICE_NAME ]
-        - [ mkdir, /data ]
-        - [ mount, -t, xfs, -o, "defaults,nofail", /dev/$EBS_DEVICE_NAME, /data ]
+        - [ echo, "## Mounting data volume" ]
+        - export EBS_DEVICE_NAME=$(lsblk | grep disk | grep -v 8G | awk {'print $1'})
+        - mkfs -t xfs /dev/$EBS_DEVICE_NAME
+        - xfs_admin -L data /dev/$EBS_DEVICE_NAME
+        - mkdir /data
+        - mount -t xfs -o defaults,nofail /dev/$EBS_DEVICE_NAME /data
         - [ echo, "## Updating fstab for future reboots" ]
-        - [ echo, "$(sudo blkid | grep -i 'label=\"data\"' |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab" ]
-        - [ echo, "$(cat /etc/fstab)" ] 
+        - echo $(sudo blkid | grep -i 'label=\"data\"' |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab
+        - echo $(cat /etc/fstab)
         - [ echo, "## Downloading & installing node exporter" ]
         - [ mkdir, -p, /usr/local/bin/prometheus_ne ]
         - [ cd, /usr/local/bin/prometheus_ne ]
