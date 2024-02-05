@@ -100,7 +100,7 @@
           - 200
       until: uri_output.status == 200
       delay: 5 # Every 5 seconds
-      retries: 18 # Retries for another 90 seconds
+      retries: 12 # Retries for another 60 seconds
       register: uri_output
 
     - name: Create Grafana Datasource
