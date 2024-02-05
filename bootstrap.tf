@@ -24,6 +24,7 @@ data "cloudinit_config" "config" {
           #groups: [root]
           sudo: ["ALL=(ALL) NOPASSWD:ALL"]
           shell: /bin/bash
+          homedir: /etc/docker
       # Cloud-init documentation confirms that disk definitions for AWS not yet implemented at the time of writing. https://cloudinit.readthedocs.io/en/23.2.2/reference/examples.html
       # fs_setup:
       #  - filesystem: xfs
@@ -84,7 +85,7 @@ data "cloudinit_config" "config" {
         - [ mkdir, /data ]
         - [ mount, -t, xfs, -o, "defaults,nofail", /dev/$EBS_DEVICE_NAME, /data ]
         - [ echo, "## Updating fstab for future reboots" ]
-        - [ echo, "$(sudo blkid | grep -i "label=\"data\"" |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab" ]
+        - [ echo, "$(sudo blkid | grep -i 'label=\"data\"' |  awk '{print $3}')$'\t'/data$'\t'xfs$'\t'defaults,nofail$'\t'0$'\t'2 >> /etc/fstab" ]
         - [ echo, "$(cat /etc/fstab)" ] 
         - [ echo, "## Downloading & installing node exporter" ]
         - [ mkdir, -p, /usr/local/bin/prometheus_ne ]
