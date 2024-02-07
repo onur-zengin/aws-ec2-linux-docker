@@ -31,9 +31,9 @@ data "cloudinit_config" "demo_config" {
         - echo "## Installing the stress utility"
         - amazon-linux-extras install epel -y
         - yum install stress -y
-        - echo "## Installing stunnel"
-        - yum install stunnel -y
-        - stunnel /etc/stunnel/stunnel.conf
+        #- echo "## Installing stunnel"
+        #- yum install stunnel -y
+        #- stunnel /etc/stunnel/stunnel.conf
         - echo "## Downloading & installing node exporter"
         - mkdir -p /usr/local/bin/prometheus_ne
         - cd /usr/local/bin/prometheus_ne

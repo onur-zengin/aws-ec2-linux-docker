@@ -14,9 +14,9 @@
 
 ## 1. DESCRIPTION
 
-Containerized Prometheus & Grafana installation with Docker Compose on Ubuntu Linux, packaged as a Terraform IaC project with Ansible deployment automation.
+Containerized Prometheus & Grafana installation with Docker on Ubuntu Linux, packaged as a Terraform IaC project with Ansible deployment automation.
 
-Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx web server. 
+Designed as a single-instance monitoring & visualization solution (on AWS EC2) that can be configured to collect metrics from other systems (multi-cloud VMs & containers) via Prometheus HTTP pull. Collected metrics & syntethic alerts are then visualized on Grafana dashboards, which can be accessed through the co-hosted Nginx proxy server. 
 
 
 ## 2. INITIAL DEPLOYMENT
@@ -90,9 +90,9 @@ ansible-playbook ansible-deploy.yml -i localhost,
     http://[HOST_IP_ADDRESS]/graf
 ```
 
-* Both Prometheus & Grafana will be installed with the default admin password: `admin`. See procedure #3.4 below to change it.
+* Grafana will be installed with the default admin password: `admin`. You may use the Grafana web interface or procedure #3.4 below to change it.
 
-* If / when you also complete procedure #3.3 (optional), then the web server will redirect connection attempts to secure (HTTPS) URLs instead.
+* If / when you also complete procedure #3.2 (optional), then the proxy server will redirect connection attempts to secure (HTTPS) URLs instead.
 
 
 ## 3. UPDATING DEPLOYMENT
@@ -122,9 +122,10 @@ su pne -c "./node_exporter --web.listen-address 0.0.0.0:9100 &"
 ```
 curl http://[TARGET_IP_ADDRESS]:9100/metrics
 ```
-**3.1.3.** **Important:** Make sure to update the AWS Security Group and / or other firewalls in front of the target host(s), to allow incoming connections on TCP port 9100 and **only from** the HOST_IP_ADDRESS that was listed in the output of step #2.2.5.
 
-**3.1.4.** Inside the local working directory, edit `configs/prometheus/prometheus.yml` to add the new targets to the configuration as applicable.
+**3.1.3.** **Important:** Make sure to update the AWS Security Group and / or other firewalls (if any) in front of the target host(s), to allow incoming connections on TCP port 9100 and **only from** the HOST_IP_ADDRESS that was printed in the output of step #2.2.5.
+
+**3.1.4.** On the local terminal, edit `configs/prometheus/prometheus.yml` to add the new targets to the configuration as applicable.
 
 **3.1.5.** Apply changes;
 ```
@@ -135,28 +136,15 @@ ansible-playbook ansible-update.yml -i localhost,
 - **Note:** If / when working with a large number of targets, these steps may also be automated with Ansible.
 
 
-#### 3.2. Updating Prometheus Alerting Rules (optional)
+#### 3.2. Domain Setup (optional)
 
-**3.2.1.** Inside the local working directory, edit `configs/prometheus/alerts.yml` as necessary.
-
-**3.2.2.** Apply changes;
-```
-ansible-playbook ansible-update.yml -i localhost,
-```
-* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
-
-- **Note:** These steps may be replaced with a CI/CD pipeline.
-
-
-#### 3.3. Domain Setup (optional)
-
-**3.3.1.** Go to your DNS zone configuration and create an A record for the static IP address;
+**3.2.1.** Go to your DNS zone configuration and create an A record for the static IP address;
 ```
 DOMAIN_NAME     A       HOST_IP_ADDRESS
 vmon.foo.com    A       XX.XX.XX.XX
 ```
 
-**3.3.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
+**3.2.2.** Obtain a TLS certificate for the DOMAIN_NAME created above (note that you may also use an _existing_ wildcard cert for the parent domain).
 
 * Sample instructions for requesting a certificate from Let's Encrypt can be found at;
 ```
@@ -177,7 +165,7 @@ This certificate expires on 2024-04-21.
 These files will be updated when the certificate renews.
 ```
 
-**3.3.3.** Upload the TLS certificate to AWS Secrets Manager;
+**3.2.3.** Upload the TLS certificate to AWS Secrets Manager;
 ```
 chmod +x ./scripts/putSecrets.py
 sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
@@ -189,11 +177,24 @@ sudo ./scripts/putSecrets.py PATH_TO_PEM_FILES DOMAIN_NAME AWS_REGION
 sudo ./scripts/putSecrets.py /etc/letsencrypt/live/foo.com vmon.foo.com eu-central-1
 ```
 
-**3.3.4.** Apply changes;
+**3.2.4.** Apply changes;
 ```
 ansible-playbook ansible-update.yml -i localhost,
 ```
 * By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
+
+
+#### 3.3. Updating Prometheus Alerting Rules (optional)
+
+**3.3.1.** On the local terminal, edit `configs/prometheus/alertrules.yml` as necessary.
+
+**3.3.2.** Apply changes;
+```
+ansible-playbook ansible-update.yml -i localhost,
+```
+* By design; changes made to configuration files will trigger the EC2 instance to be re-created, while its static IP address and application data are persisted.
+
+- **Note:** For convenience, these steps may be replaced with a CI/CD pipeline.
 
 
 #### 3.4. Prometheus & Grafana Admin Password Resets
@@ -218,7 +219,7 @@ sudo docker exec -u root $(docker ps | grep graf | awk {'print $1'}) grafana cli
 
 #### 4.1. PREREQUISITES
 
-Same as #3.1
+Same as #2.1
 
 #### 4.2. PROCEDURE
 
@@ -228,7 +229,7 @@ ansible-playbook ansible-destroy.yml -i localhost,
 ```
 * The command will look for the AWS region information and S3 bucket names inside `ansible-state.json` which was auto-created during the initial deployment.
 
-- **4.2.2.** If you had also uploaded your TLS certificate to AWS Secrets Manager (as shown in #4.5.3), then remove it with the following command;
+- **4.2.2.** If you had also uploaded your TLS certificate to AWS Secrets Manager (as shown in #3.2), then remove it with the following command;
 ```
 aws secretsmanager delete-secret --secret-id cert-encoded --force-delete-without-recovery --region [AWS_REGION]
 ```
@@ -247,13 +248,13 @@ n/a
 ## 7. PLANNED FOR LATER
 
 * Add email alerting 
-* Optimize memory usage 
+* Optimize memory usage on the Prometheus host
 * Add authentication to Prometheus web interface
-* Define least-privilege permissions for AWS IAM policies
-* Add Grafana deeplinks to worldmap dashboard
+* Define least-privilege permissions for the AWS IAM policies
+* Add Grafana deep-links to worldmap dashboard
 * Add EBS Data Snapshot & Backup 
 * Complete the demo_fargate module to test container monitoring 
-* Automate certificate renewal
+* Automate TLS certificate renewal
 
 
 ## APPENDIX. DIRECTORY STRUCTURE
@@ -272,9 +273,9 @@ n/a
 │   │   ├── nginx_http.conf     # Basic (non-secure) web server configuration (used when TLS cert not found)
 │   │   ├── nginx.conf          # Secure web server configuration
 │   ├── prometheus
-│   │   ├── alerts.yml
+│   │   ├── alertrules.yml
 │   │   ├── prometheus.yml      # Main configuration file for Prometheus (including targets)
-│   │   ├── records.yml         # Frequently queried metrics to pre-populate TSDB
+│   │   ├── records.yml         # Frequently queried metrics to pre-populate TSDB 
 ├── images                      # Logo images to differentiate the vmon host from other nodes on the world map dashboard  
 │   ├── logo_base.svg    
 │   ├── logo_alert.svg      
@@ -295,6 +296,7 @@ n/a
 ansible-deploy.yml              # Ansible playbook file to deploy Terraform IaC 
 ansible-destroy.yml             # Ansible playbook file to destroy Terraform IaC 
 ansible-update.yml              # Ansible playbook file to modify Terraform IaC 
+ansible-state.json              # Local state file that will be auto-created during initial deployment
 ansible.cfg                     # Ansible configuration with Python interpreter auto-detection disabled
 backend.tf                      # Terraform remote backend on AWS S3 & DynamoDB
 bootstrap.tf                    # Cloud-init configuration to upload files & install packages on EC2 instance during boot

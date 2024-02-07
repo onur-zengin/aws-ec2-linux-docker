@@ -48,7 +48,7 @@ data "cloudinit_config" "config" {
           content: ${base64encode(file("${path.module}/configs/prometheus/prometheus.yml"))}
           owner: root:root
           permissions: '0644'
-        - path: /etc/docker/prometheus/alerts.yml
+        - path: /etc/docker/prometheus/alertrules.yml
           encoding: b64
           content: ${base64encode(file("${path.module}/configs/prometheus/alertrules.yml"))}
           owner: root:root
